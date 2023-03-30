@@ -1,3 +1,5 @@
+import React from "react";
+
 const FormInput = (props: any) => {
   return (
     <div className="relative  group  text-green-300 ">

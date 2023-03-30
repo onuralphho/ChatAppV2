@@ -103,13 +103,13 @@ namespace ChatAppBackend.Controllers
             if(tmp != null)
             {
                 var error = new Error { Message = "Email already exists" };
-                return BadRequest(JsonConvert.SerializeObject(error));
+                return BadRequest(error);
             }
             
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return Ok(JsonConvert.SerializeObject(user));
+            return Ok(user);
         }
 
         // DELETE: api/Users/5

@@ -7,7 +7,7 @@ type LayoutProps = {
 const Layout = ({ children }: LayoutProps) => {
   return (
     <div>
-      <main className="container mx-auto   ">{children}</main>
+      <main className=" max-w-[1920px] mx-auto h-[100svh] h-[100vh] overflow-hidden   ">{children}</main>
     </div>
   );
 };
