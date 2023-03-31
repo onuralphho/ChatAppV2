@@ -9,6 +9,7 @@ using ChatAppBackend.Context;
 using ChatAppBackend.Entities;
 using Newtonsoft.Json;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
+using BCrypt.Net;
 
 namespace ChatAppBackend.Controllers
 {
@@ -105,11 +106,18 @@ namespace ChatAppBackend.Controllers
                 var error = new Error { Message = "Email already exists" };
                 return BadRequest(error);
             }
+
+
             
-            _context.Users.Add(user);
+            var reg_user = new User { Email
+            = user.Email, Password =BCrypt.Net.BCrypt.HashPassword(user.Password),Name = user.Name,CreatedTime=user.CreatedTime,UpdateTime = user.UpdateTime };
+                
+                
+
+            _context.Users.Add(reg_user);
             await _context.SaveChangesAsync();
 
-            return Ok(user);
+            return Ok(reg_user);
         }
 
         // DELETE: api/Users/5

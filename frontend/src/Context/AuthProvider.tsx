@@ -6,6 +6,7 @@ import React, {
   useEffect,
 } from "react";
 import { useNavigate } from "react-router-dom";
+import { Fetcher } from "../utils/Fetcher";
 interface User {
   id: number;
   name: string;
@@ -36,25 +37,21 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   }, []);
 
   const login = async (email: string, password: string) => {
-    // Make a request to the backend to authenticate the user
-    const response = await fetch("http://localhost:5159/api/Authentication", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+
+    const response = await Fetcher({email,password},'POST','/api/Authentication')
     const data = await response.json();
-    console.log(data[0]);
-    // Save the user to local storage and set the user state
-    if (data[0] !== undefined) {
-      localStorage.setItem("user", JSON.stringify(data[0]));
-      setUser(data[0]);
+    console.log(data)
+  
+    if (!data.message) {
+      localStorage.setItem("user", JSON.stringify(data));
+      setUser(data);
       navigate('/chats')
     }
-    console.log(user)
+    
   };
 
   const logout = () => {
-    // Remove the user from local storage and set the user state to undefined
+   
   
     localStorage.removeItem("user");
     

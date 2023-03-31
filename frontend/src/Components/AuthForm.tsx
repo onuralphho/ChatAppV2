@@ -1,11 +1,12 @@
 import { useState } from "react";
 import FormInput from "./FormInput";
+import { Fetcher } from "../utils/Fetcher";
 
 const AuthForm = (props: any) => {
   const [passwordInput, setPasswordInput] = useState("");
   const [emailInput, setEmailInput] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  
+
   const [Loading, setLoading] = useState(false);
   const [Loading2, setLoading2] = useState(false);
 
@@ -24,21 +25,20 @@ const AuthForm = (props: any) => {
     if (emailInput !== "" && passwordInput !== "") {
       setLoading(true);
       var name = emailInput.split("@")[0];
-      const res = await fetch("http://localhost:5159/api/Users", {
-        method: "POST",
-        body: JSON.stringify({
+      const res = await Fetcher(
+        {
           createdTime: new Date(),
           updateTime: new Date(),
           email: emailInput,
           password: passwordInput,
           name: name,
-        }),
-        headers: {
-          "Content-Type": "application/json",
         },
-      });
+        "POST",
+        "/api/Users"
+      );
 
       const data = await res.json();
+      console.log(data);
       if (data.message) {
         setErrorMessage(data.message);
       } else {
@@ -57,6 +57,7 @@ const AuthForm = (props: any) => {
     if (emailInput !== "" && passwordInput !== "") {
       setLoading2(true);
       props.ctx.login(emailInput, passwordInput);
+
       setLoading2(false);
       setPasswordInput("");
       setEmailInput("");
@@ -66,7 +67,7 @@ const AuthForm = (props: any) => {
   };
 
   return (
-    <form className=" rounded-3xl w-max h-max px-10 py-5 pb-7 flex flex-col gap-5 shadow-lg shadow-[rgba(0,0,0,0.4)]  bg-stone-800">
+    <form className=" rounded-xl w-max h-max px-10 py-5 pb-7 flex flex-col gap-5 shadow-lg shadow-[rgba(0,0,0,0.4)]  bg-stone-800">
       <h2 className="text-xl md:text-3xl font-bold text-green-300">
         Welcome to Chatapp
         <span className="text-4xl md:text-5xl animate-pulse text-purple-500 ">
@@ -96,7 +97,7 @@ const AuthForm = (props: any) => {
       <div className="flex gap-2">
         <button
           onClick={submitFormLogin}
-          className="min-h-[50px]  flex-1 text-2xl font-bold text-purple-500 px-4 py-2 rounded-xl border border-purple-500 hover:bg-purple-500 hover:text-white transition-all"
+          className="min-h-[50px]  flex-1 text-2xl font-bold text-purple-500 px-4 py-2 rounded-md border border-purple-500 hover:bg-purple-500 hover:text-white transition-all"
         >
           {Loading2 ? (
             <span className="dots" id="dots">
@@ -111,7 +112,7 @@ const AuthForm = (props: any) => {
         <button
           onClick={submitFormRegister}
           type="button"
-          className="min-h-[50px] min-w-[124px]  bg-purple-500 text-white hover:bg-purple-400 transition-all  text-2xl font-bold rounded-xl py-2 px-4 "
+          className="min-h-[50px] min-w-[124px]  bg-purple-500 text-white hover:bg-purple-400 transition-all  text-2xl font-bold rounded-md py-2 px-4 "
         >
           {Loading ? (
             <span className="dots">

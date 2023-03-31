@@ -24,19 +24,18 @@ namespace ChatAppBackend.Controllers
         [HttpPost]
         public async Task<ActionResult<Auth>> PostUser(Auth auth)
         {
-            var tmp = _context.Users.Where(x=>x.Email == auth.Email && x.Password == auth.Password);
+            var user = _context.Users.Where(x=>x.Email == auth.Email).FirstOrDefault();
 
-            if (tmp != null)
+            if (user == null)
             {
-                return Ok(tmp);
-
+                return BadRequest(new Error { Message = "Invalid Credentials" });
+            }
+            if (!BCrypt.Net.BCrypt.Verify(auth.Password, user.Password))
+            {
+                return BadRequest(new Error { Message = "Invalid Credentials" });
             }
 
-
-            return BadRequest(new Error { Message = "Wrong credential" });
-
-
-            
+            return Ok(user);
         }
 
 
