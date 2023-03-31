@@ -5,6 +5,8 @@ import { useAuth } from "../Context/AuthProvider";
 const AuthPage = () => {
   const ctx = useAuth();
 
+
+
   return (
     <div className="flex flex-wrap  max-xl:flex-col h-[100svh]  max-md:gap-4 items-center md:justify-center max-md:pt-10">
       <img

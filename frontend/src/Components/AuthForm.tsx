@@ -1,7 +1,7 @@
 import { useState } from "react";
 import FormInput from "./FormInput";
 import { Fetcher } from "../utils/Fetcher";
-
+import { useNavigate } from "react-router-dom";
 const AuthForm = (props: any) => {
   const [passwordInput, setPasswordInput] = useState("");
   const [emailInput, setEmailInput] = useState("");
@@ -9,6 +9,8 @@ const AuthForm = (props: any) => {
 
   const [Loading, setLoading] = useState(false);
   const [Loading2, setLoading2] = useState(false);
+
+  const navigate = useNavigate();
 
   const passwordChangeHandler = (e: any) => {
     setPasswordInput(e.target.value);
@@ -24,8 +26,10 @@ const AuthForm = (props: any) => {
 
     if (emailInput !== "" && passwordInput !== "") {
       setLoading(true);
+
       var name = emailInput.split("@")[0];
-      const res = await Fetcher(
+
+      await Fetcher(
         {
           createdTime: new Date(),
           updateTime: new Date(),
@@ -34,30 +38,25 @@ const AuthForm = (props: any) => {
           name: name,
         },
         "POST",
-        "/api/Users"
+        "/api/register"
       );
 
-      const data = await res.json();
-      console.log(data);
-      if (data.message) {
-        setErrorMessage(data.message);
-      } else {
-        props.ctx.login(emailInput, passwordInput);
-        setPasswordInput("");
-        setEmailInput("");
-      }
+      setPasswordInput("");
+      setEmailInput("");
+      await props.ctx.login(emailInput, passwordInput);
+      navigate('/chats')
       setLoading(false);
     } else {
       setErrorMessage("Provide credentials");
     }
   };
 
-  const submitFormLogin = (e: any) => {
+  const submitFormLogin = async (e: any) => {
     e.preventDefault();
     if (emailInput !== "" && passwordInput !== "") {
       setLoading2(true);
-      props.ctx.login(emailInput, passwordInput);
-
+      await props.ctx.login(emailInput, passwordInput);
+      navigate("/chats");
       setLoading2(false);
       setPasswordInput("");
       setEmailInput("");
