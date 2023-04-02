@@ -1,18 +1,17 @@
-import { useEffect, useState } from "react";
-
+import { useEffect, useRef, useState } from "react";
+import Modal from "../Components/Modal";
 import { useAuth } from "../Context/AuthProvider";
 import FriendsList from "../Components/FriendsList";
-import { useNavigate } from "react-router-dom";
-
-
+import { Link, useNavigate } from "react-router-dom";
 
 const ChatPage = () => {
-  const [showChat, setShowChat] = useState(true);
-  
+  const [showChat, setShowChat] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const ctx = useAuth();
   const navigate = useNavigate();
+
   useEffect(() => {
-    console.log(ctx?.user)
     const getUser = async () => {
       const response = await fetch(
         `${process.env.REACT_APP_ENDPOINT_URL}/api/user`,
@@ -21,31 +20,37 @@ const ChatPage = () => {
           credentials: "include",
         }
       );
-      const storedUser = await response.json();
-      ctx?.setUser(storedUser);
+
+      const data = await response.json();
+      if (data?.status !== 401) {
+        console.log(data);
+        ctx?.setUser(data);
+      }
     };
 
     getUser();
-   
   }, []);
 
-  if (!ctx?.user) {
-    return <div>Loading user data...</div>;
-  } else {
+  const logOut = () => {
+    const res = ctx?.logout();
+    navigate("/");
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  if (ctx?.user) {
     return (
       <>
+        {isModalOpen ? (
+          <Modal logout={logOut} type={"logout"} closeModal={closeModal} />
+        ) : (
+          ""
+        )}
         <div className="bg-green-500 p-2 max-lg:hidden">
           <ul className="flex justify-between px-4">
             <li className="text-2xl text-white font-bold">Logo</li>
-            <li
-              onClick={() => {
-                ctx?.logout();
-                navigate("/");
-              }}
-              className="text-2xl text-white hover:scale-105 transition-all  font-bold cursor-pointer select-none"
-            >
-              Log Out
-            </li>
+            
           </ul>
         </div>
         <div className="flex text-white h-full ">
@@ -56,10 +61,22 @@ const ChatPage = () => {
             className="w-14 h-14 rounded-full bg-white absolute z-10 left-4 bottom-4 lg:hidden"
           ></button>
           <div
-            className={`p-2 bg-[#252525] transition-all max-lg:shadow-2xl max-lg:shadow-black w-52 lg:w-2/12 gap-6 flex flex-col  ${
+            className={`p-2 pt-5 bg-[#252525] transition-all max-lg:shadow-2xl max-lg:shadow-black w-52 lg:w-2/12 gap-6 flex flex-col  ${
               showChat ? "max-lg:translate-x-0" : "max-lg:-translate-x-60"
             } max-lg:absolute max-lg:bottom-0 max-lg:top-0 `}
           >
+            <div className="flex flex-wrap gap-2">
+              <span>Welcome, {ctx?.user.name}</span>
+              
+              <button
+                onClick={() => {
+                  setIsModalOpen(true);
+                }}
+                className=" border px-2 rounded-md border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all cursor-pointer"
+              >
+                Logout
+              </button>
+            </div>
             <label htmlFor="search" className="relative">
               <div>
                 <div className="absolute left-5 top-2 w-5 h-5 border-2 border-green-500 rounded-full "></div>
@@ -71,7 +88,7 @@ const ChatPage = () => {
                 type="text"
               />
             </label>
-            {ctx?.user.name}
+
             <FriendsList />
           </div>
           <div className=" bg-[#363636] flex-1 ">
@@ -89,6 +106,8 @@ const ChatPage = () => {
         </div>
       </>
     );
+  } else {
+    return <div>Loading...</div>;
   }
 };
 

@@ -26,10 +26,12 @@ const AuthForm = (props: any) => {
 
     if (emailInput !== "" && passwordInput !== "") {
       setLoading(true);
+      setPasswordInput("");
+      setEmailInput("");
 
       var name = emailInput.split("@")[0];
 
-      await Fetcher(
+      const res = await Fetcher(
         {
           createdTime: new Date(),
           updateTime: new Date(),
@@ -40,12 +42,13 @@ const AuthForm = (props: any) => {
         "POST",
         "/api/register"
       );
-
-      setPasswordInput("");
-      setEmailInput("");
-      await props.ctx.login(emailInput, passwordInput);
-      navigate('/chats')
       setLoading(false);
+
+      if (res.message) {
+        setErrorMessage(res.message);
+        return;
+      }
+      await props.ctx.login(emailInput, passwordInput);
     } else {
       setErrorMessage("Provide credentials");
     }
@@ -54,12 +57,19 @@ const AuthForm = (props: any) => {
   const submitFormLogin = async (e: any) => {
     e.preventDefault();
     if (emailInput !== "" && passwordInput !== "") {
-      setLoading2(true);
-      await props.ctx.login(emailInput, passwordInput);
-      navigate("/chats");
-      setLoading2(false);
       setPasswordInput("");
       setEmailInput("");
+
+      setLoading2(true);
+      const res = await props.ctx.login(emailInput, passwordInput);
+      setLoading2(false);
+   
+      if (res.message) {
+        setErrorMessage(res.message);
+        return;
+      }
+
+      navigate("/chats");
     } else {
       setErrorMessage("Provide credentials");
     }

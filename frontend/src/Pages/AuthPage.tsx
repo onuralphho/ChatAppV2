@@ -1,10 +1,16 @@
 import AuthForm from "../Components/AuthForm";
 import humanImage from "../Assets/human.svg";
 import { useAuth } from "../Context/AuthProvider";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AuthPage = () => {
   const ctx = useAuth();
-
+  const navigate = useNavigate()
+  useEffect(() => {
+   
+   
+   }, []);
 
 
   return (

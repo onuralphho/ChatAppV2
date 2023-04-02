@@ -47,7 +47,7 @@ namespace ChatAppBackend.Controllers
 
             return Ok(new
             {
-                message = "success"
+                success = true
             });
         }
 
@@ -77,7 +77,10 @@ namespace ChatAppBackend.Controllers
         public IActionResult Logout()
         {
             Response.Cookies.Delete("jwt");
-            return Ok(new { message = "success"});
+            return Ok(new
+            {
+                success = true
+            });
         }
 
         

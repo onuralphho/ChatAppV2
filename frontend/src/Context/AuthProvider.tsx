@@ -6,7 +6,7 @@ import React, {
   useEffect,
 } from "react";
 import { Fetcher } from "../utils/Fetcher";
-
+import { useNavigate } from "react-router-dom";
 
 interface User {
   name: string;
@@ -14,10 +14,11 @@ interface User {
 }
 
 interface AuthContextValue {
-  setUser:any;
+  setUser: any;
   user?: any;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -26,35 +27,29 @@ const useAuth = () => useContext(AuthContext);
 
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | undefined>(undefined);
+  const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const getUser = async () => {
-  //     const response = await fetch(`${process.env.REACT_APP_ENDPOINT_URL}/api/user`,{
-  //       headers:{'Content-Type':'application/json'},
-  //       credentials:'include'
-  //     })
-  //     const storedUser = await response.json();
-      
-  //     if (storedUser) {
-  //       setUser(storedUser);
-  //     }
-  //   }
-  //   getUser();
-  // }, []);
-
-  const login  = async (email:string, password:string) => {
+  useEffect(() => {
     
-     await Fetcher({email,password},'POST','/api/login');
-    
+  }, []);
 
-  }
+ 
+
+  const login = async (email: string, password: string) => {
+    const res = await Fetcher({ email, password }, "POST", "/api/login");
+    console.log(res)
+    return res;
+  };
 
   const logout = async () => {
-    await Fetcher({},'POST','/api/logout');
-  }
+    setUser(undefined);
+    localStorage.removeItem("session");
+    const res = await Fetcher({}, "POST", "/api/logout");
+    return res;
+  };
 
   return (
-    <AuthContext.Provider value={{ user,setUser,login,logout }}>
+    <AuthContext.Provider value={{ user, setUser, login, logout}}>
       {children}
     </AuthContext.Provider>
   );
