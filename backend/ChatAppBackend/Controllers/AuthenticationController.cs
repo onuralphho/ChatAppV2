@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ChatAppBackend.Entities;
 using ChatAppBackend.Helpers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChatAppBackend.Controllers
 {
     [Route("api/")]
     [ApiController]
+    [Authorize]
     public class AuthenticationController : ControllerBase
     {
 
@@ -25,6 +27,7 @@ namespace ChatAppBackend.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<ActionResult<Auth>> PostUser(Auth auth)
         {
             var user = _context.Users.Where(x=>x.Email == auth.Email).FirstOrDefault();
@@ -40,12 +43,12 @@ namespace ChatAppBackend.Controllers
 
             var jwt = _jwtService.Generate(user.Id);
 
-            Response.Cookies.Append("jwt", jwt,new CookieOptions
+            Response.Cookies.Append("jwt", jwt,new CookieOptions //TODO: cookie'ye yazmadan yapalım.
             {
                 HttpOnly = true,
             });
 
-            return Ok(new
+            return Ok(new //TODO: TokenResponse adında bir sınıf dönülebilir.
             {
                 success = true
             });

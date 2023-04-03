@@ -16,7 +16,7 @@ builder.Services.AddScoped<JwtService>();
 var app = builder.Build();
 
 app.UseCors(options =>
-options.WithOrigins("http://localhost:3000")
+options.WithOrigins("http://localhost:3000") //TODO: alloworigin yapalým
 .AllowAnyMethod().AllowAnyHeader().AllowCredentials());
 
 // Configure the HTTP request pipeline.

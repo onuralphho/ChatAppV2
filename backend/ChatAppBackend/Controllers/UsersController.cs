@@ -10,11 +10,13 @@ using ChatAppBackend.Entities;
 using Newtonsoft.Json;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using BCrypt.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChatAppBackend.Controllers
 {
-    [Route("api/")]
+    [Route("api/")] //TODO:  [Route("api/[controller]")] olması lazım
     [ApiController]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly PostgreSqlDbContext _context;
@@ -33,38 +35,46 @@ namespace ChatAppBackend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-          if (_context.Users == null)
-          {
-              return NotFound();
-          }
-            return await _context.Users.ToListAsync();
+            if (_context.Users == null) //TODO: _context.Users == null böyle bir kontorle gerek yok.
+            {
+                return NotFound();
+            }
+            return await _context.Users.ToListAsync(); //TODO: Database nesneleri api'den dönmeyelim
         }
 
-        
+
 
         // POST: api/register
 
         [HttpPost("register")]
-        public async Task<ActionResult<User>> PostUser(User user)
+        [AllowAnonymous]
+        public async Task<ActionResult<User>> PostUser(User user) //TODO: HttpPost name ve metod adı aynı olmalıdır.
         {
-            
-          if (_context.Users == null)
-          {
-              return Problem("Entity set 'PostgreSqlDbContext.Users'  is null.");
-          }
-          var tmp = _context.Users.Where(x=>x.Email == user.Email).FirstOrDefault();
-            if(tmp != null)
+
+            if (_context.Users == null)
+            {
+                return Problem("Entity set 'PostgreSqlDbContext.Users'  is null.");
+            }
+            var tmp = _context.Users.Where(x => x.Email == user.Email).FirstOrDefault();
+            if (tmp != null)
             {
                 var error = new Error { Message = "Email already exists" };
                 return BadRequest(error);
             }
 
 
-            
-            var reg_user = new User { Email
-            = user.Email, Password =BCrypt.Net.BCrypt.HashPassword(user.Password),Name = user.Name,CreatedTime=user.CreatedTime,UpdateTime = user.UpdateTime };
-                
-                
+
+            var reg_user = new User
+            {
+                Email
+            = user.Email,
+                Password = BCrypt.Net.BCrypt.HashPassword(user.Password),
+                Name = user.Name,
+                CreatedTime = user.CreatedTime,
+                UpdateTime = user.UpdateTime
+            };
+
+
 
             _context.Users.Add(reg_user);
             await _context.SaveChangesAsync();
@@ -72,6 +82,6 @@ namespace ChatAppBackend.Controllers
             return Ok(reg_user);
         }
 
-        
+
     }
 }
