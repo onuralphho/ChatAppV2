@@ -11,12 +11,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<PostgreSqlDbContext>(options => options.UseNpgsql("Server=localhost;Port=5432;Database=ChatApp;User Id=postgres;Password=da7t0hqvz"));
+builder.Services.AddDbContext<PostgreSqlDbContext>(options => options.UseNpgsql("Server=localhost;Port=5432;Database=ChatApp;User Id=postgres;Password=da7t0hqvz")); //TODO:appsettingsden çekilecek
 builder.Services.AddScoped<JwtService>();
+
+
+
 var app = builder.Build();
 
+
+
 app.UseCors(options =>
-options.WithOrigins("http://localhost:3000")
+options.WithOrigins("http://localhost:3000")//TODO:AllowAnyOrigin
 .AllowAnyMethod().AllowAnyHeader().AllowCredentials());
 
 // Configure the HTTP request pipeline.

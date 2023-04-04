@@ -3,19 +3,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ChatAppBackend.Entities;
 using ChatAppBackend.Helpers;
-
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 namespace ChatAppBackend.Controllers
 {
-    [Route("api/")]
+    [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AuthenticationController : ControllerBase
     {
 
         private readonly PostgreSqlDbContext _context;
         private readonly JwtService _jwtService;
 
-        public AuthenticationController(PostgreSqlDbContext context,JwtService jwtService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public AuthenticationController(PostgreSqlDbContext context, JwtService jwtService,IHttpContextAccessor httpContextAccessor)
         {
+            _httpContextAccessor = httpContextAccessor;
             _context = context;
             _jwtService = jwtService;
         }
@@ -24,10 +29,13 @@ namespace ChatAppBackend.Controllers
             public string Message { get; set; }
         }
 
+
+
         [HttpPost("login")]
-        public async Task<ActionResult<Auth>> PostUser(Auth auth)
+        [AllowAnonymous]
+        public async Task<ActionResult<Auth>> Login(Auth auth)
         {
-            var user = _context.Users.Where(x=>x.Email == auth.Email).FirstOrDefault();
+            var user = _context.Users.Where(x => x.Email == auth.Email).FirstOrDefault();
 
             if (user == null)
             {
@@ -40,34 +48,31 @@ namespace ChatAppBackend.Controllers
 
             var jwt = _jwtService.Generate(user.Id);
 
-            Response.Cookies.Append("jwt", jwt,new CookieOptions
-            {
-                HttpOnly = true,
-            });
 
-            return Ok(new
+            return Ok(new Token
             {
-                success = true
+                TokenValue = jwt
             });
         }
 
-        [HttpGet("user")]
-        public IActionResult User()
+        [HttpPost("user")]
+        public IActionResult User(Token TokenValue)  //TODO: Claim'den alınacak
         {
             try
             {
+                var Id = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
 
-            var jwt = Request.Cookies["jwt"];
 
-            var token = _jwtService.Verify(jwt);
+                int userId = int.Parse(Id);//TODO:Jwt oturum açan kullanıcı alma araştır
 
-            int userId = int.Parse(token.Issuer);
+                var user = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
 
-            var user = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
+                var session = new SessionUser { Email = user.Email, Name = user.Name, Picture = user.Picture };
 
-            return Ok(user);
+                return Ok(session);
 
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return Unauthorized();
             }
@@ -83,7 +88,7 @@ namespace ChatAppBackend.Controllers
             });
         }
 
-        
+
 
 
 

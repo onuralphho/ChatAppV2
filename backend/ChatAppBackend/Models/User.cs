@@ -9,7 +9,7 @@ namespace ChatAppBackend.Entities
         [Key]
         public int Id { get; set; }
 
-        public DateTime CreatedTime { get; set; } = DateTime.Now;
+        public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
 
         public DateTime? UpdateTime { get; set; }
 
@@ -20,5 +20,6 @@ namespace ChatAppBackend.Entities
 
         
         public string Name { get; set; }
+        public string Picture { get; set; }
     }
 }

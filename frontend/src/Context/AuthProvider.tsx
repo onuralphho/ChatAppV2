@@ -18,7 +18,8 @@ interface AuthContextValue {
   user?: any;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  
+  token: any;
+  setToken: any;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -27,29 +28,37 @@ const useAuth = () => useContext(AuthContext);
 
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | undefined>(undefined);
+  const [token, setToken] = useState();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    
-  }, []);
-
- 
+  useEffect(() => {}, []);
 
   const login = async (email: string, password: string) => {
-    const res = await Fetcher({ email, password }, "POST", "/api/login");
-    console.log(res)
+    const res = await Fetcher(
+      { email, password },
+      "POST",
+      "/api/authentication/login"
+    );
+    const d = new Date();
+    d.setTime(d.getTime() + 24 * 60 * 60 * 1000);
+
+    const expires = "expires=" + d.toUTCString();
+    document.cookie = "jwt=" + res.tokenValue + ";" + expires + ";path=/";
+    
     return res;
   };
 
   const logout = async () => {
     setUser(undefined);
     localStorage.removeItem("session");
-    const res = await Fetcher({}, "POST", "/api/logout");
+    const res = await Fetcher({}, "POST", "/api/authentication/logout");
     return res;
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, login, logout}}>
+    <AuthContext.Provider
+      value={{ user, setUser, login, logout, token, setToken }}
+    >
       {children}
     </AuthContext.Provider>
   );

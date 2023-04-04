@@ -1,6 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+:root{
+  --x-angel:0deg;
+  --y-angel:0deg;
+  --drop-distance:-50px;
+  --x-accel:0px;
+  --y-accel:0px;
+}
 
 body {
   margin: 0;
@@ -51,4 +58,46 @@ code {
   to {
       transform: scale(1);
   }
+}
+
+
+
+
+.demo_wrapper{
+  position: relative;  
+  transform-style: preserve-3d;
+  transform:perspective(4000px) rotateX(var(--x-angel)) rotateY(var(--y-angel));
+  
+  
+}
+.demo_wrapper::before{
+  content: ' ';
+  position: absolute;
+  inset: 0px;
+  transform: translateZ(-49px);
+  filter: blur(5px);
+  background: rgba(0, 0,0,0.5);
+  border-radius: 1rem;
+}
+
+
+.demo_wrapper::after{
+  content: ' ';
+  position: absolute;
+  inset: -15px;
+  transform: translateZ(var(--drop-distance));
+  background: linear-gradient(35deg, rgba(134,239,172,1) 17%, rgba(168,85,247,1) 85%);
+  border-radius: 1rem;
+}
+.mobile-menu{
+  transform: translateX(var(--x-accel)) translateY(var(--y-accel));
+}
+@media screen and (max-width: 720) {
+  .demo_wrapper{
+    transform-style:flat;
+    transform: rotate(0deg,0deg);
+  }
+  
+
+
 }

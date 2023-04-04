@@ -2,7 +2,10 @@ import { useState } from "react";
 import FormInput from "./FormInput";
 import { Fetcher } from "../utils/Fetcher";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../Context/AuthProvider";
 const AuthForm = (props: any) => {
+  const ctx = useAuth();
+
   const [passwordInput, setPasswordInput] = useState("");
   const [emailInput, setEmailInput] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -33,22 +36,25 @@ const AuthForm = (props: any) => {
 
       const res = await Fetcher(
         {
-          createdTime: new Date(),
-          updateTime: new Date(),
           email: emailInput,
           password: passwordInput,
           name: name,
+          picture:
+            "https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg",
         },
         "POST",
-        "/api/register"
+        "/api/users/register"
       );
+
       setLoading(false);
 
       if (res.message) {
         setErrorMessage(res.message);
         return;
       }
+     
       await props.ctx.login(emailInput, passwordInput);
+      navigate("/chats");
     } else {
       setErrorMessage("Provide credentials");
     }
@@ -63,12 +69,13 @@ const AuthForm = (props: any) => {
       setLoading2(true);
       const res = await props.ctx.login(emailInput, passwordInput);
       setLoading2(false);
-   
+
       if (res.message) {
         setErrorMessage(res.message);
         return;
       }
 
+      
       navigate("/chats");
     } else {
       setErrorMessage("Provide credentials");
@@ -76,11 +83,13 @@ const AuthForm = (props: any) => {
   };
 
   return (
-    <form className=" rounded-xl w-max h-max px-10 py-5 pb-7 flex flex-col gap-5 shadow-lg shadow-[rgba(0,0,0,0.4)]  bg-stone-800">
+    <form
+      id="pre"
+      className="demo_wrapper rounded-xl w-max h-max px-10 py-5 pb-7 flex flex-col gap-5 bg-stone-800"
+    >
       <h2 className="text-xl md:text-3xl font-bold text-green-300">
         Welcome to Chatapp
         <span className="text-4xl md:text-5xl animate-pulse text-purple-500 ">
-          {" "}
           v.2
         </span>
       </h2>

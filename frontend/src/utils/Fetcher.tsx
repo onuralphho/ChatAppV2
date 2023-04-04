@@ -1,44 +1,15 @@
 export const Fetcher = async (
   body: Record<string, unknown>,
-  method: string,
-  url: string
+  method: string, //TODO : Obje gönderilecek (interface'e bağla)
+  url: string//TODO:TOken kullanımı için boolean value
 ) => {
-  if (url === "/api/register") {
-   
-    const response = await fetch(
-      `${process.env.REACT_APP_ENDPOINT_URL}${url}`,
-      {
-        method: method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      }
-      
-    );
-    const data = await response.json();
-    return data;
-  }
+  const response = await fetch(`${process.env.REACT_APP_ENDPOINT_URL}${url}`, {
+    method: method,
+    credentials: "include",//TODO:Headera jwt yazılacak cookie silinecek
+    headers: { "Content-Type": "application/json" },
+    body: method === "POST" ? JSON.stringify(body) : null,
+  });
+  const data = await response.json();
 
-  if (url === "/api/login") {
-   const response =  await fetch(`${process.env.REACT_APP_ENDPOINT_URL}${url}`, {
-      method: method,
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    const data = await response.json()
-    
-    return data;
-  }
-
-  if (url === "/api/logout") {
-   const response = await fetch(`${process.env.REACT_APP_ENDPOINT_URL}${url}`, {
-      method: method,
-      credentials:"include",
-      headers: { "Content-Type": "application/json" },
-    });
-    const data = await response.json();
-   
-    return data;
-  }
-  
+  return data;
 };

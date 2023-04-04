@@ -44,7 +44,9 @@ namespace ChatAppBackend.Data.Migrations
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("text");
-
+                    b.Property<string>("Picture")
+                        .IsRequired()
+                        .HasColumnType("text");
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("timestamp with time zone");
 

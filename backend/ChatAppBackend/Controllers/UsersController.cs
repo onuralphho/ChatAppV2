@@ -10,11 +10,16 @@ using ChatAppBackend.Entities;
 using Newtonsoft.Json;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using BCrypt.Net;
+using ChatAppBackend.Models;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace ChatAppBackend.Controllers
 {
-    [Route("api/")]
+    [Route("api/[controller]")]
+
     [ApiController]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly PostgreSqlDbContext _context;
@@ -29,49 +34,45 @@ namespace ChatAppBackend.Controllers
             public string Message { get; set; }
         }
 
-        // GET: api/Users
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-        {
-          if (_context.Users == null)
-          {
-              return NotFound();
-          }
-            return await _context.Users.ToListAsync();
-        }
-
-        
 
         // POST: api/register
 
         [HttpPost("register")]
-        public async Task<ActionResult<User>> PostUser(User user)
+        [AllowAnonymous]
+        public async Task<ActionResult> Register(Register regUser)
         {
-            
-          if (_context.Users == null)
-          {
-              return Problem("Entity set 'PostgreSqlDbContext.Users'  is null.");
-          }
-          var tmp = _context.Users.Where(x=>x.Email == user.Email).FirstOrDefault();
-            if(tmp != null)
+
+         
+            var tmp = _context.Users.Where(x => x.Email == regUser.Email).FirstOrDefault();
+            if (tmp != null)
             {
                 var error = new Error { Message = "Email already exists" };
                 return BadRequest(error);
             }
 
 
-            
-            var reg_user = new User { Email
-            = user.Email, Password =BCrypt.Net.BCrypt.HashPassword(user.Password),Name = user.Name,CreatedTime=user.CreatedTime,UpdateTime = user.UpdateTime };
-                
-                
+
+            var reg_user = new User
+            {
+                Email = regUser.Email,
+                Password = BCrypt.Net.BCrypt.HashPassword(regUser.Password),
+                Name = regUser.Name,
+                CreatedTime = DateTime.UtcNow,
+                UpdateTime = DateTime.UtcNow,
+                Picture = regUser.Picture
+            };
+
+
 
             _context.Users.Add(reg_user);
             await _context.SaveChangesAsync();
 
-            return Ok(reg_user);
+            return Ok(new
+            {
+                success = "Registeration Complete"
+            });
         }
 
-        
+
     }
 }
