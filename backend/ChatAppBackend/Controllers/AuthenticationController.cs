@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ChatAppBackend.Entities;
 using ChatAppBackend.Helpers;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
+
 namespace ChatAppBackend.Controllers
 {
     [Route("api/[controller]")]
@@ -16,11 +16,9 @@ namespace ChatAppBackend.Controllers
         private readonly PostgreSqlDbContext _context;
         private readonly JwtService _jwtService;
 
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthenticationController(PostgreSqlDbContext context, JwtService jwtService,IHttpContextAccessor httpContextAccessor)
+        public AuthenticationController(PostgreSqlDbContext context, JwtService jwtService)
         {
-            _httpContextAccessor = httpContextAccessor;
             _context = context;
             _jwtService = jwtService;
         }
@@ -30,10 +28,10 @@ namespace ChatAppBackend.Controllers
         }
 
 
-
-        [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<ActionResult<Auth>> Login(Auth auth)
+        [HttpPost("login")]
+        
+        public async Task<ActionResult<TokenDto>>  Login(AuthDto auth)
         {
             var user = _context.Users.Where(x => x.Email == auth.Email).FirstOrDefault();
 
@@ -49,33 +47,27 @@ namespace ChatAppBackend.Controllers
             var jwt = _jwtService.Generate(user.Id);
 
 
-            return Ok(new Token
+            return Ok(new TokenDto
             {
                 TokenValue = jwt
             });
         }
 
-        [HttpPost("user")]
-        public IActionResult User(Token TokenValue)  //TODO: Claim'den alınacak
+        [HttpGet("session")]
+        public IActionResult Session()  //TODO: Claim'den alınacak
         {
-            try
-            {
-                var Id = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-
-
-                int userId = int.Parse(Id);//TODO:Jwt oturum açan kullanıcı alma araştır
-
+            
+               
+                int userId = _jwtService.UserId;//TODO:Jwt oturum açan kullanıcı alma araştır
+                
                 var user = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
 
-                var session = new SessionUser { Email = user.Email, Name = user.Name, Picture = user.Picture };
+                var session = new SessionUserDto { Email = user.Email, Name = user.Name, Picture = user.Picture };
 
                 return Ok(session);
 
-            }
-            catch (Exception ex)
-            {
-                return Unauthorized();
-            }
+            
+           
         }
 
         [HttpPost("logout")]

@@ -34,17 +34,17 @@ const AuthForm = (props: any) => {
 
       var name = emailInput.split("@")[0];
 
-      const res = await Fetcher(
-        {
+      const res = await Fetcher({
+        body: {
           email: emailInput,
           password: passwordInput,
           name: name,
           picture:
             "https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg",
         },
-        "POST",
-        "/api/users/register"
-      );
+        method: "POST",
+        url: "/api/users/register",
+      });
 
       setLoading(false);
 
@@ -52,7 +52,7 @@ const AuthForm = (props: any) => {
         setErrorMessage(res.message);
         return;
       }
-     
+
       await props.ctx.login(emailInput, passwordInput);
       navigate("/chats");
     } else {
@@ -75,7 +75,6 @@ const AuthForm = (props: any) => {
         return;
       }
 
-      
       navigate("/chats");
     } else {
       setErrorMessage("Provide credentials");

@@ -1,6 +1,7 @@
 import FriendsList from "../Components/FriendsList";
 import { AiFillCaretRight } from "react-icons/ai";
 import { useState } from "react";
+
 const SideBar = (props: any) => {
   const [showChat, setShowChat] = useState(true);
   return (
@@ -36,7 +37,11 @@ const SideBar = (props: any) => {
         <div className="flex flex-wrap items-center gap-2">
           <img src={props.user.picture} className="w-10 rounded-full" alt="" />
 
-          <span>Welcome, {props.user.name}</span>
+          <span>
+            Welcome,
+            {props.user.name.charAt(0).toUpperCase() +
+              props.user.name.slice(1).toLowerCase()}
+          </span>
 
           <button
             onClick={() => {
@@ -47,7 +52,10 @@ const SideBar = (props: any) => {
             Logout
           </button>
         </div>
-        <label htmlFor="search" className="relative border py-2 pl-12 border-green-400 text-green-500 text-xl focus-within:border-purple-500  pr-4 rounded-full">
+        <label
+          htmlFor="search"
+          className="relative border py-2 pl-12 border-green-400 text-green-500 text-xl focus-within:border-purple-500  pr-4 rounded-full"
+        >
           <div>
             <div className="absolute left-3 top-2 w-5 h-5 border-2 border-green-500 rounded-full "></div>
             <div className="absolute w-3 h-[2px] rounded-full left-7 top-7 rotate-45 bg-green-500"></div>

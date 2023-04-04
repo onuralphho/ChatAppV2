@@ -35,9 +35,9 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     const res = await Fetcher(
-      { email, password },
-      "POST",
-      "/api/authentication/login"
+      {body:{ email, password },
+      method:"POST",
+      url:"/api/authentication/login"}
     );
     const d = new Date();
     d.setTime(d.getTime() + 24 * 60 * 60 * 1000);
@@ -51,7 +51,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const logout = async () => {
     setUser(undefined);
     localStorage.removeItem("session");
-    const res = await Fetcher({}, "POST", "/api/authentication/logout");
+    const res = await Fetcher({body:null, method:"POST", url:"/api/authentication/logout"});
     return res;
   };
 

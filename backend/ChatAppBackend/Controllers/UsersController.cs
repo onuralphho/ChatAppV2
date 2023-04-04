@@ -10,7 +10,6 @@ using ChatAppBackend.Entities;
 using Newtonsoft.Json;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using BCrypt.Net;
-using ChatAppBackend.Models;
 using Microsoft.AspNetCore.Authorization;
 
 
@@ -39,7 +38,7 @@ namespace ChatAppBackend.Controllers
 
         [HttpPost("register")]
         [AllowAnonymous]
-        public async Task<ActionResult> Register(Register regUser)
+        public async Task<ActionResult> Register(RegisterDto regUser)
         {
 
          

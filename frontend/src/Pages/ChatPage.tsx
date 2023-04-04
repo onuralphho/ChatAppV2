@@ -22,15 +22,16 @@ const ChatPage = () => {
     const getUser = async () => {
       const jwt = getCookie("jwt");
 
-      if (!jwt) {
-        navigate("/");
-        return;
-      }
-      const data = await Fetcher(
-        { TokenValue: jwt },
-        "POST",
-        "/api/authentication/user"
-      );
+      // if (!jwt) {
+      //   navigate("/");
+      //   return;
+      // }
+      const data = await Fetcher({
+        body: null,
+        method: "GET",
+        url: "/api/authentication/session",
+        token: jwt,
+      });
 
       if (data?.status !== 401) {
         localStorage.setItem("session", JSON.stringify(data)); //optional
