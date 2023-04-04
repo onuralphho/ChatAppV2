@@ -22,16 +22,16 @@ namespace ChatAppBackend.Helpers
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public int UserId => int.Parse(_httpContextAccessor.HttpContext?.User?.FindFirstValue(JwtRegisteredClaimNames.UniqueName));
+        public int UserId => int.Parse(_httpContextAccessor.HttpContext?.User?.FindFirstValue(JwtRegisteredClaimNames.Name));
 
         public string Generate(int id)
         {
 
             var claims = new[] {
+                        new Claim(JwtRegisteredClaimNames.Name, id.ToString()),
                         new Claim(JwtRegisteredClaimNames.Sub, _options.Value.Subject),
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                         new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                        new Claim(JwtRegisteredClaimNames.UniqueName, id.ToString())
                     };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Value.Key));
