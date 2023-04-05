@@ -8,6 +8,11 @@ const AuthPage = () => {
   const ctx = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
+    const jwt = ctx?.getCookie('jwt')
+    if(jwt){
+      navigate('/chats')
+    }
+
     const pre = document.getElementById("pre");
     function rotateElement(event: any, element: any) {
       const rect = pre?.getBoundingClientRect();

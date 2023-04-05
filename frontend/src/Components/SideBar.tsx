@@ -106,10 +106,10 @@ const SideBar = (props: ISideBarProps) => {
 
         <FriendsList showMenu={showMenu} />
         {/* Settings */}
-        <div className="bg-green-500 h-[3rem] absolute bottom-0 py-2 left-0 right-0">
+        <div className="bg-green-500 h-[2.95rem] flex absolute bottom-0 py-2 left-0 right-0">
          
             {showMenu ? (
-              <ul className="flex justify-around">
+              <ul className="flex w-full justify-around items-center">
                 <li onClick={() => {
                   props.openProfile()
                 }} className="cursor-pointer        ">
