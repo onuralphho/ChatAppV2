@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace ChatAppBackend.Data.Migrations
+namespace ChatAppBackend.Migrations
 {
     [DbContext(typeof(PostgreSqlDbContext))]
     partial class PostgreSqlDbContextModelSnapshot : ModelSnapshot
@@ -22,6 +22,38 @@ namespace ChatAppBackend.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("ChatAppBackend.Entities.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FromUserId")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("FromUserId1")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("SentDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ToUserId")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ToUserId1")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FromUserId1");
+
+                    b.HasIndex("ToUserId1");
+
+                    b.ToTable("Messages");
+                });
+
             modelBuilder.Entity("ChatAppBackend.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -34,25 +66,38 @@ namespace ChatAppBackend.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasColumnType("text");
+
                     b.Property<string>("Picture")
-                        .IsRequired()
                         .HasColumnType("text");
+
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("ChatAppBackend.Entities.Message", b =>
+                {
+                    b.HasOne("ChatAppBackend.Entities.User", "FromUser")
+                        .WithMany()
+                        .HasForeignKey("FromUserId1");
+
+                    b.HasOne("ChatAppBackend.Entities.User", "ToUser")
+                        .WithMany()
+                        .HasForeignKey("ToUserId1");
+
+                    b.Navigation("FromUser");
+
+                    b.Navigation("ToUser");
                 });
 #pragma warning restore 612, 618
         }

@@ -40,7 +40,7 @@ namespace ChatAppBackend.Helpers
                 _options.Value.Issuer,
                 _options.Value.Audience,
                 claims,
-                expires: DateTime.UtcNow.AddDays(1),//case çalışması olduğu için süreyi uzun verdim.
+                expires: DateTime.UtcNow.AddDays(1),
                 signingCredentials: signIn);
 
 

@@ -5,15 +5,18 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import Layout from "./Layout/Layout";
 import { BrowserRouter } from "react-router-dom";
+import AlertProvider from "./Context/AlertProvider";
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <Layout >
-        <App />
-      </Layout>
+      <AlertProvider>
+        <Layout>
+          <App />
+        </Layout>
+      </AlertProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

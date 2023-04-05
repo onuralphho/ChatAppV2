@@ -1,17 +1,16 @@
 interface fetchReq {
   body: Record<string, unknown> | null;
-  method: string; //TODO : Obje gönderilecek (interface'e bağla) // DONE
+  method: string;
   url: string;
   token?: string | null;
 }
 
 export const Fetcher = async (fetchReq: fetchReq) => {
-  console.log(fetchReq)
+  
   const response = await fetch(
     `${process.env.REACT_APP_ENDPOINT_URL}${fetchReq.url}`,
     {
       method: fetchReq.method,
-      credentials: "include",
       headers: fetchReq.token
         ? {
             "Content-Type": "application/json",

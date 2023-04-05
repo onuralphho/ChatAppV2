@@ -1,6 +1,8 @@
+import { RiChatSmile3Fill } from "react-icons/ri";
+
 const ChatLog = () => {
   return (
-    <div className=" bg-[#363636] flex-1  h-full">
+    <div className=" bg-[#363636] flex-1  h-full fade-in">
       {/* TEMP */}
       <div className="flex ">
         <div className="  w-full p-2 flex items-center gap-3">
@@ -12,16 +14,28 @@ const ChatLog = () => {
           <span className="text-xl">John Doe</span>
         </div>
       </div>
-      {/* TEMP */}
-      <form className=" relative max-lg:h-[calc(100%-60px)] h-[calc(100%-40px)] ">
-        <label className="  focus-within:border-green-500 bg-white text-[#252525]   max-lg:bottom-0 bottom-5   w-full  p-2 pl-6 lg:text-xl absolute  border-4 ">
-          <input
-            type="text"
-            placeholder="Say Hi!"
-            className="bg-transparent w-full outline-none  "
-          />
-        </label>
-      </form>
+      {/* Log */}
+      <div className="flex max-lg:h-[calc(100%-55px)] h-[calc(100%-40px)] flex-col">
+        <div className=" flex-1">
+          
+        </div>
+        {/* TEMP  */}
+        <form className=" relative  ">
+          <label className=" focus-within:border-green-600 bg-white text-[#252525] left-0 right-0 py-2 pl-9  max-lg:bottom-0 bottom-4 absolute  border-4 ">
+            <div className="relative">
+              <RiChatSmile3Fill
+                size={20}
+                className="absolute -left-7 text-green-500 top-0.5"
+              />
+              <input
+                type="text"
+                placeholder="Say Hi!"
+                className="bg-transparent w-full outline-none  "
+              />
+            </div>
+          </label>
+        </form>
+      </div>
     </div>
   );
 };

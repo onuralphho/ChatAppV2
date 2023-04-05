@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using BCrypt.Net;
 using Microsoft.AspNetCore.Authorization;
-
+using ChatAppBackend.Dto;
 
 namespace ChatAppBackend.Controllers
 {
@@ -41,7 +41,7 @@ namespace ChatAppBackend.Controllers
         public async Task<ActionResult> Register(RegisterDto regUser)
         {
 
-         
+
             var tmp = _context.Users.Where(x => x.Email == regUser.Email).FirstOrDefault();
             if (tmp != null)
             {
@@ -72,6 +72,33 @@ namespace ChatAppBackend.Controllers
             });
         }
 
+        [HttpPut("update")]
+        public async Task<ActionResult> Update(UpdateUserDto updatedUser)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(updatedUser.Id);
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                user.UpdateTime = DateTime.UtcNow;
+                user.Name = updatedUser.Name;
+                user.Picture = updatedUser.Picture;
+
+                await _context.SaveChangesAsync();
+                var session = new SessionUserDto { Id = user.Id, Email = user.Email, Name = user.Name, Picture = user.Picture };
+
+                return Ok(new { session, success = "User updated successfully"});
+                
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while updating the user: {ex.Message}");
+            }
+        }
 
     }
 }

@@ -1,27 +1,22 @@
 import { useEffect, useState } from "react";
-import Modal from "../Components/Modal";
+
 import { useAuth } from "../Context/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import { Fetcher } from "../utils/Fetcher";
 import ChatLog from "../Components/ChatLog";
 import SideBar from "../Components/SideBar";
+import ProfileSettings from "../Components/ProfileSettings";
 import { Link } from "react-router-dom";
 const ChatPage = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
   const ctx = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    function getCookie(name: string): string | undefined {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) {
-        return parts.pop()?.split(";").shift();
-      }
-    }
+    
     const getUser = async () => {
-      const jwt = getCookie("jwt");
+      const jwt = ctx?.getCookie("jwt")
 
       if (!jwt) {
         navigate("/");
@@ -33,9 +28,8 @@ const ChatPage = () => {
         url: "/api/authentication/session",
         token: jwt,
       });
-
+      
       if (data?.status !== 401) {
-        localStorage.setItem("session", JSON.stringify(data)); //optional
         ctx?.setUser(data);
       }
     };
@@ -43,25 +37,16 @@ const ChatPage = () => {
     getUser();
   }, []);
 
-  const logOut = () => {
-    ctx?.logout();
-    navigate("/");
+  const closeProfile = () => {
+    setShowProfile(false);
   };
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-  const openModal = () => {
-    setIsModalOpen(true);
+  const openProfile = () => {
+    setShowProfile(true);
   };
 
   if (ctx?.user) {
     return (
       <>
-        {/* Modal */}
-        {isModalOpen && (
-          <Modal confirm={logOut} cancel={closeModal} title={"Logout?"} />
-        )}
-
         {/* TopBar Temp
         <div className="bg-green-500 p-2 max-lg:hidden">
           <ul className="flex justify-between px-4">
@@ -69,20 +54,25 @@ const ChatPage = () => {
           </ul>
         </div> */}
 
-        <div className="flex text-white h-[100dvh] ">
+        <div className="flex bg-[#363636] text-white h-[100dvh] ">
           {/* SideBar */}
-          <SideBar user={ctx.user} openModal={openModal} />
+          <SideBar openProfile={openProfile} />
+
+          {showProfile ? (
+            <ProfileSettings closeProfile={closeProfile} />
+          ) : (
+            <ChatLog />
+          )}
 
           {/* ChatLog */}
-          <ChatLog />
         </div>
       </>
     );
   } else {
     return (
       <div>
-        <div className=" h-[100dvh] bg-[#252525] text-white flex flex-col justify-center items-center w-full gap-4">
-          <h2 className="text-5xl">Please Sign In</h2>
+        <div className=" h-[100dvh] bg-[#252525] text-white flex justify-center items-center w-full gap-4">
+          <h2 className="text-5xl">Please </h2>
           <Link
             to={"/"}
             className="text-3xl border py-2 px-8  border-green-500 text-green-500 text-center rounded-md hover:bg-green-500 hover:text-white transition-all"
@@ -90,7 +80,6 @@ const ChatPage = () => {
             Sign In
           </Link>
         </div>
-        ;
       </div>
     );
   }

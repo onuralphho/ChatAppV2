@@ -7,23 +7,16 @@ import ProtectedRoute from "./Components/ProtectedRoute";
 import { useAuth } from "./Context/AuthProvider";
 
 function App() {
-  const ctx = useAuth()
+  const ctx = useAuth();
 
   return (
     <>
       <AuthProvider>
         <Routes>
           <Route index path="/" element={<AuthPage />} />
-
-          <Route
-            path="/chats"
-            element={
-              // <ProtectedRoute user={ctx?.user}>
-              //   <ChatPage />
-              // </ProtectedRoute>
-              <ChatPage />
-            }
-          />
+          <Route path="/chats">
+            <Route path="" element={<ChatPage />} />
+          </Route>
         </Routes>
       </AuthProvider>
     </>

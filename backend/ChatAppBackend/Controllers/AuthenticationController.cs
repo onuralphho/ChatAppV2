@@ -55,20 +55,17 @@ namespace ChatAppBackend.Controllers
         }
 
         [HttpGet("session")]
-        public IActionResult Session()  //TODO: Claim'den alınacak
+        public IActionResult Session()  
         {
 
 
-            int userId = _jwtService.UserId;//TODO:Jwt oturum açan kullanıcı alma araştır
+            int userId = _jwtService.UserId;
 
-            if (userId == null)
-            {
-                return BadRequest(new{message = "Something went wrong"});
-            }
+        
 
             var user = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
 
-            var session = new SessionUserDto { Email = user.Email, Name = user.Name, Picture = user.Picture };
+            var session = new SessionUserDto { Id = user.Id, Email = user.Email, Name = user.Name, Picture = user.Picture };
 
             return Ok(session);
 

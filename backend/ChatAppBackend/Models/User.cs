@@ -11,7 +11,7 @@ namespace ChatAppBackend.Entities
 
         public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
 
-        public DateTime? UpdateTime { get; set; }
+        public DateTime UpdateTime { get; set; }
 
         public string Email { get; set; }
 

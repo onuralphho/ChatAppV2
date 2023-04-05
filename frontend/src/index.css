@@ -9,20 +9,17 @@
   --y-accel:0px;
 }
 
-body {
+/* body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  
-}
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
+} */
+
+
 
 
 .dots {
@@ -98,6 +95,21 @@ code {
     transform: rotate(0deg,0deg);
   }
   
+}
 
 
+.fade-in{
+  
+  animation: fade 0.5s ease  forwards;
+}
+
+
+@keyframes fade {
+  from{
+    opacity: 0;
+  }
+  to{
+    opacity: 1;
+  }
+  
 }

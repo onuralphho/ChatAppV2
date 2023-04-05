@@ -45,14 +45,13 @@ const AuthForm = (props: any) => {
       });
 
       setLoading(false);
-      setPasswordInput("");
-      setEmailInput("");
 
       if (res.message) {
         setErrorMessage(res.message);
         return;
       }
-
+      setPasswordInput("");
+      setEmailInput("");
       await props.ctx.login(emailInput, passwordInput);
       navigate("/chats");
     } else {
@@ -66,13 +65,13 @@ const AuthForm = (props: any) => {
       setLoading2(true);
       const res = await props.ctx.login(emailInput, passwordInput);
       setLoading2(false);
-      setPasswordInput("");
-      setEmailInput("");
+
       if (res.message) {
         setErrorMessage(res.message);
         return;
       }
-
+      setPasswordInput("");
+      setEmailInput("");
       navigate("/chats");
     } else {
       setErrorMessage("Provide credentials");
