@@ -55,17 +55,17 @@ namespace ChatAppBackend.Controllers
         }
 
         [HttpGet("session")]
-        public IActionResult Session()  
+        public IActionResult Session()
         {
 
 
             int userId = _jwtService.UserId;
 
-        
+
 
             var user = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
 
-            var session = new SessionUserDto { Id = user.Id, Email = user.Email, Name = user.Name, Picture = user.Picture };
+            var session = new SessionUserDto { Id = user.Id, Email = user.Email, Name = user.Name, Picture = user.Picture, UpdateTime = user.UpdateTime };
 
             return Ok(session);
 

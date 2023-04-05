@@ -89,10 +89,10 @@ namespace ChatAppBackend.Controllers
                 user.Picture = updatedUser.Picture;
 
                 await _context.SaveChangesAsync();
-                var session = new SessionUserDto { Id = user.Id, Email = user.Email, Name = user.Name, Picture = user.Picture };
+                var session = new SessionUserDto { Id = user.Id, Email = user.Email, Name = user.Name, Picture = user.Picture, UpdateTime = DateTime.UtcNow };
 
-                return Ok(new { session, success = "User updated successfully"});
-                
+                return Ok(new { session, success = "User updated successfully" });
+
             }
             catch (Exception ex)
             {
