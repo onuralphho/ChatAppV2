@@ -30,9 +30,10 @@ namespace ChatAppBackend.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        
-        public async Task<ActionResult<TokenDto>>  Login(AuthDto auth)
+
+        public async Task<ActionResult<TokenDto>> Login(AuthDto auth)
         {
+
             var user = _context.Users.Where(x => x.Email == auth.Email).FirstOrDefault();
 
             if (user == null)
@@ -56,18 +57,23 @@ namespace ChatAppBackend.Controllers
         [HttpGet("session")]
         public IActionResult Session()  //TODO: Claim'den alınacak
         {
-            
-               
-                int userId = _jwtService.UserId;//TODO:Jwt oturum açan kullanıcı alma araştır
-                
-                var user = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
 
-                var session = new SessionUserDto { Email = user.Email, Name = user.Name, Picture = user.Picture };
 
-                return Ok(session);
+            int userId = _jwtService.UserId;//TODO:Jwt oturum açan kullanıcı alma araştır
 
-            
-           
+            if (userId == null)
+            {
+                return BadRequest(new{message = "Something went wrong"});
+            }
+
+            var user = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
+
+            var session = new SessionUserDto { Email = user.Email, Name = user.Name, Picture = user.Picture };
+
+            return Ok(session);
+
+
+
         }
 
         [HttpPost("logout")]

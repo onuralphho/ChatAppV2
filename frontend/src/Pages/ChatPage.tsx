@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Fetcher } from "../utils/Fetcher";
 import ChatLog from "../Components/ChatLog";
 import SideBar from "../Components/SideBar";
+import { Link } from "react-router-dom";
 const ChatPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -22,10 +23,10 @@ const ChatPage = () => {
     const getUser = async () => {
       const jwt = getCookie("jwt");
 
-      // if (!jwt) {
-      //   navigate("/");
-      //   return;
-      // }
+      if (!jwt) {
+        navigate("/");
+        return;
+      }
       const data = await Fetcher({
         body: null,
         method: "GET",
@@ -78,7 +79,20 @@ const ChatPage = () => {
       </>
     );
   } else {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <div className=" h-[100dvh] bg-[#252525] text-white flex flex-col justify-center items-center w-full gap-4">
+          <h2 className="text-5xl">Please Sign In</h2>
+          <Link
+            to={"/"}
+            className="text-3xl border py-2 px-8  border-green-500 text-green-500 text-center rounded-md hover:bg-green-500 hover:text-white transition-all"
+          >
+            Sign In
+          </Link>
+        </div>
+        ;
+      </div>
+    );
   }
 };
 
