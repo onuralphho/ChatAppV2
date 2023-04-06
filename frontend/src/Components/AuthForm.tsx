@@ -114,11 +114,11 @@ const AuthForm = (props: any) => {
           className="min-h-[50px]  flex-1 text-2xl font-bold text-purple-500 px-4 py-2 rounded-md border border-purple-500 hover:bg-purple-500 hover:text-white transition-all"
         >
           {Loading2 ? (
-            <span className="dots" id="dots">
-              <span></span>
-              <span></span>
-              <span></span>
-            </span>
+            <span className="dots gap-1">
+            <span className="w-3 bg-white"></span>
+            <span className="w-3 bg-white"></span>
+            <span className="w-3 bg-white"></span>
+          </span>
           ) : (
             "Login"
           )}
@@ -129,10 +129,10 @@ const AuthForm = (props: any) => {
           className="min-h-[50px] min-w-[124px]  bg-purple-500 text-white hover:bg-purple-400 transition-all  text-2xl font-bold rounded-md py-2 px-4 "
         >
           {Loading ? (
-            <span className="dots">
-              <span></span>
-              <span></span>
-              <span></span>
+            <span className="dots gap-1">
+              <span className="w-3 bg-white"></span>
+              <span className="w-3 bg-white"></span>
+              <span className="w-3 bg-white"></span>
             </span>
           ) : (
             "Register"

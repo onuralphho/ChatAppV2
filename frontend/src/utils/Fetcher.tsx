@@ -1,12 +1,12 @@
 interface fetchReq {
-  body: Record<string, unknown> | null;
+  body: Record<string, unknown> | string | null;
   method: string;
   url: string;
   token?: string | null;
 }
 
 export const Fetcher = async (fetchReq: fetchReq) => {
-  
+
   const response = await fetch(
     `${process.env.REACT_APP_ENDPOINT_URL}${fetchReq.url}`,
     {
@@ -14,7 +14,7 @@ export const Fetcher = async (fetchReq: fetchReq) => {
       headers: fetchReq.token
         ? {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${fetchReq.token}`,
+            Authorization: `Bearer ${fetchReq.token}`,
           }
         : { "Content-Type": "application/json" },
       body: fetchReq.body !== null ? JSON.stringify(fetchReq.body) : null,

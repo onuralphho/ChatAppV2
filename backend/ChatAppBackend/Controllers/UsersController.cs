@@ -12,6 +12,8 @@ using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using BCrypt.Net;
 using Microsoft.AspNetCore.Authorization;
 using ChatAppBackend.Dto;
+using ChatAppBackend.Models.User.Request;
+using ChatAppBackend.Models.User.Response;
 
 namespace ChatAppBackend.Controllers
 {
@@ -75,30 +77,75 @@ namespace ChatAppBackend.Controllers
         [HttpPut("update")]
         public async Task<ActionResult> Update(UpdateUserDto updatedUser)
         {
-            try
+
+            var user = await _context.Users.FindAsync(updatedUser.Id);
+
+            if (user == null)
             {
-                var user = await _context.Users.FindAsync(updatedUser.Id);
-
-                if (user == null)
-                {
-                    return NotFound("User not found");
-                }
-
-                user.UpdateTime = DateTime.UtcNow;
-                user.Name = updatedUser.Name;
-                user.Picture = updatedUser.Picture;
-
-                await _context.SaveChangesAsync();
-                var session = new SessionUserDto { Id = user.Id, Email = user.Email, Name = user.Name, Picture = user.Picture, UpdateTime = DateTime.UtcNow };
-
-                return Ok(new { session, success = "User updated successfully" });
-
+                return NotFound("User not found");
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while updating the user: {ex.Message}");
-            }
+
+            user.UpdateTime = DateTime.UtcNow;
+            user.Name = updatedUser.Name;
+            user.Picture = updatedUser.Picture;
+
+            await _context.SaveChangesAsync();
+            var session = new SessionUserDto { Id = user.Id, Email = user.Email, Name = user.Name, Picture = user.Picture, UpdateTime = DateTime.UtcNow };
+
+            return Ok(new { session, success = "User updated successfully" }); //res dto bağla
+
         }
+
+        [HttpPost("search")]
+        [AllowAnonymous]
+        public List<UserSearchResponse> SearchUsers(UserSearchRequest userSearch)
+        {
+            List<UserSearchResponse> result = new List<UserSearchResponse>();
+
+
+            var matchingUsers = _context.Users.Where(u => u.Name.Contains(userSearch.searchValue)).Select(u => new UserSearchResponse { Id = u.Id, Name = u.Name ,Picture=u.Picture}).ToList();
+
+
+            //// Sort the list based on string similarity with the search text
+            //matchingUsers = matchingUsers.OrderBy(u => GetSimilarity(u.Name, searchText)).ToList();
+
+
+
+            result.AddRange(matchingUsers);
+
+            return result;
+        }
+        
+        //private double GetSimilarity(string s1, string s2)
+        //{
+        //    int n = s1.Length;
+        //    int m = s2.Length;
+
+        //    if (n == 0 || m == 0) return 0;
+
+        //    int[,] d = new int[n + 1, m + 1];
+
+        //    for (int i = 0; i <= n; i++)
+        //    {
+        //        d[i, 0] = i;
+        //    }
+
+        //    for (int j = 0; j <= m; j++)
+        //    {
+        //        d[0, j] = j;
+        //    }
+
+        //    for (int j = 1; j <= m; j++)
+        //    {
+        //        for (int i = 1; i <= n; i++)
+        //        {
+        //            int cost = (s1[i - 1] == s2[j - 1]) ? 0 : 1;
+        //            d[i, j] = Math.Min(d[i - 1, j] + 1, Math.Min(d[i, j - 1] + 1, d[i - 1, j - 1] + cost));
+        //        }
+        //    }
+
+        //    return 1 - (double)d[n, m] / Math.Max(n, m);
+        //}
 
     }
 }

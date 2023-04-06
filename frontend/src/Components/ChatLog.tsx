@@ -15,7 +15,7 @@ const ChatLog = () => {
         </div>
       </div>
       {/* Log */}
-      <div className="flex max-lg:h-[calc(100%-55px)] h-[calc(100%-40px)] flex-col">
+      <div className="flex max-lg:h-[calc(100%-55px)] h-[calc(100%-39.5px)] flex-col">
         <div className=" flex-1">
           
         </div>

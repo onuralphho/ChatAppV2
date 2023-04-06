@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using ChatAppBackend.Models.FriendBox.Response;
 
 namespace ChatAppBackend.Entities
 {
@@ -21,5 +22,7 @@ namespace ChatAppBackend.Entities
         
         public string Name { get; set; }
         public string Picture { get; set; }
+
+        
     }
 }

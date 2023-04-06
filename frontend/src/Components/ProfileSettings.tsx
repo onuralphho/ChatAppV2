@@ -55,10 +55,11 @@ const ProfileSettings = (props: IProfileProps) => {
   const submitFormHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const jwt = ctx?.getCookie("jwt");
+
     const res = await Fetcher({
       body: {
         Id: ctx?.user.id,
-        Name: nameInput,
+        Name: nameInput.toLowerCase(),
         Email: emailInput,
         Picture: pictureInput,
       },
@@ -99,27 +100,28 @@ const ProfileSettings = (props: IProfileProps) => {
               className="    sm:w-max   shadow shadow-neutral-800 rounded-md  p-2 "
             >
               <div className="flex max-[440px]:flex-col  gap-4  h-full ">
-                <div className="flex flex-col  gap-1 w-40 ">
+                <div className="flex flex-col  gap-2 w-40 ">
                   <img
                     src={pictureInput}
                     className="rounded-lg   flex-1 object-cover "
                     alt=""
                   />
 
-                  <div
+                  <button
+                    type="button"
                     onClick={() => {
                       setDropdownShown((prev) => !prev);
                     }}
-                    className="relative z-10 cursor-pointer select-none  bg-[#252525] border border-green-500 text-white text-sm font-medium rounded-lg  focus:border-green-500 block w-full p-2.5"
+                    className="relative z-10 cursor-pointer select-none  bg-[#252525] text-white text-sm font-medium rounded-lg p-2.5"
                   >
                     <span>Choose an avatar</span>
-                    <ul
+                    <div
                       className={`${
                         !dropdownShown ? "h-0 border-0 p-0 " : "h-56 p-1"
                       } bg-[#252525]  transition-all flex flex-col gap-1 overflow-hidden absolute left-0 top-11 w-full rounded-md `}
                     >
                       {DROPDOWN_DATA.map((item, index) => (
-                        <li
+                        <div
                           key={index}
                           onClick={() => {
                             setPictureInput(item.url);
@@ -128,10 +130,10 @@ const ProfileSettings = (props: IProfileProps) => {
                         >
                           <img src={item.url} alt="" className="h-8" />
                           <span>{item.title}</span>
-                        </li>
+                        </div>
                       ))}
-                    </ul>
-                  </div>
+                    </div>
+                  </button>
                 </div>
                 <div className="flex flex-col gap-1 justify-between">
                   <div className="flex flex-col">

@@ -1,21 +1,35 @@
 import FriendsList from "../Components/FriendsList";
-import { AiFillCaretRight } from "react-icons/ai";
+import { AiFillCaretRight, AiFillPlusCircle } from "react-icons/ai";
 import { useState } from "react";
 import { useAuth } from "../Context/AuthProvider";
 import Modal from "./Modal";
 import { useNavigate } from "react-router-dom";
 import { IoSettingsSharp, IoLogOutOutline } from "react-icons/io5";
 import { BiSearchAlt } from "react-icons/bi";
-import { Link } from "react-router-dom";
-
+import AlertBox from "./AlertBox";
+import { Fetcher } from "../utils/Fetcher";
+import { useAlertContext } from "../Context/AlertProvider";
+import { sleep } from "../utils/sleep";
+import { IFriendList } from "../@types/friendBoxType";
 interface ISideBarProps {
   openProfile: Function;
 }
 
+interface ISearchResult {
+  id: number;
+  name: string;
+  picture: string;
+}
+
 const SideBar = (props: ISideBarProps) => {
+  const [searchInput, setSearchInput] = useState("");
   const [showMenu, setShowMenu] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchResult, setSearchResult] = useState([]);
+
   const ctx = useAuth();
+  const alertCtx = useAlertContext();
+
   const navigate = useNavigate();
 
   const closeModal = () => {
@@ -29,8 +43,49 @@ const SideBar = (props: ISideBarProps) => {
     ctx?.logout();
   };
 
+  const searchHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
+
+    if (searchInput.length - 1 === 0) {
+      setSearchResult([]);
+    }
+    if (searchInput.length + 1 < 3) {
+      return;
+    }
+
+    const res = await Fetcher({
+      body: { searchValue: searchInput.toLowerCase() },
+      method: "POST",
+      url: "/api/users/search",
+    });
+    setSearchResult(res);
+  };
+
+  const addFriendHandler = async (friendId: number) => {
+    const res = await Fetcher({
+      body: { fromId: ctx?.user.id, toId: friendId },
+      method: "POST",
+      url: "/api/FriendBoxes/addfriend",
+      token: ctx?.getCookie("jwt"),
+    });
+    setSearchResult([]);
+    setSearchInput("");
+
+    alertCtx?.setAlert({ shown: true, type: res.message });
+    if (res.addedfriend) {
+      ctx?.setFriendList((prev: IFriendList[]) => [...prev, res.addedfriend]);
+    }
+    await sleep(2000);
+    alertCtx?.setAlert({ shown: false, type: res.message });
+  };
+
   return (
     <>
+      <AlertBox
+        message={alertCtx?.alert.type}
+        isShown={alertCtx?.alert.shown}
+        closeBox={alertCtx?.setAlert}
+      />
       {/* Modal */}
       {isModalOpen && (
         <Modal confirm={logOut} cancel={closeModal} title={"Logout?"} />
@@ -73,7 +128,7 @@ const SideBar = (props: ISideBarProps) => {
               setShowMenu(true);
             }}
             src={ctx?.user.picture}
-            className="w-10 aspect-square shadow shadow-green-500 rounded-full object-cover"
+            className="w-10 aspect-square shadow-md shadow-black rounded-full object-cover"
             alt=""
           />
           <div className={`flex gap-2 flex-wrap ${showMenu ? "" : "hidden"}`}>
@@ -99,44 +154,69 @@ const SideBar = (props: ISideBarProps) => {
           </div>
           <input
             id="search"
+            onChange={searchHandler}
+            value={searchInput}
             className="bg-transparent outline-none w-full"
             type="text"
           />
+          <div
+            className={`${
+              searchResult.length > 0 ? "p-0.5" : ""
+            } bg-green-500  transition-all flex flex-col gap-0.5 overflow-hidden absolute left-0 top-11 w-full rounded-md `}
+          >
+            {searchResult.map((item: ISearchResult) =>
+              item.id !== ctx?.user.id ? (
+                <div
+                  key={item.id}
+                  className=" hover:bg-[#363636] rounded-md select-none p-1 flex items-center gap-2 bg-[#252525]"
+                >
+                  <img src={item.picture} alt="" className="h-8 rounded-full" />
+                  <span className="text-white">{item.name}</span>
+                  <AiFillPlusCircle
+                    onClick={() => {
+                      addFriendHandler(item.id);
+                    }}
+                    className="cursor-pointer"
+                  />
+                </div>
+              ) : null
+            )}
+          </div>
         </label>
 
         <FriendsList showMenu={showMenu} />
         {/* Settings */}
         <div className="bg-green-500 h-[2.95rem] flex absolute bottom-0 py-2 left-0 right-0">
-         
-            {showMenu ? (
-              <ul className="flex w-full justify-around items-center">
-                <li onClick={() => {
-                  props.openProfile()
-                }} className="cursor-pointer        ">
-                  <IoSettingsSharp size={25} className="" />
-                </li>
-
-                <li
-                  onClick={() => {
-                    openModal();
-                  }}
-                  className="cursor-pointer"
-                >
-                  <IoLogOutOutline size={30} className="text-red-500 " />
-                </li>
-              </ul>
-            ) : (
-            
-              <button
+          {showMenu ? (
+            <ul className="flex w-full justify-around items-center">
+              <li
                 onClick={() => {
-                  setShowMenu(true);
+                  props.openProfile();
                 }}
-                className="w-full flex justify-center items-center"
+                className="cursor-pointer        "
               >
                 <IoSettingsSharp size={25} className="" />
-              </button>
-            )}
-         
+              </li>
+
+              <li
+                onClick={() => {
+                  openModal();
+                }}
+                className="cursor-pointer"
+              >
+                <IoLogOutOutline size={30} className="text-red-500 " />
+              </li>
+            </ul>
+          ) : (
+            <button
+              onClick={() => {
+                setShowMenu(true);
+              }}
+              className="w-full flex justify-center items-center"
+            >
+              <IoSettingsSharp size={25} className="" />
+            </button>
+          )}
         </div>
       </div>
     </>

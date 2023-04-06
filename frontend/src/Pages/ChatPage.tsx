@@ -6,7 +6,7 @@ import { Fetcher } from "../utils/Fetcher";
 import ChatLog from "../Components/ChatLog";
 import SideBar from "../Components/SideBar";
 import ProfileSettings from "../Components/ProfileSettings";
-import { Link } from "react-router-dom";
+
 const ChatPage = () => {
   const [showProfile, setShowProfile] = useState(false);
 
@@ -14,24 +14,34 @@ const ChatPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    
     const getUser = async () => {
-      const jwt = ctx?.getCookie("jwt")
+      const jwt = ctx?.getCookie("jwt");
 
       if (!jwt) {
         navigate("/");
         return;
       }
+
       const data = await Fetcher({
         body: null,
         method: "GET",
         url: "/api/authentication/session",
         token: jwt,
       });
-      
+
       if (data?.status !== 401) {
         ctx?.setUser(data);
       }
+
+      const data2 = await Fetcher({
+        body: null,
+        method: "GET",
+        url: "/api/friendboxes/friends",
+        token: jwt,
+      });
+
+      ctx?.setFriendList(data2);
+
     };
 
     getUser();
@@ -44,7 +54,7 @@ const ChatPage = () => {
     setShowProfile(true);
   };
 
-  if (ctx?.user) {
+  if (ctx?.user ) {
     return (
       <>
         {/* TopBar Temp
@@ -72,13 +82,13 @@ const ChatPage = () => {
     return (
       <div>
         <div className=" h-[100dvh] bg-[#252525] text-white flex justify-center items-center w-full gap-4">
-          <h2 className="text-5xl">Please </h2>
-          <Link
-            to={"/"}
-            className="text-3xl border py-2 px-8  border-green-500 text-green-500 text-center rounded-md hover:bg-green-500 hover:text-white transition-all"
-          >
-            Sign In
-          </Link>
+          <h2 className="">
+            <span className="dots  gap-5">
+              <span className="w-7 bg-green-500"></span>
+              <span className="w-7 bg-green-500"></span>
+              <span className="w-7 bg-green-500"></span>
+            </span>{" "}
+          </h2>
         </div>
       </div>
     );

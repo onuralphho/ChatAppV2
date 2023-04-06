@@ -2,7 +2,9 @@ import { createContext, useState, useContext } from "react";
 import { AlertContextType,IAlert } from "../@types/alertType";
 const AlertContext = createContext<AlertContextType | null>(null);
 
-const AlertProvider = (props: any) => {
+
+
+const AlertProvider = (props:any) => {
   const [alert, setAlert] = useState<IAlert>({ shown:false, type: "Message Delivered" });
 
   return (

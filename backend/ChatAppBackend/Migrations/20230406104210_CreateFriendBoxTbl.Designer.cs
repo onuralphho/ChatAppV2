@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ChatAppBackend.Migrations
 {
     [DbContext(typeof(PostgreSqlDbContext))]
-    [Migration("20230405101732_CreateTables")]
-    partial class CreateTables
+    [Migration("20230406104210_CreateFriendBoxTbl")]
+    partial class CreateFriendBoxTbl
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,6 +24,32 @@ namespace ChatAppBackend.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("ChatAppBackend.Entities.FriendBox", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("FromUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ToUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FromUserId");
+
+                    b.HasIndex("ToUserId");
+
+                    b.ToTable("FriendBoxes");
+                });
+
             modelBuilder.Entity("ChatAppBackend.Entities.Message", b =>
                 {
                     b.Property<int>("Id")
@@ -32,26 +58,24 @@ namespace ChatAppBackend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("FromUserId")
+                    b.Property<string>("ContentText")
                         .HasColumnType("text");
 
-                    b.Property<int?>("FromUserId1")
+                    b.Property<int?>("FriendshipId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("FromUserId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("SentDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("ToUserId")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("ToUserId1")
+                    b.Property<int>("ToUserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FromUserId1");
-
-                    b.HasIndex("ToUserId1");
+                    b.HasIndex("FriendshipId");
 
                     b.ToTable("Messages");
                 });
@@ -79,7 +103,7 @@ namespace ChatAppBackend.Migrations
                     b.Property<string>("Picture")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("UpdateTime")
+                    b.Property<DateTime>("UpdateTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -87,19 +111,32 @@ namespace ChatAppBackend.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ChatAppBackend.Entities.Message", b =>
+            modelBuilder.Entity("ChatAppBackend.Entities.FriendBox", b =>
                 {
                     b.HasOne("ChatAppBackend.Entities.User", "FromUser")
                         .WithMany()
-                        .HasForeignKey("FromUserId1");
+                        .HasForeignKey("FromUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ChatAppBackend.Entities.User", "ToUser")
                         .WithMany()
-                        .HasForeignKey("ToUserId1");
+                        .HasForeignKey("ToUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("FromUser");
 
                     b.Navigation("ToUser");
+                });
+
+            modelBuilder.Entity("ChatAppBackend.Entities.Message", b =>
+                {
+                    b.HasOne("ChatAppBackend.Entities.FriendBox", "Friendship")
+                        .WithMany()
+                        .HasForeignKey("FriendshipId");
+
+                    b.Navigation("Friendship");
                 });
 #pragma warning restore 612, 618
         }

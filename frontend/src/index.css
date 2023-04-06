@@ -26,14 +26,13 @@
   height: max-content;
   justify-content: center;
   display: flex;
-  gap: 5px;
+  
 }
 
 .dots>span {
-  width: 10px;
+  
   aspect-ratio: 1;
   border-radius: 50%;
-  background-color: white;
   animation: dotAnim 0.5s alternate infinite;
 }
 
