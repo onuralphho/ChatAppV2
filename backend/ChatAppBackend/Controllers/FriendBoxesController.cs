@@ -41,7 +41,7 @@ namespace ChatAppBackend.Controllers
 
             if (friendShip != null)
             {
-                return Ok(new { message = "Both of you already friend" });
+                return Ok(new { message = "Already your friend" });
             }
 
 
@@ -61,7 +61,7 @@ namespace ChatAppBackend.Controllers
             return Ok(new
             {
                 addedfriend = friendShip, // friend için bir response nesnesi oluşturulabilir.!!!
-                message = "Friend Added",
+                message = "Friend request sent",
 
             });
 
@@ -70,12 +70,56 @@ namespace ChatAppBackend.Controllers
         [HttpGet("friends")]
         public List<FriendBox> GetUserFriendships()
         {
+            //TODO:sadece karşı taraf dönülecek 
             int userId = _jwtService.UserId;
             return _context.FriendBoxes
                 .Include(f => f.FromUser)
                 .Include(f => f.ToUser)
                 .Where(f => f.FromUserId == userId || f.ToUserId == userId)
                 .ToList();
+        }
+
+        [HttpPut]
+        [Route("approve/{friendBoxId}")]
+        public async Task<ActionResult> Update(int friendBoxId)
+        {
+            Console.WriteLine(friendBoxId);
+            var friendbox = await _context.FriendBoxes.FirstOrDefaultAsync(f => f.Id == friendBoxId);
+
+
+            if (friendbox == null)
+            {
+                return NotFound();
+            }
+
+            friendbox.Approved = true;
+
+            await _context.SaveChangesAsync();
+            return Ok(new
+            {
+                message = "You have new friend!"
+            });
+        }
+        [HttpDelete]
+        [Route("delete/{friendBoxId}")]
+        public async Task<ActionResult> Delete(int friendBoxId)
+        {
+            var friendbox = await _context.FriendBoxes.FirstOrDefaultAsync(f => f.Id == friendBoxId);
+
+
+            if (friendbox == null)
+            {
+                return NotFound();
+            }
+
+            _context.FriendBoxes.Remove(friendbox);
+
+
+            await _context.SaveChangesAsync();
+            return Ok(new
+            {
+                message = "Friend rejected"
+            });
         }
     }
 }

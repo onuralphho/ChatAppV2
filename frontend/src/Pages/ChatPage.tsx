@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import { useAuth } from "../Context/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import { Fetcher } from "../utils/Fetcher";
@@ -41,7 +40,6 @@ const ChatPage = () => {
       });
 
       ctx?.setFriendList(data2);
-
     };
 
     getUser();
@@ -54,7 +52,7 @@ const ChatPage = () => {
     setShowProfile(true);
   };
 
-  if (ctx?.user ) {
+  if (ctx?.user) {
     return (
       <>
         {/* TopBar Temp
@@ -66,12 +64,15 @@ const ChatPage = () => {
 
         <div className="flex bg-[#363636] text-white h-[100dvh] ">
           {/* SideBar */}
-          <SideBar openProfile={openProfile} />
+          <SideBar openProfile={openProfile} closeProfile={closeProfile} />
 
           {showProfile ? (
             <ProfileSettings closeProfile={closeProfile} />
           ) : (
-            <ChatLog />
+            ctx.talkingTo &&
+            ctx.talkingTo.isApproved && (
+              <ChatLog talkingTo={ctx.talkingTo} messages={ctx.messages} />
+            )
           )}
 
           {/* ChatLog */}

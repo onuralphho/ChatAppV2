@@ -21,6 +21,5 @@ namespace ChatAppBackend.Entities
 
 
 
-
     }
 }

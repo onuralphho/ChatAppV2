@@ -7,14 +7,14 @@ import React, {
 } from "react";
 import { Fetcher } from "../utils/Fetcher";
 import { IFriendList } from "../@types/friendBoxType";
-
+import { IMessage } from "../@types/messageType";
 interface User {
+  id: number;
   name: string;
   picture: string;
   email: string;
   updateTime: Date;
 }
-
 
 
 interface AuthContextValue {
@@ -25,8 +25,12 @@ interface AuthContextValue {
   token: any;
   setToken: any;
   getCookie: Function;
-  friendList: any;
+  friendList?: IFriendList[];
   setFriendList: Function;
+  messages?: IMessage[];
+  setMessages: Function;
+  talkingTo?:ITalkingTo;
+  setTalkingTo:Function;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -35,12 +39,12 @@ const useAuth = () => useContext(AuthContext);
 
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | undefined>(undefined);
+  const [messages, setMessages] = useState<IMessage[] | undefined>(undefined);
+  const [talkingTo, setTalkingTo] = useState<ITalkingTo | undefined>(undefined);
   const [friendList, setFriendList] = useState<IFriendList[] | undefined>(
     undefined
   );
   const [token, setToken] = useState();
-
-  useEffect(() => {}, []);
 
   const login = async (email: string, password: string) => {
     const res = await Fetcher({
@@ -89,6 +93,10 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         getCookie,
         setFriendList,
         friendList,
+        messages,
+        setMessages,
+        talkingTo,
+        setTalkingTo
       }}
     >
       {children}

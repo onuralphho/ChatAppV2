@@ -92,12 +92,12 @@ namespace ChatAppBackend.Controllers
             await _context.SaveChangesAsync();
             var session = new SessionUserDto { Id = user.Id, Email = user.Email, Name = user.Name, Picture = user.Picture, UpdateTime = DateTime.UtcNow };
 
-            return Ok(new { session, success = "User updated successfully" }); //res dto bağla
+            return Ok(new { session, success = "User updated successfully" }); 
 
         }
 
         [HttpPost("search")]
-        [AllowAnonymous]
+        [AllowAnonymous] //Performansa etkisine göre Authorize yapılabilir
         public List<UserSearchResponse> SearchUsers(UserSearchRequest userSearch)
         {
             List<UserSearchResponse> result = new List<UserSearchResponse>();
@@ -106,7 +106,7 @@ namespace ChatAppBackend.Controllers
             var matchingUsers = _context.Users.Where(u => u.Name.Contains(userSearch.searchValue)).Select(u => new UserSearchResponse { Id = u.Id, Name = u.Name ,Picture=u.Picture}).ToList();
 
 
-            //// Sort the list based on string similarity with the search text
+            
             //matchingUsers = matchingUsers.OrderBy(u => GetSimilarity(u.Name, searchText)).ToList();
 
 

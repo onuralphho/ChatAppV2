@@ -1,5 +1,5 @@
 interface fetchReq {
-  body: Record<string, unknown> | string | null;
+  body?: Record<string, unknown> | string | number |  null;
   method: string;
   url: string;
   token?: string | null;
