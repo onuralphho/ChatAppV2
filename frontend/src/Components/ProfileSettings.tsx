@@ -83,9 +83,9 @@ const ProfileSettings = (props: IProfileProps) => {
       />
       <div className="bg-[#363636] flex-1   h-full fade-in">
         <div className="flex flex-col h-full">
-          <div className="flex p-2">
+          <div className="flex py-2 px-10  items-center">
             <button
-              className=" px-4 rounded-md "
+              className=" "
               onClick={() => {
                 props.closeProfile();
               }}

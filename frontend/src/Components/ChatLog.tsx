@@ -1,6 +1,6 @@
 import { RiChatSmile3Fill } from "react-icons/ri";
 import { IMessage } from "../@types/messageType";
-import { useState } from "react";
+import { useState,useRef,useEffect } from "react";
 import { Fetcher } from "../utils/Fetcher";
 import { useAuth } from "../Context/AuthProvider";
 
@@ -11,11 +11,14 @@ interface IProps {
 
 const ChatLog = (props: IProps) => {
   const [messageInput, setMessageInput] = useState("");
-
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [checkerVal, setCheckerVal] = useState(false);
+  const [windowInnerHeight, setWindowInnerHeight] = useState<number>();
   const ctx = useAuth();
 
   const messageChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessageInput(e.target.value);
+
   };
 
   const sendMessageHandler = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -32,17 +35,35 @@ const ChatLog = (props: IProps) => {
       url: "/api/messages/addmessage",
       token: ctx?.getCookie("jwt"),
     });
-
+    console.log(res)
+    console.log(ctx?.messages)
     ctx?.setMessages((prev: IMessage[]) => [...(prev || []), res]);
-
+    setCheckerVal(true);
     setMessageInput("");
   };
+  const scrollToBottom = () => {
+    if (checkerVal === false) {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: "auto" });
+      }
+    } else {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: "auto" });
+      }
+    }
+  };
+
+  useEffect(() => {
+    setWindowInnerHeight(window.innerHeight);
+    scrollToBottom();
+  }, [ctx?.messages]);
+
 
   return (
-    <div className=" bg-[#363636] flex-1   h-full fade-in">
+    <div className=" bg-[#363636]    flex-1  flex flex-col  h-full fade-in">
       {/* TALKINGTO */}
-      <div className="flex ">
-        <div className="  w-full p-2 flex items-center gap-3">
+     
+        <div className="  w-full p-2 pl-12 flex items-center gap-3">
           <img
             className="w-10 h-10 object-cover rounded-full"
             src={props.talkingTo.picture}
@@ -50,40 +71,40 @@ const ChatLog = (props: IProps) => {
           />
           <span className="text-xl">{props.talkingTo.name}</span>
         </div>
-      </div>
+      
       {/* LOG */}
-      <div className="flex max-lg:h-[calc(100%-55px)] h-[calc(100%-39.5px)] flex-col">
-        <div className=" flex-1">
-          <div className="flex flex-col w-full">
-            {props.messages?.map((message, index) => (
-              <div key={index} className="text-2xl bg-white text-black">
-                {message.contentText}
-              </div>
-            ))}
-          </div>
-        </div>
 
-        <form onSubmit={sendMessageHandler} className=" relative  ">
-          <label className=" border-t-4 focus-within:border-green-600 bg-white h-12 text-[#252525] left-0 right-0  max-lg:bottom-0 bottom-4 absolute   ">
-            <div className="relative flex px-2 h-full items-center  gap-2">
-              <RiChatSmile3Fill size={20} className=" text-green-500" />
-              <input
-                type="text"
-                onChange={messageChangeHandler}
-                value={messageInput}
-                placeholder="Say Hi!"
-                className="bg-transparent w-full outline-none  "
-              />
-              <button
-                type={"submit"}
-                className="bg-green-500 h-full px-4 text-white font-semibold text-xl"
-              >
-                Send
-              </button>
-            </div>
-          </label>
-        </form>
+      <div className={`flex flex-1 flex-col gap-2 w-full overflow-y-scroll  px-2  pb-2 `}>
+        {props.messages?.map((message, index) => (
+          <div key={index} className={` flex rounded-lg bg-white p-1 w-max  items-end    ${ctx?.user.id === message.fromUserId ?' self-end rounded-br-none justify-end':'self-start rounded-bl-none justify-start'}`}>
+            <span className=" text-black px-2 break-words whitespace-pre-line max-sm:max-w-[70dvw]  max-w-[450px]  ">{message.contentText}</span>
+            <span className="text-neutral-500 text-xs italic ">{message.sentDate.split("T")[1].split(".")[0].split(":")[0]}:{message.sentDate.split("T")[1].split(".")[0].split(":")[1]}</span>
+          </div>
+        ))}
+        <div ref={messagesEndRef} />
       </div>
+
+      <form onSubmit={sendMessageHandler} className=" relative  bg-white h-12 border-t-4  focus-within:border-green-600 ">
+       
+          <div className="relative flex pl-2 h-full items-center  gap-2">
+            <RiChatSmile3Fill size={20} className=" text-green-500" />
+            <input
+              type="text"
+              onChange={messageChangeHandler}
+              value={messageInput}
+              placeholder="Say Hi!"
+              className="bg-transparent text-black w-full outline-none  "
+            />
+            <button
+              type={"submit"}
+              disabled={messageInput.length === 0 ? true:false}
+              className="disabled:bg-neutral-400 bg-green-500 h-full px-4 text-white font-semibold text-xl"
+            >
+              Send
+            </button>
+          </div>
+        
+      </form>
     </div>
   );
 };

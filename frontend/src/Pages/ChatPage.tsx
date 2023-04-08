@@ -62,20 +62,20 @@ const ChatPage = () => {
           </ul>
         </div> */}
 
-        <div className="flex bg-[#363636] text-white h-[100dvh] ">
-          {/* SideBar */}
-          <SideBar openProfile={openProfile} closeProfile={closeProfile} />
-
-          {showProfile ? (
-            <ProfileSettings closeProfile={closeProfile} />
-          ) : (
-            ctx.talkingTo &&
-            ctx.talkingTo.isApproved && (
-              <ChatLog talkingTo={ctx.talkingTo} messages={ctx.messages} />
-            )
-          )}
-
-          {/* ChatLog */}
+        <div className="flex lg:p-10 bg-purple-900  text-white h-full ">
+          <div className="flex w-full rounded-sm overflow-hidden">
+            {/* SideBar */}
+            <SideBar openProfile={openProfile} closeProfile={closeProfile} />
+            {/* ChatLog */}
+            {showProfile ? (
+              <ProfileSettings closeProfile={closeProfile} />
+            ) : (
+              ctx.talkingTo &&
+              ctx.talkingTo.isApproved && (
+                <ChatLog talkingTo={ctx.talkingTo} messages={ctx.messages} />
+              )
+            )}
+          </div>
         </div>
       </>
     );

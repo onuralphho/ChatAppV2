@@ -2,9 +2,9 @@
 
 export interface IMessage {
     id:number,
-    sentDate:Date,
+    sentDate:string,
     contentText:string,
-    FroumUserId:number,
+    fromUserId:number,
     toUserId:number,
 
   }

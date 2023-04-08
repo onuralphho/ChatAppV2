@@ -101,7 +101,7 @@ const SideBar = (props: ISideBarProps) => {
         onClick={() => {
           setShowMenu((prev) => !prev);
         }}
-        className={`cursor-pointer transition-all bottom-14 z-[2]  w-10 h-14 rounded-r-lg flex items-center justify-center bg-green-500 absolute ${
+        className={`cursor-pointer  transition-all top-1 lg:top-11 z-[2]  w-10 h-12 rounded-r-lg flex items-center justify-center bg-green-500 absolute ${
           showMenu ? "lg:translate-x-64" : "lg:translate-x-[4.5rem]"
         }   ${showMenu ? "max-lg:translate-x-64" : "max-lg:translate-x-0"} `}
       >
@@ -197,7 +197,7 @@ const SideBar = (props: ISideBarProps) => {
         {/* FRIEND LIST */}
         <FriendsList showMenu={showMenu} openMenu={openSideBar} closeProfile={props.closeProfile} />
         {/* Settings */}
-        <div className="bg-green-500 h-[2.95rem] flex absolute bottom-0 py-2 left-0 right-0">
+        <div className="bg-green-500 h-12 flex absolute bottom-0 py-2 left-0 right-0">
           {showMenu ? (
             <ul className="flex w-full justify-around items-center">
               <li
