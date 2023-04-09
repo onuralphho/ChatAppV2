@@ -61,6 +61,7 @@ const FriendList = (props: Iprops) => {
       props.openMenu();
 
       ctx?.setTalkingTo(talkingTo);
+      
     }
     const res = await Fetcher({
       method: "GET",
@@ -117,7 +118,7 @@ const FriendList = (props: Iprops) => {
                   alt=""
                 />
                 {props.showMenu && (
-                  <span className="truncate cursor-default ">
+                  <span className="truncate select-none ">
                     {ctx?.user.id !== friendBox.fromUserId
                       ? friendBox.fromUser.name
                       : friendBox.toUser.name}

@@ -28,13 +28,13 @@ namespace ChatAppBackend.Controllers
         }
 
         [HttpGet("{friendBoxId}")]
-        public async Task<ActionResult> Messages(int friendBoxId)
-        {   
-            var messages = _context.Messages.Where(u => u.Friendship.Id==friendBoxId).ToList();
+        public ActionResult Messages(int friendBoxId)
+        {
+            var messages = _context.Messages.Where(u => u.Friendship.Id == friendBoxId).ToList();
 
-            if(messages == null)
+            if (messages == null)
             {
-                return BadRequest(new {error="a"});
+                return BadRequest(new { error = "No friendship with this user!" });
             }
             return Ok(new
             {
