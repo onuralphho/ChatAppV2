@@ -4,6 +4,9 @@ import { BsFillPersonCheckFill, BsFillPersonXFill } from "react-icons/bs";
 import { Fetcher } from "../utils/Fetcher";
 import { sleep } from "../utils/sleep";
 import { useAlertContext } from "../Context/AlertProvider";
+import { ITalkingTo } from "../@types/talkingTo";
+import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import { useState } from "react";
 
 interface Iprops {
   showMenu: boolean;
@@ -12,8 +15,11 @@ interface Iprops {
 }
 
 const FriendList = (props: Iprops) => {
+  const [connectionR, setConnectionR] = useState<any>();
+
   const ctx = useAuth();
-  const alertCtx = useAlertContext() 
+  const alertCtx = useAlertContext();
+
   const approveFriendRequestHandler = async (
     e: React.MouseEvent<HTMLButtonElement>,
     id: number
@@ -26,7 +32,7 @@ const FriendList = (props: Iprops) => {
       token: ctx?.getCookie("jwt"),
     });
 
-    ctx?.setFriendList((prev: IFriendList[]) => {
+    ctx?.setFriendList((prev) => {
       if (!prev) return prev;
 
       return prev.map((friendBox) => {
@@ -36,11 +42,12 @@ const FriendList = (props: Iprops) => {
         return friendBox;
       });
     });
-    console.log(res)
+
     alertCtx?.setAlert({ shown: true, type: res.message });
-    sleep(2000)
+    sleep(2000);
     alertCtx?.setAlert({ shown: false, type: res.message });
   };
+
   const RejectFriendRequestHandler = async (
     e: React.MouseEvent<HTMLButtonElement>,
     id: number
@@ -52,7 +59,7 @@ const FriendList = (props: Iprops) => {
       token: ctx?.getCookie("jwt"),
     });
 
-    ctx?.setFriendList((prev: IFriendList[]) => {
+    ctx?.setFriendList((prev) => {
       if (!prev) return prev;
 
       return prev.filter((friendBox) => {
@@ -68,14 +75,31 @@ const FriendList = (props: Iprops) => {
 
       ctx?.setTalkingTo(talkingTo);
     }
+
     const res = await Fetcher({
       method: "GET",
       url: "/api/messages/" + talkingTo.friendBoxId,
       token: ctx?.getCookie("jwt"),
     });
 
-
     ctx?.setMessages(res);
+
+    //İLK KEZ Mesaj kutusuna girildiğinde mesaj atmadan huba bağlanmıyor mesaj atana kadar canlı veriyi alamıyor(beklediğim bir sorun loadchatloghandler çalıştığında huba bağlanması sağlanacak) 
+
+    // const connection = new HubConnectionBuilder()
+    //   .withUrl(`${process.env.REACT_APP_ENDPOINT_URL}/chatHub`)
+    //   .configureLogging(LogLevel.Information)
+    //   .build();
+
+    // connection.on("RecieveMessage", (message) => {
+      
+    // });
+    // var userId =  ctx?.user?.id.toString();
+    // var friendBoxId = talkingTo.friendBoxId.toString();
+    
+    // await connection.start();
+    
+    // setConnectionR(connection);
   };
 
   if (ctx?.friendList) {
@@ -93,15 +117,15 @@ const FriendList = (props: Iprops) => {
                 }
                 loadChatLogHandler({
                   id:
-                    ctx.user.id !== friendBox.fromUserId
+                  ctx?.user?.id !== friendBox.fromUserId
                       ? friendBox.fromUserId
                       : friendBox.toUserId,
                   name:
-                    ctx.user.id !== friendBox.fromUserId
+                  ctx?.user?.id !== friendBox.fromUserId
                       ? friendBox.fromUser.name
                       : friendBox.toUser.name,
                   picture:
-                    ctx.user.id !== friendBox.fromUserId
+                  ctx?.user?.id !== friendBox.fromUserId
                       ? friendBox.fromUser.picture
                       : friendBox.toUser.picture,
                   isApproved: friendBox.approved,
@@ -117,7 +141,7 @@ const FriendList = (props: Iprops) => {
                 <img
                   className="w-10 h-10 object-cover rounded-full"
                   src={
-                    ctx?.user.id !== friendBox.fromUserId
+                    ctx?.user?.id !== friendBox.fromUserId
                       ? friendBox.fromUser.picture
                       : friendBox.toUser.picture
                   }
@@ -125,14 +149,14 @@ const FriendList = (props: Iprops) => {
                 />
                 {props.showMenu && (
                   <span className="truncate select-none ">
-                    {ctx?.user.id !== friendBox.fromUserId
+                    {ctx?.user?.id !== friendBox.fromUserId
                       ? friendBox.fromUser.name
                       : friendBox.toUser.name}
                   </span>
                 )}
               </div>
               {props.showMenu && !friendBox.approved ? (
-                friendBox.fromUser.id !== ctx.user.id ? (
+                  ctx?.user?.id !== friendBox.fromUser.id? (
                   <div className="flex gap-2">
                     <button
                       className="peer"

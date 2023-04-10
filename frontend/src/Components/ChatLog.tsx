@@ -3,6 +3,8 @@ import { IMessage } from "../@types/messageType";
 import { useState, useRef, useEffect } from "react";
 import { Fetcher } from "../utils/Fetcher";
 import { useAuth } from "../Context/AuthProvider";
+import { ITalkingTo } from "../@types/talkingTo";
+import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 
 interface IProps {
   talkingTo: ITalkingTo;
@@ -23,23 +25,49 @@ const ChatLog = (props: IProps) => {
   const sendMessageHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const res = await Fetcher({
-      method: "POST",
-      body: {
-        contentText: messageInput,
-        fromUserId: ctx?.user.id,
-        toUserId: props.talkingTo.id,
-        friendBoxId: props.talkingTo.friendBoxId,
-      },
-      url: "/api/messages/addmessage",
-      token: ctx?.getCookie("jwt"),
+    // const res = await Fetcher({
+    //   method: "POST",
+    //   body: {
+    //     contentText: messageInput,
+    //     fromUserId: ctx?.user && ctx.user.id,
+    //     toUserId: props.talkingTo.id,
+    //     friendBoxId: props.talkingTo.friendBoxId,
+    //   },
+    //   url: "/api/messages/addmessage",
+    //   token: ctx?.getCookie("jwt"),
+    // });
+
+    // ctx?.setMessages((prev) => [...(prev || []), res]);
+
+    const connection = new HubConnectionBuilder()
+      .withUrl(`${process.env.REACT_APP_ENDPOINT_URL}/chatHub`)
+      .configureLogging(LogLevel.Information)
+      .build();
+
+    connection.on("RecieveMessage", (message) => {
+      //İlk mesaj 1 kere, 2. mesaj 2 kere, 3. mesaj 3 kere .... ve böyle devam ediyor (HATA!!!!!!)
+      ctx?.setMessages((prev) => {
+        if (prev && prev.some((premessage) => premessage.id === message.id)) {
+          // Bu hatayı bu şekidle clienta göstermiyorum fakat console.log yaparsam mesajın her seferinde x katına çıktığını gözlemliyorum
+          return prev;
+        }
+
+        return [...(prev || []), message];
+      });
     });
 
-   
-    ctx?.setMessages((prev: IMessage[]) => [...(prev || []), res]);
+    await connection.start();
+    await connection.invoke("SendMessage", {
+      contentText: messageInput,
+      fromUserId: ctx?.user?.id,
+      toUserId: props.talkingTo.id,
+      friendBoxId: props.talkingTo.friendBoxId,
+    });
+
     setCheckerVal(true);
     setMessageInput("");
   };
+
   const scrollToBottom = () => {
     if (checkerVal === false) {
       if (messagesEndRef.current) {
@@ -65,7 +93,7 @@ const ChatLog = (props: IProps) => {
         <img
           className="w-10 h-10 object-cover rounded-full"
           src={
-            ctx?.user.id === props.talkingTo.id
+            ctx?.user && ctx.user.id === props.talkingTo.id
               ? ctx?.user.picture
               : props.talkingTo.picture
           }
@@ -77,20 +105,20 @@ const ChatLog = (props: IProps) => {
       {/* LOG */}
 
       <div
-        className={`flex flex-1 flex-col h-20 gap-2 w-full overflow-y-scroll  px-2  pb-2 `}
+        className={`flex flex-1 flex-col h-20 gap-2 w-full overflow-y-scroll  px-2   pb-2 `}
       >
         {props.messages?.map((message) => (
           <div
             key={message.id}
             className={` flex  rounded-lg gap-2 p-1 w-max  items-end    ${
-              ctx?.user.id === message.fromUserId
+              ctx?.user && ctx.user.id === message.fromUserId
                 ? "self-end  justify-end flex-row-reverse"
                 : "self-start justify-start"
             }`}
           >
             <img
               src={
-                ctx?.user.id === message.fromUserId
+                ctx?.user && ctx.user.id === message.fromUserId
                   ? ctx?.user.picture
                   : props.talkingTo.picture
               }
@@ -100,7 +128,7 @@ const ChatLog = (props: IProps) => {
 
             <div
               className={` flex  rounded-lg bg-white mb-4 px-2 py-1 min-h-8 gap-2   w-max    ${
-                ctx?.user.id === message.fromUserId
+                ctx?.user && ctx.user.id === message.fromUserId
                   ? " rounded-br-none "
                   : " rounded-bl-none "
               }`}

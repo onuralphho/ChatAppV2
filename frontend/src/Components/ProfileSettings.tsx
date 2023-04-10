@@ -36,9 +36,9 @@ const DROPDOWN_DATA = [
 const ProfileSettings = (props: IProfileProps) => {
   const ctx = useAuth();
   const alertCtx = useAlertContext();
-  const [nameInput, setNameInput] = useState(ctx?.user.name);
-  const [emailInput, setEmailInput] = useState(ctx?.user.email);
-  const [pictureInput, setPictureInput] = useState(ctx?.user.picture);
+  const [nameInput, setNameInput] = useState(ctx?.user?.name);
+  const [emailInput, setEmailInput] = useState(ctx?.user?.email);
+  const [pictureInput, setPictureInput] = useState(ctx?.user?.picture);
   const [dropdownShown, setDropdownShown] = useState(false);
 
   const nameChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,8 +58,8 @@ const ProfileSettings = (props: IProfileProps) => {
 
     const res = await Fetcher({
       body: {
-        Id: ctx?.user.id,
-        Name: nameInput.toLowerCase(),
+        Id: ctx?.user && ctx.user.id,
+        Name: nameInput?.toLowerCase(),
         Email: emailInput,
         Picture: pictureInput,
       },
@@ -144,7 +144,7 @@ const ProfileSettings = (props: IProfileProps) => {
                     />
                     <span className=" italic opacity-60">
                       {"( "}
-                      {ctx?.user.email}
+                      {ctx?.user && ctx.user.email}
                       {" )"}
                     </span>
                   </div>
@@ -158,20 +158,22 @@ const ProfileSettings = (props: IProfileProps) => {
                     <span className="italic opacity-60 text-xs ">
                       {"Last Update: ( "}
                       {
-                        ctx?.user.updateTime
+                        ctx?.user?.updateTime
+                          .toString()
                           .split("T")[1]
                           .split(".")[0]
                           .split(":")[0]
                       }
                       {":"}
                       {
-                        ctx?.user.updateTime
+                        ctx?.user?.updateTime
+                          .toString()
                           .split("T")[1]
                           .split(".")[0]
                           .split(":")[1]
                       }
                       {"  "}
-                      {ctx?.user.updateTime.split("T")[0]}
+                      {ctx?.user?.updateTime.toString().split("T")[0]}
                       {" )"}
                     </span>
                   </div>

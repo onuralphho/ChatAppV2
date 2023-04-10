@@ -1,5 +1,6 @@
 using ChatAppBackend.Context;
 using ChatAppBackend.Helpers;
+using ChatAppBackend.Hubs;
 using ChatAppBackend.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -88,15 +89,26 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptio
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
+builder.Services.AddSignalR();
+
+
 
 var app = builder.Build();
 
 
 
 
-app.UseCors(options =>
-options.AllowAnyOrigin()
-.AllowAnyMethod().AllowAnyHeader());
+//app.UseCors(options =>
+//options.AllowAnyOrigin()
+//.AllowAnyMethod().AllowAnyHeader());
+
+
+app.UseCors(options => options
+    .WithOrigins("http://localhost:3000") // Bu kısmı istemcinizin adresine göre değiştirmelisiniz
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials()
+);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -112,4 +124,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+
+app.UseEndpoints(endpoints => { endpoints.MapHub<ChatHub>("/chatHub"); });
 app.Run();

@@ -63,8 +63,8 @@ const ChatPage = () => {
           </ul>
         </div> */}
 
-        <div className="flex lg:p-5 lg:px-40 bg-[#252525]  text-white h-full ">
-          <div className="flex w-full  overflow-hidden shadow-lg shadow-[rgba(0,0,0,0.5)]">
+        <div className="flex   lg:p-5 lg:px-10   xl:px-20  2xl:px-40   text-white h-full ">
+          <div className="flex w-full max-w-[1920px] mx-auto rounded-xl  overflow-hidden shadow-lg shadow-[rgba(0,0,0,0.5)]">
             {/* SideBar */}
             <SideBar openProfile={openProfile} closeProfile={closeProfile} />
             {/* ChatLog */}
@@ -81,10 +81,13 @@ const ChatPage = () => {
     );
   } else {
     return (
-      <div className="flex lg:p-10 bg-[#000]  text-white h-full ">
-        <div className={`flex w-full rounded-sm overflow-hidden `}>
-          <div className={` p-2  bg-[#252525]  overflow-hidden relative  w-64 `}>
-            
+      <div className="flex lg:p-5 lg:px-10  xl:px-20  2xl:px-40   text-white h-full ">
+        <div
+          className={`flex  w-full max-w-[1920px] mx-auto rounded-xl overflow-hidden shadow-lg shadow-[rgba(0,0,0,0.5)]`}
+        >
+          <div
+            className={` p-2  bg-[#252525]  overflow-hidden relative  w-64 `}
+          >
             <ul className="flex flex-col gap-1 ">
               <li className="flex gap-4 animate-pulse items-center transition-all bg-neutral-700 rounded-lg p-1 px-2 cursor-pointer">
                 <span className="w-10 h-10 rounded-full  bg-green-500"></span>
@@ -142,7 +145,6 @@ const ChatPage = () => {
                   <span className="w-2 bg-neutral-400"></span>
                 </span>
               </li>
-              
             </ul>
             <div className="bg-green-500 h-12 flex absolute bottom-0 py-2 left-0 right-0"></div>
           </div>
@@ -154,7 +156,6 @@ const ChatPage = () => {
               <span className="w-7 bg-green-500"></span>
             </span>
           </div>
-          
         </div>
       </div>
     );

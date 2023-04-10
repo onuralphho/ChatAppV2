@@ -70,7 +70,7 @@ const SideBar = (props: ISideBarProps) => {
 
   const addFriendHandler = async (friendId: number) => {
     const res = await Fetcher({
-      body: { fromId: ctx?.user.id, toId: friendId },
+      body: { fromId: ctx?.user?.id, toId: friendId },
       method: "POST",
       url: "/api/FriendBoxes/addfriend",
       token: ctx?.getCookie("jwt"),
@@ -80,7 +80,7 @@ const SideBar = (props: ISideBarProps) => {
     console.log(res);
     alertCtx?.setAlert({ shown: true, type: res.message });
     if (res.addedfriend) {
-      ctx?.setFriendList((prev: IFriendList[]) => [...prev, res.addedfriend]);
+      ctx?.setFriendList((prev) => [...(prev ?? []), res.addedfriend]);
     }
     await sleep(2000);
     alertCtx?.setAlert({ shown: false, type: res.message });
@@ -135,13 +135,13 @@ const SideBar = (props: ISideBarProps) => {
             onClick={() => {
               setShowMenu(true);
             }}
-            src={ctx?.user.picture}
+            src={ctx?.user?.picture}
             className="w-10 aspect-square shadow-md shadow-black rounded-full object-cover"
             alt=""
           />
           <div className={`flex gap-2 flex-wrap ${showMenu ? "" : "hidden"}`}>
             <span>
-              {ctx?.user.name.charAt(0).toUpperCase() +
+              {ctx?.user && ctx?.user.name.charAt(0).toUpperCase() +
                 ctx?.user.name.slice(1).toLowerCase()}
             </span>
           </div>
@@ -173,7 +173,7 @@ const SideBar = (props: ISideBarProps) => {
             } bg-green-500 z-20  transition-all flex flex-col gap-0.5 overflow-hidden absolute left-0 top-11 w-full rounded-md `}
           >
             {searchResult.map((item: ISearchResult) =>
-              item.id !== ctx?.user.id ? (
+              item.id !== ctx?.user?.id ? (
                 <div
                   key={item.id}
                   className=" hover:bg-[#363636]  rounded-md select-none p-1 flex  justify-between items-center gap-2 bg-[#252525]"
@@ -203,7 +203,7 @@ const SideBar = (props: ISideBarProps) => {
           openMenu={openSideBar}
           closeProfile={props.closeProfile}
         />
-        {/* Settings */}
+        {/* Bottom menu */}
         <div className="bg-green-500 h-12 flex absolute bottom-0 py-2 left-0 right-0">
           {showMenu ? (
             <ul className="flex w-full justify-around items-center">

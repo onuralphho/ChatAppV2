@@ -6,9 +6,12 @@ type LayoutProps = {
 
 const Layout = ({ children }: LayoutProps) => {
   return (
-    <main className=" max-w-[1920px] mx-auto h-[100vh] h-[100dvh] overflow-hidden   ">
+    <div
+      className=" mx-auto h-[100vh]  bg-[#f8f8f8]  overflow-hidden   "
+      style={{ height: "100dvh" }}
+    >
       {children}
-    </main>
+    </div>
   );
 };
 

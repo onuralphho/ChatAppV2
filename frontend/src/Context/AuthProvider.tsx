@@ -8,7 +8,8 @@ import React, {
 import { Fetcher } from "../utils/Fetcher";
 import { IFriendList } from "../@types/friendBoxType";
 import { IMessage } from "../@types/messageType";
-interface User {
+import { ITalkingTo } from "../@types/talkingTo";
+interface IUser {
   id: number;
   name: string;
   picture: string;
@@ -16,21 +17,22 @@ interface User {
   updateTime: Date;
 }
 
-
 interface AuthContextValue {
-  setUser: any;
-  user?: any;
+  setUser: React.Dispatch<React.SetStateAction<IUser | undefined>>;
+  user?: IUser | undefined ;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  token: any;
-  setToken: any;
-  getCookie: Function;
+  token: string | undefined;
+  setToken: React.Dispatch<React.SetStateAction<string | undefined>>;
+  getCookie: (name: string) => string | undefined;
   friendList?: IFriendList[];
-  setFriendList: Function;
+  setFriendList: React.Dispatch<
+    React.SetStateAction<IFriendList[] | undefined>
+  >;
   messages?: IMessage[];
-  setMessages: Function;
-  talkingTo?:ITalkingTo;
-  setTalkingTo:Function;
+  setMessages: React.Dispatch<React.SetStateAction<IMessage[] | undefined>>;
+  talkingTo?: ITalkingTo;
+  setTalkingTo: React.Dispatch<React.SetStateAction<ITalkingTo | undefined>>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -38,13 +40,13 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 const useAuth = () => useContext(AuthContext);
 
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | undefined>(undefined);
+  const [user, setUser] = useState<IUser | undefined>(undefined);
   const [messages, setMessages] = useState<IMessage[] | undefined>(undefined);
   const [talkingTo, setTalkingTo] = useState<ITalkingTo | undefined>(undefined);
   const [friendList, setFriendList] = useState<IFriendList[] | undefined>(
     undefined
   );
-  const [token, setToken] = useState();
+  const [token, setToken] = useState<string | undefined>();
 
   const login = async (email: string, password: string) => {
     const res = await Fetcher({
@@ -96,7 +98,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         messages,
         setMessages,
         talkingTo,
-        setTalkingTo
+        setTalkingTo,
       }}
     >
       {children}

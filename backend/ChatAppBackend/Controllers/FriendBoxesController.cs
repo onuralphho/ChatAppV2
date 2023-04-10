@@ -63,7 +63,7 @@ namespace ChatAppBackend.Controllers
 
             return Ok(new
             {
-                addedfriend = _mapper.Map<FriendBoxFriendsResponse>(friendShip), 
+                addedfriend = _mapper.Map<FriendBoxFriendsResponse>(friendShip), //DONE
                 message = "Friend request sent",
 
             });

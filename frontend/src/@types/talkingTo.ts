@@ -1,4 +1,4 @@
-interface ITalkingTo {
+export  interface ITalkingTo {
     id: number;
     name: string;
     picture: string;
