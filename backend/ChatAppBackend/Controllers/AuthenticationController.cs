@@ -48,7 +48,7 @@ namespace ChatAppBackend.Controllers
             var jwt = _jwtService.Generate(user.Id);
 
 
-            return Ok(new TokenDto
+            return Ok(new TokenDto //mapper kullanılması gerekir mi Fatih beye sorulacak
             {
                 TokenValue = jwt
             });

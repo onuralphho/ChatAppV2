@@ -34,8 +34,8 @@ const ChatLog = (props: IProps) => {
       url: "/api/messages/addmessage",
       token: ctx?.getCookie("jwt"),
     });
-    console.log(res);
-    console.log(ctx?.messages);
+
+   
     ctx?.setMessages((prev: IMessage[]) => [...(prev || []), res]);
     setCheckerVal(true);
     setMessageInput("");
@@ -55,8 +55,6 @@ const ChatLog = (props: IProps) => {
   useEffect(() => {
     setWindowInnerHeight(window.innerHeight);
     scrollToBottom();
-    console.log("AAA", ctx?.user);
-    console.log("BBB", props.talkingTo);
   }, [ctx?.messages]);
 
   return (
@@ -81,8 +79,9 @@ const ChatLog = (props: IProps) => {
       <div
         className={`flex flex-1 flex-col h-20 gap-2 w-full overflow-y-scroll  px-2  pb-2 `}
       >
-        {props.messages?.map((message, index) => (
+        {props.messages?.map((message) => (
           <div
+            key={message.id}
             className={` flex  rounded-lg gap-2 p-1 w-max  items-end    ${
               ctx?.user.id === message.fromUserId
                 ? "self-end  justify-end flex-row-reverse"
@@ -95,22 +94,21 @@ const ChatLog = (props: IProps) => {
                   ? ctx?.user.picture
                   : props.talkingTo.picture
               }
-              className="w-8 "
+              className="w-8 rounded-full "
               alt=""
             />
 
             <div
-              key={index}
-              className={` flex rounded-lg bg-white mb-3 p-1 w-max  items-end  ${
+              className={` flex  rounded-lg bg-white mb-4 px-2 py-1 min-h-8 gap-2   w-max    ${
                 ctx?.user.id === message.fromUserId
                   ? " rounded-br-none "
                   : " rounded-bl-none "
               }`}
             >
-              <span className=" text-black px-2 break-words whitespace-pre-line max-sm:max-w-[70dvw]  max-w-[450px]  ">
+              <span className=" text-black  break-words whitespace-pre-line max-sm:max-w-[70dvw]  max-w-[450px]  ">
                 {message.contentText}
               </span>
-              <span className="text-neutral-500 text-xs italic ">
+              <span className="text-neutral-500 text-xs italic self-end">
                 {message.sentDate.split("T")[1].split(".")[0].split(":")[0]}:
                 {message.sentDate.split("T")[1].split(".")[0].split(":")[1]}
               </span>

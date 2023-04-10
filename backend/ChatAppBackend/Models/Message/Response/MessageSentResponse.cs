@@ -12,7 +12,6 @@
 
         public int ToUserId { get; set; }
 
-       
-        
+               
     }
 }

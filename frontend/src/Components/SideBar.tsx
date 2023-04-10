@@ -13,7 +13,7 @@ import { sleep } from "../utils/sleep";
 import { IFriendList } from "../@types/friendBoxType";
 interface ISideBarProps {
   openProfile: Function;
-  closeProfile:Function
+  closeProfile: Function;
 }
 
 interface ISearchResult {
@@ -40,6 +40,7 @@ const SideBar = (props: ISideBarProps) => {
     setIsModalOpen(true);
   };
   const logOut = () => {
+    ctx?.setTalkingTo(undefined);
     navigate("/");
     ctx?.logout();
   };
@@ -62,6 +63,7 @@ const SideBar = (props: ISideBarProps) => {
       body: { searchValue: e.target.value.toLowerCase() },
       method: "POST",
       url: "/api/users/search",
+      token: ctx?.getCookie("jwt"),
     });
     setSearchResult(res);
   };
@@ -75,7 +77,7 @@ const SideBar = (props: ISideBarProps) => {
     });
     setSearchResult([]);
     setSearchInput("");
-
+    console.log(res);
     alertCtx?.setAlert({ shown: true, type: res.message });
     if (res.addedfriend) {
       ctx?.setFriendList((prev: IFriendList[]) => [...prev, res.addedfriend]);
@@ -101,7 +103,7 @@ const SideBar = (props: ISideBarProps) => {
         onClick={() => {
           setShowMenu((prev) => !prev);
         }}
-        className={`cursor-pointer  transition-all top-1 lg:top-11 z-[2]  w-10 h-12 rounded-r-lg flex items-center justify-center bg-green-500 absolute ${
+        className={`cursor-pointer  transition-all top-1 lg:top-6 z-[2]  w-10 h-12 rounded-r-lg flex items-center justify-center bg-green-500 absolute ${
           showMenu ? "lg:translate-x-64" : "lg:translate-x-[4.5rem]"
         }   ${showMenu ? "max-lg:translate-x-64" : "max-lg:translate-x-0"} `}
       >
@@ -110,6 +112,8 @@ const SideBar = (props: ISideBarProps) => {
           className={`transition-all ${showMenu ? "rotate-180" : ""}`}
         />
       </div>
+      {/* Flag */}
+
       {showMenu && (
         <div
           onClick={() => {
@@ -118,7 +122,6 @@ const SideBar = (props: ISideBarProps) => {
           className="w-[100dvw] z-[1] h-[100dvh] absolute left-0 top-0 bg-[rgba(0,0,0,0.4)] backdrop-blur-sm lg:hidden"
         ></div>
       )}
-      {/* Flag */}
 
       <div
         className={` p-2  bg-[#252525] z-[2] transition-all relative overflow-hidden  w-64  ${
@@ -195,7 +198,11 @@ const SideBar = (props: ISideBarProps) => {
           </div>
         </label>
         {/* FRIEND LIST */}
-        <FriendsList showMenu={showMenu} openMenu={openSideBar} closeProfile={props.closeProfile} />
+        <FriendsList
+          showMenu={showMenu}
+          openMenu={openSideBar}
+          closeProfile={props.closeProfile}
+        />
         {/* Settings */}
         <div className="bg-green-500 h-12 flex absolute bottom-0 py-2 left-0 right-0">
           {showMenu ? (

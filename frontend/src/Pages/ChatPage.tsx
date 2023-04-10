@@ -22,25 +22,25 @@ const ChatPage = () => {
         return;
       }
 
-      const data = await Fetcher({
+      const sessionData = await Fetcher({
         body: null,
         method: "GET",
         url: "/api/authentication/session",
         token: jwt,
       });
 
-      if (data?.status !== 401) {
-        ctx?.setUser(data);
+      if (sessionData?.status !== 401) {
+        ctx?.setUser(sessionData);
       }
 
-      const data2 = await Fetcher({
+      const friendsData = await Fetcher({
         body: null,
         method: "GET",
         url: "/api/friendboxes/friends",
         token: jwt,
       });
 
-      ctx?.setFriendList(data2);
+      ctx?.setFriendList(friendsData);
     };
 
     getUser();
@@ -63,8 +63,8 @@ const ChatPage = () => {
           </ul>
         </div> */}
 
-        <div className="flex lg:p-10 bg-[#b7ffb5]  text-white h-full ">
-          <div className="flex w-full rounded-sm overflow-hidden">
+        <div className="flex lg:p-5 lg:px-40 bg-[#252525]  text-white h-full ">
+          <div className="flex w-full  overflow-hidden shadow-lg shadow-[rgba(0,0,0,0.5)]">
             {/* SideBar */}
             <SideBar openProfile={openProfile} closeProfile={closeProfile} />
             {/* ChatLog */}
@@ -81,7 +81,7 @@ const ChatPage = () => {
     );
   } else {
     return (
-      <div className="flex lg:p-10 bg-[#b7ffb5]  text-white h-full ">
+      <div className="flex lg:p-10 bg-[#000]  text-white h-full ">
         <div className={`flex w-full rounded-sm overflow-hidden `}>
           <div className={` p-2  bg-[#252525]  overflow-hidden relative  w-64 `}>
             

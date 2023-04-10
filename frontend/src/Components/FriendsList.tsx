@@ -2,6 +2,8 @@ import { useAuth } from "../Context/AuthProvider";
 import { IFriendList } from "../@types/friendBoxType";
 import { BsFillPersonCheckFill, BsFillPersonXFill } from "react-icons/bs";
 import { Fetcher } from "../utils/Fetcher";
+import { sleep } from "../utils/sleep";
+import { useAlertContext } from "../Context/AlertProvider";
 
 interface Iprops {
   showMenu: boolean;
@@ -11,7 +13,7 @@ interface Iprops {
 
 const FriendList = (props: Iprops) => {
   const ctx = useAuth();
-
+  const alertCtx = useAlertContext() 
   const approveFriendRequestHandler = async (
     e: React.MouseEvent<HTMLButtonElement>,
     id: number
@@ -34,6 +36,10 @@ const FriendList = (props: Iprops) => {
         return friendBox;
       });
     });
+    console.log(res)
+    alertCtx?.setAlert({ shown: true, type: res.message });
+    sleep(2000)
+    alertCtx?.setAlert({ shown: false, type: res.message });
   };
   const RejectFriendRequestHandler = async (
     e: React.MouseEvent<HTMLButtonElement>,
@@ -61,7 +67,6 @@ const FriendList = (props: Iprops) => {
       props.openMenu();
 
       ctx?.setTalkingTo(talkingTo);
-      
     }
     const res = await Fetcher({
       method: "GET",
@@ -69,7 +74,8 @@ const FriendList = (props: Iprops) => {
       token: ctx?.getCookie("jwt"),
     });
 
-    ctx?.setMessages(res.messages);
+
+    ctx?.setMessages(res);
   };
 
   if (ctx?.friendList) {

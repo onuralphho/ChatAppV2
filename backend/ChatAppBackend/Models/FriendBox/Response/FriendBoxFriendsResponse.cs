@@ -1,5 +1,5 @@
 using ChatAppBackend.Models.FriendBox.DTO;
-using Npgsql;
+
 
 namespace ChatAppBackend.Models.FriendBox.Response;
 public class FriendBoxFriendsResponse

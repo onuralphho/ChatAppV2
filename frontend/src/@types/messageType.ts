@@ -6,5 +6,4 @@ export interface IMessage {
     contentText:string,
     fromUserId:number,
     toUserId:number,
-
   }

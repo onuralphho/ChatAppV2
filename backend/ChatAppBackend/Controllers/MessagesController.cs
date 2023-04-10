@@ -11,6 +11,7 @@ using ChatAppBackend.Models.Message.Response;
 using Microsoft.AspNetCore.Authorization;
 using ChatAppBackend.Models.Message.Request;
 using ChatAppBackend.Models.User.Response;
+using AutoMapper;
 
 namespace ChatAppBackend.Controllers
 {
@@ -22,26 +23,24 @@ namespace ChatAppBackend.Controllers
     {
         private readonly PostgreSqlDbContext _context;
 
-        public MessagesController(PostgreSqlDbContext context)
+        public readonly IMapper _mapper;
+
+
+        public MessagesController(PostgreSqlDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpGet("{friendBoxId}")]
-        public ActionResult Messages(int friendBoxId)
+        public async Task<List<MessageSentResponse>> Messages(int friendBoxId)
         {
-            var messages = _context.Messages.Where(u => u.Friendship.Id == friendBoxId).ToList();
+            var messages = await _context.Messages
+                .Where(u => u.Friendship.Id == friendBoxId)
+                .ToListAsync();
 
-            if (messages == null)
-            {
-                return BadRequest(new { error = "No friendship with this user!" });
-            }
-            return Ok(new
-            {
-                messages
-            });
+            return messages.Select((message) => _mapper.Map<MessageSentResponse>(message)).ToList(); //DONE
         }
-
 
 
 
@@ -50,11 +49,7 @@ namespace ChatAppBackend.Controllers
         {
             var friendship = await _context.FriendBoxes.FindAsync(message.FriendBoxId);
 
-            //if (friendship == null)
-            //{
-            //    return NotFound();
-            //}
-
+            friendship.UpdateTime = DateTime.UtcNow;
 
             var newMessage = new Message
             {
@@ -66,26 +61,14 @@ namespace ChatAppBackend.Controllers
 
             };
 
-           
-
-
             _context.Add(newMessage);
             await _context.SaveChangesAsync();
 
-            var resMessage = new MessageSentResponse
-            {
-                Id = newMessage.Id,
-                ContentText = message.ContentText,
-                SentDate = DateTime.UtcNow,
-                FromUserId = message.FromUserId,
-                ToUserId = message.ToUserId,
 
-            };
-
-            return resMessage;
+            return _mapper.Map<MessageSentResponse>(newMessage);//DONE
         }
 
-        
+
 
     }
 }

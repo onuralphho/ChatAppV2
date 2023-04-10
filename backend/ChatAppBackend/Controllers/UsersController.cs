@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using ChatAppBackend.Dto;
 using ChatAppBackend.Models.User.Request;
 using ChatAppBackend.Models.User.Response;
+using AutoMapper;
 
 namespace ChatAppBackend.Controllers
 {
@@ -25,10 +26,17 @@ namespace ChatAppBackend.Controllers
     {
         private readonly PostgreSqlDbContext _context;
 
-        public UsersController(PostgreSqlDbContext context)
+        private readonly IMapper _mapper;
+
+
+
+        public UsersController(PostgreSqlDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
+
+      
 
         public class Error
         {
@@ -90,62 +98,59 @@ namespace ChatAppBackend.Controllers
             user.Picture = updatedUser.Picture;
 
             await _context.SaveChangesAsync();
-            var session = new SessionUserDto { Id = user.Id, Email = user.Email, Name = user.Name, Picture = user.Picture, UpdateTime = DateTime.UtcNow };
+            //var session = new SessionUserDto { Id = user.Id, Email = user.Email, Name = user.Name, Picture = user.Picture, UpdateTime = user.UpdateTime };
 
-            return Ok(new { session, success = "User updated successfully" }); 
+            return Ok(new {session=_mapper.Map<SessionUserDto>(user) , success = "User updated successfully" }); 
 
         }
 
         [HttpPost("search")]
-        [AllowAnonymous] //Performansa etkisine göre Authorize yapılabilir
+         
         public List<UserSearchResponse> SearchUsers(UserSearchRequest userSearch)
         {
-            List<UserSearchResponse> result = new List<UserSearchResponse>();
+            
 
 
             var matchingUsers = _context.Users.Where(u => u.Name.Contains(userSearch.searchValue)).Select(u => new UserSearchResponse { Id = u.Id, Name = u.Name ,Picture=u.Picture}).ToList();
 
 
-            
-            //matchingUsers = matchingUsers.OrderBy(u => GetSimilarity(u.Name, searchText)).ToList();
+
+            matchingUsers = matchingUsers.OrderByDescending(u => GetSimilarity(u.Name, userSearch.searchValue)).ToList(); //Eşleşme oranı algoritması
 
 
-
-            result.AddRange(matchingUsers);
-
-            return result;
+            return matchingUsers.Select((matchingUser) => _mapper.Map<UserSearchResponse>(matchingUser)).ToList(); //DONE
         }
-        
-        //private double GetSimilarity(string s1, string s2)
-        //{
-        //    int n = s1.Length;
-        //    int m = s2.Length;
 
-        //    if (n == 0 || m == 0) return 0;
+        private double GetSimilarity(string s1, string s2)
+        {
+            int n = s1.Length;
+            int m = s2.Length;
 
-        //    int[,] d = new int[n + 1, m + 1];
+            if (n == 0 || m == 0) return 0;
 
-        //    for (int i = 0; i <= n; i++)
-        //    {
-        //        d[i, 0] = i;
-        //    }
+            int[,] d = new int[n + 1, m + 1];
 
-        //    for (int j = 0; j <= m; j++)
-        //    {
-        //        d[0, j] = j;
-        //    }
+            for (int i = 0; i <= n; i++)
+            {
+                d[i, 0] = i;
+            }
 
-        //    for (int j = 1; j <= m; j++)
-        //    {
-        //        for (int i = 1; i <= n; i++)
-        //        {
-        //            int cost = (s1[i - 1] == s2[j - 1]) ? 0 : 1;
-        //            d[i, j] = Math.Min(d[i - 1, j] + 1, Math.Min(d[i, j - 1] + 1, d[i - 1, j - 1] + cost));
-        //        }
-        //    }
+            for (int j = 0; j <= m; j++)
+            {
+                d[0, j] = j;
+            }
 
-        //    return 1 - (double)d[n, m] / Math.Max(n, m);
-        //}
+            for (int j = 1; j <= m; j++)
+            {
+                for (int i = 1; i <= n; i++)
+                {
+                    int cost = (s1[i - 1] == s2[j - 1]) ? 0 : 1;
+                    d[i, j] = Math.Min(d[i - 1, j] + 1, Math.Min(d[i, j - 1] + 1, d[i - 1, j - 1] + cost));
+                }
+            }
+
+            return 1 - (double)d[n, m] / Math.Max(n, m);
+        }
 
     }
 }

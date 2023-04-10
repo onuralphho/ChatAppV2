@@ -86,6 +86,7 @@ builder.Services.AddScoped<JwtService>();
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.Jwt));
 
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 
 var app = builder.Build();

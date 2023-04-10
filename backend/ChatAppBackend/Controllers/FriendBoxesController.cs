@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 using ChatAppBackend.Models.FriendBox.Response;
 using ChatAppBackend.Models.FriendBox.Request;
 using ChatAppBackend.Helpers;
+using ChatAppBackend.Models.FriendBox.DTO;
+using AutoMapper;
 
 namespace ChatAppBackend.Controllers
 {
@@ -21,11 +23,14 @@ namespace ChatAppBackend.Controllers
     {
         private readonly PostgreSqlDbContext _context;
         private readonly JwtService _jwtService;
-        public FriendBoxesController(PostgreSqlDbContext context, JwtService jwtService)
+        private readonly IMapper _mapper;
+
+        public FriendBoxesController(PostgreSqlDbContext context, JwtService jwtService,IMapper mapper)
         {
 
             _context = context;
             _jwtService = jwtService;
+            _mapper = mapper;
         }
 
         [HttpPost("addfriend")]
@@ -45,8 +50,6 @@ namespace ChatAppBackend.Controllers
             }
 
 
-            // COMMENT: Burada yeni oluşturduğum FriendBox objesindeki FromUser ve ToUsera FriendBoxFriendsResponse'da
-            //          özelleştirdiğim  objeleri veremiyorum çünkü User objesi referanslılar nasıl çözerim
 
             friendShip = new FriendBox
             {
@@ -60,7 +63,7 @@ namespace ChatAppBackend.Controllers
 
             return Ok(new
             {
-                addedfriend = friendShip, // friend için bir response nesnesi oluşturulabilir.!!!
+                addedfriend = _mapper.Map<FriendBoxFriendsResponse>(friendShip), 
                 message = "Friend request sent",
 
             });
@@ -68,15 +71,18 @@ namespace ChatAppBackend.Controllers
         }
 
         [HttpGet("friends")]
-        public List<FriendBox> GetUserFriendships()
+        public List<FriendBoxFriendsResponse> GetUserFriendships()
         {
             //TODO:sadece karşı taraf dönülecek 
             int userId = _jwtService.UserId;
-            return _context.FriendBoxes
-                .Include(f => f.FromUser)
-                .Include(f => f.ToUser)
-                .Where(f => f.FromUserId == userId || f.ToUserId == userId)
-                .ToList();
+            var friendBoxes = _context.FriendBoxes
+         .Include(f => f.FromUser)
+         .Include(f => f.ToUser)
+         .Where(f => f.FromUserId == userId || f.ToUserId == userId)
+         .ToList();
+
+   
+            return friendBoxes.Select((friendBox)=> _mapper.Map<FriendBoxFriendsResponse>(friendBox)).ToList(); //DONE
         }
 
         [HttpPut]
@@ -93,11 +99,12 @@ namespace ChatAppBackend.Controllers
             }
 
             friendbox.Approved = true;
+            friendbox.UpdateTime = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
             return Ok(new
             {
-                message = "You have new friend!"
+                message = "You have a new friend!"
             });
         }
         [HttpDelete]
