@@ -4,23 +4,27 @@ using Microsoft.EntityFrameworkCore;
 using ChatAppBackend.Entities;
 using ChatAppBackend.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
+using ChatAppBackend.Hubs;
 
 namespace ChatAppBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class AuthenticationController : ControllerBase
+    public class AuthenticationController : ControllerBase 
     {
 
         private readonly PostgreSqlDbContext _context;
         private readonly JwtService _jwtService;
-
-
-        public AuthenticationController(PostgreSqlDbContext context, JwtService jwtService)
+        private readonly IHubContext<ChatHub> _chathub;
+        //
+        public AuthenticationController(PostgreSqlDbContext context, JwtService jwtService, IHubContext<ChatHub> chathub)
         {
             _context = context;
             _jwtService = jwtService;
+            _chathub = chathub;
+
         }
         public class Error
         {
@@ -31,7 +35,7 @@ namespace ChatAppBackend.Controllers
         [AllowAnonymous]
         [HttpPost("login")]
 
-        public async Task<ActionResult<TokenDto>> Login(AuthDto auth)
+        public async Task<ActionResult<TokenDto>> Login(AuthDto auth) // async kaldır test et !!!
         {
 
             var user = _context.Users.Where(x => x.Email == auth.Email).FirstOrDefault();
@@ -67,6 +71,7 @@ namespace ChatAppBackend.Controllers
 
             var session = new SessionUserDto { Id = user.Id, Email = user.Email, Name = user.Name, Picture = user.Picture, UpdateTime = user.UpdateTime };
 
+            
             return Ok(session);
 
 

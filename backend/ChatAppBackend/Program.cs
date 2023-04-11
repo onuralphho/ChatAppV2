@@ -91,6 +91,7 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddSignalR();
 
+builder.Services.AddSingleton<IDictionary<string, UserConnection>>(opts => new Dictionary<string, UserConnection>());
 
 
 var app = builder.Build();
@@ -104,7 +105,7 @@ var app = builder.Build();
 
 
 app.UseCors(options => options
-    .WithOrigins("http://localhost:3000") // Bu kısmı istemcinizin adresine göre değiştirmelisiniz
+    .WithOrigins("http://localhost:3000") 
     .AllowAnyHeader()
     .AllowAnyMethod()
     .AllowCredentials()

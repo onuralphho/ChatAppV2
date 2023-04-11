@@ -72,6 +72,7 @@ const AuthForm = (props: any) => {
       }
       setPasswordInput("");
       setEmailInput("");
+      
       navigate("/chats");
     } else {
       setErrorMessage("Provide credentials");

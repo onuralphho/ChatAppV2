@@ -6,12 +6,45 @@ import ChatLog from "../Components/ChatLog";
 import SideBar from "../Components/SideBar";
 import ProfileSettings from "../Components/ProfileSettings";
 import Welcome from "../Components/Welcome";
+import {
+  HubConnection,
+  HubConnectionBuilder,
+  LogLevel,
+} from "@microsoft/signalr";
 
 const ChatPage = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
+
   const ctx = useAuth();
   const navigate = useNavigate();
+
+  const [hubConnection, setHubConnection] = useState<HubConnection>();
+
+  const connectHub = async () => {
+    const connection = new HubConnectionBuilder()
+      .withUrl(`${process.env.REACT_APP_ENDPOINT_URL}/chatHub`)
+      .configureLogging(LogLevel.Information)
+      .build();
+
+    connection.on("RecieveMessage", (message) => {
+      console.log(message);
+    });
+
+    await connection.start();
+    await connection.invoke("JoinRoom", { UserId: ctx?.user?.id.toString() });
+
+    setHubConnection(connection);
+  };
+
+
+
+  useEffect(() => {
+    
+    if (ctx?.user && !hubConnection) {
+      connectHub();
+    }
+  }, [ctx?.user, hubConnection, connectHub]);
 
   useEffect(() => {
     const getUser = async () => {
@@ -64,7 +97,7 @@ const ChatPage = () => {
         </div> */}
 
         <div className="flex   lg:p-5 lg:px-10   xl:px-20  2xl:px-40   text-white h-full ">
-          <div className="flex w-full max-w-[1920px] mx-auto rounded-xl  overflow-hidden shadow-lg shadow-[rgba(0,0,0,0.5)]">
+          <div className="flex w-full max-w-[1920px] mx-auto lg:rounded-xl  overflow-hidden shadow-lg shadow-[rgba(0,0,0,0.5)]">
             {/* SideBar */}
             <SideBar openProfile={openProfile} closeProfile={closeProfile} />
             {/* ChatLog */}
@@ -83,7 +116,7 @@ const ChatPage = () => {
     return (
       <div className="flex lg:p-5 lg:px-10  xl:px-20  2xl:px-40   text-white h-full ">
         <div
-          className={`flex  w-full max-w-[1920px] mx-auto rounded-xl overflow-hidden shadow-lg shadow-[rgba(0,0,0,0.5)]`}
+          className={`flex  w-full max-w-[1920px] mx-auto lg:rounded-xl overflow-hidden shadow-lg shadow-[rgba(0,0,0,0.5)]`}
         >
           <div
             className={` p-2  bg-[#252525]  overflow-hidden relative  w-64 `}

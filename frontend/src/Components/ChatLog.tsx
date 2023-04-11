@@ -45,6 +45,7 @@ const ChatLog = (props: IProps) => {
       .build();
 
     connection.on("RecieveMessage", (message) => {
+      console.log(message.message);
       //İlk mesaj 1 kere, 2. mesaj 2 kere, 3. mesaj 3 kere .... ve böyle devam ediyor (HATA!!!!!!)
       ctx?.setMessages((prev) => {
         if (prev && prev.some((premessage) => premessage.id === message.id)) {
@@ -52,10 +53,10 @@ const ChatLog = (props: IProps) => {
           return prev;
         }
 
-        return [...(prev || []), message];
+        return [...(prev || []), message.message];
       });
     });
-
+    
     await connection.start();
     await connection.invoke("SendMessage", {
       contentText: messageInput,

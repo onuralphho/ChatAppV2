@@ -9,21 +9,33 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ChatAppBackend.Hubs
 {
-    public class ChatHub: Hub
+    public class ChatHub : Hub
     {
-       private readonly PostgreSqlDbContext _context;
+        private readonly PostgreSqlDbContext _context;
+        private readonly IDictionary<string, UserConnection> _connections;
         public readonly IMapper _mapper;
 
-        public ChatHub(PostgreSqlDbContext context, IMapper mapper)
+
+        public ChatHub(PostgreSqlDbContext context, IMapper mapper, IDictionary<string, UserConnection> connections)
         {
             _context = context;
             _mapper = mapper;
+            _connections = connections;
         }
 
-      
+        public async Task JoinRoom(UserConnection userConnection)
+        {
+
+            await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.UserId);
+            _connections[Context.ConnectionId] = userConnection;
+            await Clients.Group(userConnection.UserId).SendAsync("RecieveMessage", _connections[Context.ConnectionId].UserId);
+
+        }
+
 
         public async Task SendMessage(MessageSentRequest messageSentRequest)
         {
+            try { 
             var friendship = await _context.FriendBoxes.FindAsync(messageSentRequest.FriendBoxId);
 
             friendship.UpdateTime = DateTime.UtcNow;
@@ -38,10 +50,26 @@ namespace ChatAppBackend.Hubs
             };
 
             _context.Add(newMessage);
-            await _context.SaveChangesAsync();
+            
+                var rowcount = await _context.SaveChangesAsync();
 
-            await Groups.AddToGroupAsync(Context.ConnectionId, messageSentRequest.FriendBoxId.ToString());
-            await Clients.Group(messageSentRequest.FriendBoxId.ToString()).SendAsync("RecieveMessage", _mapper.Map<MessageSentResponse>(newMessage));
+            Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
+           
+
+                Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
+
+                await Clients.Group(messageSentRequest.ToUserId.ToString()).SendAsync("RecieveMessage", _mapper.Map<MessageSentResponse>(newMessage));
+            
+                Console.WriteLine("BBBBBBBBBBBBBBBBBBBBBB");
+            }
+            catch(Exception ex) {
+                var a = "";
+            }
+            
+
         }
+
     }
 }
