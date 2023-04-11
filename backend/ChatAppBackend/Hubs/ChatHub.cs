@@ -16,11 +16,10 @@ namespace ChatAppBackend.Hubs
         public readonly IMapper _mapper;
 
 
-        public ChatHub(PostgreSqlDbContext context, IMapper mapper, IDictionary<string, List<string>> connections)
+        public ChatHub(PostgreSqlDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
-            _connections = connections;
         }
 
         public async Task JoinRoom(UserConnection userConnection)
