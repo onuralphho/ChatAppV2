@@ -11,7 +11,7 @@ const root = ReactDOM.createRoot(
 );
 console.log("index");
 root.render(
-  <React.StrictMode>
+  
     <BrowserRouter>
       <AlertProvider>
         <Layout>
@@ -19,7 +19,7 @@ root.render(
         </Layout>
       </AlertProvider>
     </BrowserRouter>
-  </React.StrictMode>
+  
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -2,6 +2,7 @@
 using ChatAppBackend.Context;
 using ChatAppBackend.Entities;
 using ChatAppBackend.Models;
+using ChatAppBackend.Models.Hub;
 using ChatAppBackend.Models.Message.Request;
 using ChatAppBackend.Models.Message.Response;
 using Microsoft.AspNetCore.SignalR;
@@ -27,25 +28,25 @@ namespace ChatAppBackend.Hubs
         }
 
 
-        public async Task SendMessage(MessageSentRequest messageSentRequest)
+        public async Task SendMessage(HubMessageSent hubMessageSent)
         {
-            var friendship = await _context.FriendBoxes.FindAsync(messageSentRequest.FriendBoxId);
+            //var friendship = await _context.FriendBoxes.FindAsync(messageSentRequest.FriendBoxId);
 
-            friendship.UpdateTime = DateTime.UtcNow;
+            //friendship.UpdateTime = DateTime.UtcNow;
 
-            var newMessage = new Message
-            {
-                ContentText = messageSentRequest.ContentText,
-                SentDate = DateTime.UtcNow,
-                FromUserId = messageSentRequest.FromUserId,
-                ToUserId = messageSentRequest.ToUserId,
-                Friendship = friendship
-            };
+            //var newMessage = new Message
+            //{
+            //    ContentText = messageSentRequest.ContentText,
+            //    SentDate = DateTime.UtcNow,
+            //    FromUserId = messageSentRequest.FromUserId,
+            //    ToUserId = messageSentRequest.ToUserId,
+            //    Friendship = friendship
+            //};
 
-            _context.Add(newMessage);
-            await _context.SaveChangesAsync();
+            //_context.Add(newMessage);
+            //await _context.SaveChangesAsync();
 
-            await Clients.Group(messageSentRequest.ToUserId.ToString()).SendAsync("RecieveMessage", _mapper.Map<MessageSentResponse>(newMessage));
+            await Clients.Group(hubMessageSent.ToUserId.ToString()).SendAsync("RecieveMessage", hubMessageSent);
         }
 
     }

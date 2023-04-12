@@ -57,15 +57,18 @@ namespace ChatAppBackend.Controllers
                 SentDate = DateTime.UtcNow,
                 FromUserId = message.FromUserId,
                 ToUserId = message.ToUserId,
-                Friendship = friendship
-
+                Friendship = friendship,
+                
             };
 
             _context.Add(newMessage);
             await _context.SaveChangesAsync();
+            var resMessage = _mapper.Map<MessageSentResponse>(newMessage);
+            resMessage.FriendBoxId = message.FriendBoxId;
 
 
-            return _mapper.Map<MessageSentResponse>(newMessage);//DONE
+
+            return resMessage;//DONE
         }
 
 

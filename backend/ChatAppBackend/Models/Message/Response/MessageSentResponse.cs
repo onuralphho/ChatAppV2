@@ -12,6 +12,9 @@
 
         public int ToUserId { get; set; }
 
+        public int FriendBoxId { get; set; }
+
+
                
     }
 }

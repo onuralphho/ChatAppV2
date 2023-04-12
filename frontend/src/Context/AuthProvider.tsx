@@ -103,6 +103,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
       await newConnection.start();
 
+     
       setConnection(newConnection);
     };
 

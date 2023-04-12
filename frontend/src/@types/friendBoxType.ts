@@ -14,4 +14,6 @@ export interface IFriendList {
     toUserId: number;
     updateTime: Date;
     approved:boolean;
+    newMessage?:number ;
+
   }
