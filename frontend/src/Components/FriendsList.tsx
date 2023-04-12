@@ -82,6 +82,7 @@ const FriendList = (props: Iprops) => {
       token: ctx?.getCookie("jwt"),
     });
 
+    
     ctx?.setMessages(res);
 
     //İLK KEZ Mesaj kutusuna girildiğinde mesaj atmadan huba bağlanmıyor mesaj atana kadar canlı veriyi alamıyor(beklediğim bir sorun loadchatloghandler çalıştığında huba bağlanması sağlanacak) 

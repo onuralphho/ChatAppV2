@@ -39,26 +39,18 @@ const ChatLog = (props: IProps) => {
 
     // ctx?.setMessages((prev) => [...(prev || []), res]);
 
-    const connection = new HubConnectionBuilder()
-      .withUrl(`${process.env.REACT_APP_ENDPOINT_URL}/chatHub`)
-      .configureLogging(LogLevel.Information)
-      .build();
+    // const connection = new HubConnectionBuilder()
+    //   .withUrl(`${process.env.REACT_APP_ENDPOINT_URL}/chatHub`)
+    //   .configureLogging(LogLevel.Information)
+    //   .build();
 
-    connection.on("RecieveMessage", (message) => {
-      console.log(message.message);
-      //İlk mesaj 1 kere, 2. mesaj 2 kere, 3. mesaj 3 kere .... ve böyle devam ediyor (HATA!!!!!!)
-      ctx?.setMessages((prev) => {
-        if (prev && prev.some((premessage) => premessage.id === message.id)) {
-          // Bu hatayı bu şekidle clienta göstermiyorum fakat console.log yaparsam mesajın her seferinde x katına çıktığını gözlemliyorum
-          return prev;
-        }
+    // ctx?.connection?.on("RecieveMessage", (message) => {
+    //   ctx?.setMessages((prev) => {
+    //     return [...(prev || []), message];
+    //   });
+    // });
 
-        return [...(prev || []), message.message];
-      });
-    });
-    
-    await connection.start();
-    await connection.invoke("SendMessage", {
+    await ctx?.connection?.invoke("SendMessage", {
       contentText: messageInput,
       fromUserId: ctx?.user?.id,
       toUserId: props.talkingTo.id,
@@ -137,10 +129,10 @@ const ChatLog = (props: IProps) => {
               <span className=" text-black  break-words whitespace-pre-line max-sm:max-w-[70dvw]  max-w-[450px]  ">
                 {message.contentText}
               </span>
-              <span className="text-neutral-500 text-xs italic self-end">
+              {/* <span className="text-neutral-500 text-xs italic self-end">
                 {message.sentDate.split("T")[1].split(".")[0].split(":")[0]}:
                 {message.sentDate.split("T")[1].split(".")[0].split(":")[1]}
-              </span>
+              </span> */}
             </div>
           </div>
         ))}

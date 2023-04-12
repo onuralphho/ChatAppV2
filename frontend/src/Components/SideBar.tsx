@@ -77,7 +77,6 @@ const SideBar = (props: ISideBarProps) => {
     });
     setSearchResult([]);
     setSearchInput("");
-    console.log(res);
     alertCtx?.setAlert({ shown: true, type: res.message });
     if (res.addedfriend) {
       ctx?.setFriendList((prev) => [...(prev ?? []), res.addedfriend]);

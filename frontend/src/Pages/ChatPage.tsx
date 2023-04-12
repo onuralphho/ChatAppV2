@@ -19,32 +19,29 @@ const ChatPage = () => {
   const ctx = useAuth();
   const navigate = useNavigate();
 
-  const [hubConnection, setHubConnection] = useState<HubConnection>();
+  // const [hubConnection, setHubConnection] = useState<HubConnection>();
 
   const connectHub = async () => {
-    const connection = new HubConnectionBuilder()
-      .withUrl(`${process.env.REACT_APP_ENDPOINT_URL}/chatHub`)
-      .configureLogging(LogLevel.Information)
-      .build();
-
-    connection.on("RecieveMessage", (message) => {
-      console.log(message);
-    });
-
-    await connection.start();
-    await connection.invoke("JoinRoom", { UserId: ctx?.user?.id.toString() });
-
-    setHubConnection(connection);
+    // const connection = new HubConnectionBuilder()
+    //   .withUrl(`${process.env.REACT_APP_ENDPOINT_URL}/chatHub`)
+    //   .configureLogging(LogLevel.Information)
+    //   .build();
   };
 
-
-
   useEffect(() => {
-    
-    if (ctx?.user && !hubConnection) {
-      connectHub();
-    }
-  }, [ctx?.user, hubConnection, connectHub]);
+    const joinRoom = async () => {
+      ctx?.connection?.on("RecieveMessage", (message) => {
+        console.log(message);
+        ctx?.setMessages((prev) => [...(prev || []), message]);
+      });
+
+      await ctx?.connection?.invoke("JoinRoom", {
+        UserId: ctx?.user?.id.toString(),
+      });
+    };
+
+    joinRoom();
+  }, [ctx?.connection]);
 
   useEffect(() => {
     const getUser = async () => {
