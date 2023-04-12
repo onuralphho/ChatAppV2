@@ -12,24 +12,18 @@ namespace ChatAppBackend.Hubs
     public class ChatHub : Hub
     {
         private readonly PostgreSqlDbContext _context;
-        private readonly IDictionary<string, UserConnection> _connections;
         public readonly IMapper _mapper;
 
 
-        public ChatHub(PostgreSqlDbContext context, IMapper mapper, IDictionary<string, UserConnection> connections)
+        public ChatHub(PostgreSqlDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
-            _connections = connections;
         }
 
         public async Task JoinRoom(UserConnection userConnection)
         {
-
             await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.UserId);
-            _connections[Context.ConnectionId] = userConnection;
-            await Clients.Group(userConnection.UserId).SendAsync("RecieveMessage", Context.ConnectionId);
-
         }
 
 
@@ -52,7 +46,6 @@ namespace ChatAppBackend.Hubs
             await _context.SaveChangesAsync();
 
             await Clients.Group(messageSentRequest.ToUserId.ToString()).SendAsync("RecieveMessage", _mapper.Map<MessageSentResponse>(newMessage));
-
         }
 
     }

@@ -95,6 +95,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     const connect = async () => {
+      console.log("SignalR connect");
       const newConnection = new HubConnectionBuilder()
         .withUrl(`${process.env.REACT_APP_ENDPOINT_URL}/chatHub`)
         .configureLogging(LogLevel.Information)

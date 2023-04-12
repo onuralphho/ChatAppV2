@@ -3,18 +3,12 @@ import { Routes, Route } from "react-router-dom";
 import AuthPage from "./Pages/AuthPage";
 import { AuthProvider } from "./Context/AuthProvider";
 import ChatPage from "./Pages/ChatPage";
-import ProtectedRoute from "./Components/ProtectedRoute";
-import { useAuth } from "./Context/AuthProvider";
-import { useEffect } from "react";
 
 function App() {
-  const ctx = useAuth();
 
 
-
-
+console.log("App");
   return (
-    <>
       <AuthProvider>
         <Routes>
           <Route index path="/" element={<AuthPage />} />
@@ -23,7 +17,6 @@ function App() {
           </Route>
         </Routes>
       </AuthProvider>
-    </>
   );
 }
 

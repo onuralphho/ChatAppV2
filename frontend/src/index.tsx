@@ -9,6 +9,7 @@ import AlertProvider from "./Context/AlertProvider";
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+console.log("index");
 root.render(
   <React.StrictMode>
     <BrowserRouter>
