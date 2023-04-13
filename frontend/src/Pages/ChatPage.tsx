@@ -8,79 +8,75 @@ import ProfileSettings from "../Components/ProfileSettings";
 import Welcome from "../Components/Welcome";
 import AlertBox from "../Components/AlertBox";
 import { useAlertContext } from "../Context/AlertProvider";
-import { sleep } from "../utils/sleep";
+
+import { useConnectionContext } from "../Context/ConnectionProvider";
 
 const ChatPage = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
 
+  const conCtx = useConnectionContext();
   const alertCtx = useAlertContext();
   const ctx = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const joinRoom = async () => {
-      if (!ctx?.talkingTo?.friendBoxId) return;
-      if (ctx?.talkingTo?.friendBoxId) {
-        ctx?.connection?.on("RecieveMessage", (message) => {
-          if (ctx.talkingTo?.friendBoxId === message.friendBoxId) {
-            console.log("Recieve message Listening...", message);
-            ctx?.setMessages((prev) => [...(prev || []), message]);
-          }
-        });
-      }
+  // useEffect(() => {
+  //   const joinRoom = async () => {
+  //     if (!ctx?.talkingTo?.friendBoxId) return;
+  //     if (ctx?.talkingTo?.friendBoxId) {
+  //       ctx?.connection?.on("RecieveMessage", (message) => {
+  //         console.log("Recieve message Listening...", message);
+  //         ctx?.setMessages((prev) => [...(prev || []), message]);
+  //       });
+  //     }
 
-      console.log("JoinRoom isteği atıldı. Payload", ctx?.user?.id.toString());
-      await ctx?.connection?.invoke("JoinRoom", {
-        UserId: ctx.user?.id.toString(),
-      });
-    };
-    joinRoom();
-
-    return () => {
-      ctx?.connection?.off("RecieveMessage");
-    };
-  }, [ctx?.talkingTo?.friendBoxId, ctx?.connection]);
+  //     console.log("JoinRoom isteği atıldı. Payload", ctx?.user?.id.toString());
+  //     await ctx?.connection?.invoke("JoinRoom", {
+  //       UserId: ctx.user?.id.toString(),
+  //     });
+  //   };
+  //   joinRoom();
+  // }, [ctx?.connection]);
 
   useEffect(() => {
     const loginHub = async () => {
-      ctx?.connection?.on("RecieveMessage", async (message) => {
-        console.log("AAAAAAAA", message);
+      // connection.on methodunu fonksiyon içinde çağırın
+      const receiveMessage = async (message: any) => {
+        console.log("RecieveMessage Listening...", message);
+        ctx?.setMessages((prev) => [...(prev || []), message]);
+      };
 
-        let a = ctx.friendList?.find((f) => f.id === message.friendBoxId ); //BURDA KALDIN İsmi yazdırmaya çalışıyosun
-
-        alertCtx?.setAlert({
-          shown: true,
-          type:
-            "New message from " + a?.fromUser
-        });
-        await sleep(1500);
-        alertCtx?.setAlert({
-          shown: false,
-          type:
-            "New message from " +
-            ctx.friendList?.find((f) => {
-              if (f.id === message.friendBoxId) {
-                return f.fromUser.name;
-              } else return;
-            }),
-        });
-        console.log(ctx.friendList);
-      });
+      conCtx?.connection?.on("RecieveMessage", receiveMessage);
 
       if (ctx?.user?.id) {
         console.log(
           "JoinRoom isteği atıldı. Payload",
           ctx?.user?.id.toString()
         );
-        await ctx?.connection?.invoke("JoinRoom", {
+        await conCtx?.connection?.invoke("JoinRoom", {
           UserId: ctx.user?.id.toString(),
         });
       }
     };
 
     loginHub();
-  }, [ctx?.connection]);
+  }, [ ctx?.user]);
+
+  // useEffect(() => {
+  //   const receiveMessage = async (message: any) => {
+  //     console.log("Alert Listen",message)
+  //     alertCtx?.setAlert({
+  //       shown: true,
+  //       type: "New message ",
+  //     });
+  //     await sleep(1500);
+  //     alertCtx?.setAlert({
+  //       shown: false,
+  //       type: "New message ",
+  //     });
+  //   };
+  //   ctx?.connection?.on("RecieveMessage", receiveMessage);
+  // }, [ctx?.talkingTo, ctx?.connection]);
 
   useEffect(() => {
     const getUser = async () => {

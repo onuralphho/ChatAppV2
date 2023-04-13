@@ -72,15 +72,15 @@ const FriendList = (props: Iprops) => {
       props.openMenu();
 
       ctx?.setTalkingTo(talkingTo);
+      
+      const res = await Fetcher({
+        method: "GET",
+        url: "/api/messages/" + talkingTo.friendBoxId,
+        token: ctx?.getCookie("jwt"),
+      });
+      
+      ctx?.setMessages(res);
     }
-
-    const res = await Fetcher({
-      method: "GET",
-      url: "/api/messages/" + talkingTo.friendBoxId,
-      token: ctx?.getCookie("jwt"),
-    });
-
-    ctx?.setMessages(res);
   };
 
   if (ctx?.friendList) {

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../Context/AuthProvider";
 import { ITalkingTo } from "../@types/talkingTo";
 import { Fetcher } from "../utils/Fetcher";
+import { useConnectionContext } from "../Context/ConnectionProvider";
 
 interface IProps {
   talkingTo: ITalkingTo;
@@ -16,6 +17,7 @@ const ChatLog = (props: IProps) => {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const conCtx = useConnectionContext()
   const ctx = useAuth();
 
   const messageChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,11 +40,10 @@ const ChatLog = (props: IProps) => {
       token: ctx?.getCookie("jwt"),
     });
 
-    
     ctx?.setMessages((prev) => [...(prev || []), res]);
 
     console.log("SendMessage invoke", res);
-    await ctx?.connection?.invoke("SendMessage", res);
+    await conCtx?.connection?.invoke("SendMessage", res);
     setCheckerVal(true);
     setMessageInput("");
   };
@@ -85,55 +86,59 @@ const ChatLog = (props: IProps) => {
       <div
         className={`flex flex-1 flex-col h-20 gap-2 w-full overflow-y-scroll  px-2   pb-2 `}
       >
-        {props.messages?.map((message) => (
-          <div
-            key={message.id}
-            className={` flex  rounded-lg gap-2 p-1 w-max  items-end    ${
-              ctx?.user && ctx.user.id === message.fromUserId
-                ? "self-end  justify-end flex-row-reverse"
-                : "self-start justify-start"
-            }`}
-          >
-            <img
-              src={
-                ctx?.user && ctx.user.id === message.fromUserId
-                  ? ctx?.user.picture
-                  : props.talkingTo.picture
-              }
-              className="w-8 rounded-full "
-              alt=""
-            />
-
+        {props.messages
+          ?.filter(
+            (message) => message.friendBoxId === props.talkingTo.friendBoxId
+          )
+          .map((message) => (
             <div
-              className={` flex  rounded-lg bg-white mb-4 px-2 py-1 min-h-8 gap-2   w-max    ${
+              key={message.id}
+              className={` flex  rounded-lg gap-2 p-1 w-max  items-end    ${
                 ctx?.user && ctx.user.id === message.fromUserId
-                  ? " rounded-br-none "
-                  : " rounded-bl-none "
+                  ? "self-end  justify-end flex-row-reverse"
+                  : "self-start justify-start"
               }`}
             >
-              <span className=" text-black  break-words whitespace-pre-line max-sm:max-w-[70dvw]  max-w-[450px]  ">
-                {message.contentText}
-              </span>
-              <span className="text-neutral-500 text-xs italic self-end">
-                {
-                  message.sentDate
-                    .toLocaleString()
-                    .split("T")[1]
-                    .split(".")[0]
-                    .split(":")[0]
+              <img
+                src={
+                  ctx?.user && ctx.user.id === message.fromUserId
+                    ? ctx?.user.picture
+                    : props.talkingTo.picture
                 }
-                :
-                {
-                  message.sentDate
-                    .toLocaleString()
-                    .split("T")[1]
-                    .split(".")[0]
-                    .split(":")[1]
-                }
-              </span>
+                className="w-8 rounded-full "
+                alt=""
+              />
+
+              <div
+                className={` flex  rounded-lg bg-white mb-4 px-2 py-1 min-h-8 gap-2   w-max    ${
+                  ctx?.user && ctx.user.id === message.fromUserId
+                    ? " rounded-br-none "
+                    : " rounded-bl-none "
+                }`}
+              >
+                <span className=" text-black  break-words whitespace-pre-line max-sm:max-w-[70dvw]  max-w-[450px]  ">
+                  {message.contentText}
+                </span>
+                <span className="text-neutral-500 text-xs italic self-end">
+                  {
+                    message.sentDate
+                      .toLocaleString()
+                      .split("T")[1]
+                      .split(".")[0]
+                      .split(":")[0]
+                  }
+                  :
+                  {
+                    message.sentDate
+                      .toLocaleString()
+                      .split("T")[1]
+                      .split(".")[0]
+                      .split(":")[1]
+                  }
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
         <div ref={messagesEndRef} />
       </div>
 

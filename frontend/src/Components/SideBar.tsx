@@ -10,7 +10,8 @@ import AlertBox from "./AlertBox";
 import { Fetcher } from "../utils/Fetcher";
 import { useAlertContext } from "../Context/AlertProvider";
 import { sleep } from "../utils/sleep";
-import { IFriendList } from "../@types/friendBoxType";
+import { useConnectionContext } from "../Context/ConnectionProvider";
+
 interface ISideBarProps {
   openProfile: Function;
   closeProfile: Function;
@@ -30,6 +31,7 @@ const SideBar = (props: ISideBarProps) => {
 
   const ctx = useAuth();
   const alertCtx = useAlertContext();
+  const conCtx = useConnectionContext();
 
   const navigate = useNavigate();
 
@@ -41,6 +43,7 @@ const SideBar = (props: ISideBarProps) => {
   };
   const logOut = () => {
     ctx?.setTalkingTo(undefined);
+    conCtx?.disconnectConnection();
     navigate("/");
     ctx?.logout();
   };
@@ -140,8 +143,9 @@ const SideBar = (props: ISideBarProps) => {
           />
           <div className={`flex gap-2 flex-wrap ${showMenu ? "" : "hidden"}`}>
             <span>
-              {ctx?.user && ctx?.user.name.charAt(0).toUpperCase() +
-                ctx?.user.name.slice(1).toLowerCase()}
+              {ctx?.user &&
+                ctx?.user.name.charAt(0).toUpperCase() +
+                  ctx?.user.name.slice(1).toLowerCase()}
             </span>
           </div>
         </div>

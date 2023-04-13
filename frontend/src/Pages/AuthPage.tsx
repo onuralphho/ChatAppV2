@@ -8,10 +8,11 @@ const AuthPage = () => {
   const ctx = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
-    const jwt = ctx?.getCookie('jwt')
-    if(jwt){
-      navigate('/chats')
+    const jwt = ctx?.getCookie("jwt");
+    if (jwt) {
+      navigate("/chats");
     }
+
 
     const pre = document.getElementById("pre");
     function rotateElement(event: any, element: any) {
@@ -43,9 +44,8 @@ const AuthPage = () => {
       rotateElement(e, pre);
     });
   }, []);
-  
+
   return (
-    
     <div className="flex   max-xl:flex-col h-[100svh]  max-md:gap-4 max-xl:gap-4 items-center md:justify-center max-md:pt-10">
       <img
         src={humanImage}

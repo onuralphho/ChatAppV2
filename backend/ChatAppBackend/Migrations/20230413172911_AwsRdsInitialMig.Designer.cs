@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ChatAppBackend.Migrations
 {
     [DbContext(typeof(PostgreSqlDbContext))]
-    [Migration("20230406104210_CreateFriendBoxTbl")]
-    partial class CreateFriendBoxTbl
+    [Migration("20230413172911_AwsRdsInitialMig")]
+    partial class AwsRdsInitialMig
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -31,6 +31,9 @@ namespace ChatAppBackend.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Approved")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("FromUserId")
                         .HasColumnType("integer");

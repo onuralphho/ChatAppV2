@@ -1,20 +1,9 @@
-import React, {
-  ReactNode,
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-} from "react";
+import React, { ReactNode, createContext, useContext, useState } from "react";
 import { Fetcher } from "../utils/Fetcher";
 import { IFriendList } from "../@types/friendBoxType";
 import { IMessage } from "../@types/messageType";
 import { ITalkingTo } from "../@types/talkingTo";
-import {
-  HubConnection,
-  HubConnectionBuilder,
-  IHubProtocol,
-  LogLevel,
-} from "@microsoft/signalr";
+
 interface IUser {
   id: number;
   name: string;
@@ -39,7 +28,6 @@ interface AuthContextValue {
   setMessages: React.Dispatch<React.SetStateAction<IMessage[] | undefined>>;
   talkingTo?: ITalkingTo;
   setTalkingTo: React.Dispatch<React.SetStateAction<ITalkingTo | undefined>>;
-  connection: HubConnection | undefined;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -54,9 +42,6 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     undefined
   );
   const [token, setToken] = useState<string | undefined>();
-  const [connection, setConnection] = useState<HubConnection | undefined>(
-    undefined
-  );
 
   const login = async (email: string, password: string) => {
     const res = await Fetcher({
@@ -75,6 +60,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const logout = async () => {
     setUser(undefined);
+
     // localStorage.removeItem("session");
     document.cookie = "jwt=;" + 0 + ";path=/";
     const res = await Fetcher({
@@ -93,23 +79,6 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }
   }
 
-  useEffect(() => {
-    const connect = async () => {
-      console.log("SignalR connect");
-      const newConnection = new HubConnectionBuilder()
-        .withUrl(`${process.env.REACT_APP_ENDPOINT_URL}/chatHub`)
-        .configureLogging(LogLevel.Information)
-        .build();
-
-      await newConnection.start();
-
-     
-      setConnection(newConnection);
-    };
-
-    connect();
-  }, []);
-
   return (
     <AuthContext.Provider
       value={{
@@ -126,7 +95,6 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         setMessages,
         talkingTo,
         setTalkingTo,
-        connection,
       }}
     >
       {children}

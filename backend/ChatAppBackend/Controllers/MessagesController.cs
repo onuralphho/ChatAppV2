@@ -32,15 +32,20 @@ namespace ChatAppBackend.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("{friendBoxId}")]
-        public async Task<List<MessageSentResponse>> Messages(int friendBoxId)
-        {
-            var messages = await _context.Messages
-                .Where(u => u.Friendship.Id == friendBoxId)
-                .ToListAsync();
+       [HttpGet("{friendBoxId}")]
+public async Task<List<MessageSentResponse>> Messages(int friendBoxId)
+{
+    var messages = await _context.Messages
+        .Include(m => m.Friendship)
+        .Where(m => m.Friendship.Id == friendBoxId)
+        .ToListAsync();
 
-            return messages.Select((message) => _mapper.Map<MessageSentResponse>(message)).ToList(); //DONE
-        }
+    return messages.Select((message) => {
+        var messageSentResponse = _mapper.Map<MessageSentResponse>(message);
+        messageSentResponse.FriendBoxId = message.Friendship.Id;
+        return messageSentResponse;
+    }).ToList();
+}
 
 
 
@@ -63,6 +68,8 @@ namespace ChatAppBackend.Controllers
 
             _context.Add(newMessage);
             await _context.SaveChangesAsync();
+
+
             var resMessage = _mapper.Map<MessageSentResponse>(newMessage);
             resMessage.FriendBoxId = message.FriendBoxId;
 

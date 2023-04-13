@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ChatAppBackend.Migrations
 {
-    public partial class CreateFriendBoxTbl : Migration
+    public partial class AwsRdsInitialMig : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -36,7 +36,8 @@ namespace ChatAppBackend.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     FromUserId = table.Column<int>(type: "integer", nullable: false),
                     ToUserId = table.Column<int>(type: "integer", nullable: false),
-                    UpdateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    UpdateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Approved = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
