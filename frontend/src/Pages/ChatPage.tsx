@@ -6,21 +6,28 @@ import ChatLog from "../Components/ChatLog";
 import SideBar from "../Components/SideBar";
 import ProfileSettings from "../Components/ProfileSettings";
 import Welcome from "../Components/Welcome";
-import AlertBox from "../Components/AlertBox";
-import { useAlertContext } from "../Context/AlertProvider";
 
+import { IMessage } from "../@types/messageType";
 import { useConnectionContext } from "../Context/ConnectionProvider";
+import { sleep } from "../utils/sleep";
+import { ITalkingTo } from "../@types/talkingTo";
+
+type Notification = {
+  shown: boolean;
+  talkingTo?: ITalkingTo;
+  message?: IMessage;
+};
 
 const ChatPage = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
+  const [notification, setNotification] = useState<Notification | undefined>(
+    undefined
+  );
 
   const conCtx = useConnectionContext();
-  const alertCtx = useAlertContext();
   const ctx = useAuth();
   const navigate = useNavigate();
-
-  
 
   useEffect(() => {
     const loginHub = async () => {
@@ -43,23 +50,37 @@ const ChatPage = () => {
     };
 
     loginHub();
-  }, [ ctx?.user]);
+  }, [ctx?.user]);
 
-  // useEffect(() => {
-  //   const receiveMessage = async (message: any) => {
-  //     console.log("Alert Listen",message)
-  //     alertCtx?.setAlert({
-  //       shown: true,
-  //       type: "New message ",
-  //     });
-  //     await sleep(1500);
-  //     alertCtx?.setAlert({
-  //       shown: false,
-  //       type: "New message ",
-  //     });
-  //   };
-  //   ctx?.connection?.on("RecieveMessage", receiveMessage);
-  // }, [ctx?.talkingTo, ctx?.connection]);
+  useEffect(() => {
+    const receiveMessage = async (message: IMessage) => {
+      console.log("Comparing:", ctx?.talkingTo?.id, message.fromUserId);
+      console.log(ctx?.talkingTo?.id !== message.fromUserId);
+
+      if (
+        (ctx?.talkingTo && ctx.talkingTo.id !== message.fromUserId) ||
+        !ctx?.talkingTo
+      ) {
+        setNotification({
+          shown: true,
+          message: message,
+          talkingTo: ctx?.talkingTo,
+        });
+        await sleep(1500);
+        setNotification({
+          shown: false,
+          message: message,
+          talkingTo: ctx?.talkingTo,
+        });
+      }
+    };
+
+    conCtx?.connection?.on("RecieveMessage", receiveMessage);
+
+    return () => {
+      conCtx?.connection?.off("RecieveMessage", receiveMessage);
+    };
+  }, [ctx?.talkingTo, conCtx?.connection]);
 
   useEffect(() => {
     const getUser = async () => {
@@ -104,11 +125,6 @@ const ChatPage = () => {
   if (ctx?.user) {
     return (
       <>
-        <AlertBox
-          message={alertCtx?.alert.type}
-          isShown={alertCtx?.alert.shown}
-          closeBox={alertCtx?.setAlert}
-        />
         {/* TopBar Temp
         <div className="bg-green-500 p-2 max-lg:hidden">
           <ul className="flex justify-between px-4">
@@ -117,7 +133,28 @@ const ChatPage = () => {
         </div> */}
 
         <div className="flex   lg:p-5 lg:px-10   xl:px-20  2xl:px-40   text-white h-full ">
-          <div className="flex w-full max-w-[1920px] mx-auto lg:rounded-xl  overflow-hidden shadow-lg shadow-[rgba(0,0,0,0.5)]">
+          <div className="flex w-full relative max-w-[1920px] mx-auto lg:rounded-xl  overflow-hidden shadow-lg shadow-[rgba(0,0,0,0.5)]">
+            {/* Notification */}
+            <div
+              className={`${
+                notification?.shown ? "translate-y-0" : "-translate-y-20"
+              } flex ease-out duration-500 items-center gap-3 absolute px-4 py-1 w-max   top-2 bg-[#efefef] border-purple-500 border-[2px] shadow-md rounded-lg text-black z-40 m-auto left-0 right-0 `}
+            >
+              <img
+                src={notification?.message?.fromUser.picture}
+                alt=""
+                className="w-10 aspect-square object-cover rounded-full"
+              />
+              <div className="flex flex-col">
+                <span className="text-lg font-semibold">
+                  {notification?.message?.fromUser.name}
+                </span>
+                <span className="truncate w-52">
+                  {notification?.message?.contentText}
+                </span>
+              </div>
+            </div>
+
             {/* SideBar */}
             <SideBar openProfile={openProfile} closeProfile={closeProfile} />
             {/* ChatLog */}

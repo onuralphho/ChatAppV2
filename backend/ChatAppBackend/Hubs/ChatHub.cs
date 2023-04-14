@@ -30,21 +30,7 @@ namespace ChatAppBackend.Hubs
 
         public async Task SendMessage(HubMessageSent hubMessageSent)
         {
-            //var friendship = await _context.FriendBoxes.FindAsync(messageSentRequest.FriendBoxId);
-
-            //friendship.UpdateTime = DateTime.UtcNow;
-
-            //var newMessage = new Message
-            //{
-            //    ContentText = messageSentRequest.ContentText,
-            //    SentDate = DateTime.UtcNow,
-            //    FromUserId = messageSentRequest.FromUserId,
-            //    ToUserId = messageSentRequest.ToUserId,
-            //    Friendship = friendship
-            //};
-
-            //_context.Add(newMessage);
-            //await _context.SaveChangesAsync();
+            
 
             await Clients.Group(hubMessageSent.ToUserId.ToString()).SendAsync("RecieveMessage", hubMessageSent);
         }

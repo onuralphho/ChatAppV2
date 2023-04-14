@@ -1,4 +1,6 @@
 ﻿
+using ChatAppBackend.Dto;
+
 namespace ChatAppBackend.Models.Message.Request
 {
     public class MessageSentRequest
@@ -11,5 +13,7 @@ namespace ChatAppBackend.Models.Message.Request
         public int ToUserId { get; set; }
         public int FriendBoxId { get; set; }
         public DateTime SentDate { get; set; } = DateTime.UtcNow;
+
+        public UpdateUserDto FromUser { get; set; }
     }
 }

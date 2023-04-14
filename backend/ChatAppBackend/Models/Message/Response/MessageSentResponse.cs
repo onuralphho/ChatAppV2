@@ -1,4 +1,6 @@
-﻿namespace ChatAppBackend.Models.Message.Response
+﻿using ChatAppBackend.Dto;
+
+namespace ChatAppBackend.Models.Message.Response
 {
     public class MessageSentResponse
     {
@@ -14,7 +16,7 @@
 
         public int FriendBoxId { get; set; }
 
-
+        public UpdateUserDto FromUser { get; set; }
                
     }
 }

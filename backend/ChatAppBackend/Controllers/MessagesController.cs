@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using ChatAppBackend.Models.Message.Request;
 using ChatAppBackend.Models.User.Response;
 using AutoMapper;
+using ChatAppBackend.Dto;
 
 namespace ChatAppBackend.Controllers
 {
@@ -66,16 +67,23 @@ public async Task<List<MessageSentResponse>> Messages(int friendBoxId)
                 
             };
 
+
             _context.Add(newMessage);
             await _context.SaveChangesAsync();
+            
+           
+
+                var resMessage = _mapper.Map<MessageSentResponse>(newMessage);
+                resMessage.FriendBoxId = message.FriendBoxId;
+                resMessage.FromUser = message.FromUser;
+
+                return resMessage;
+     
 
 
-            var resMessage = _mapper.Map<MessageSentResponse>(newMessage);
-            resMessage.FriendBoxId = message.FriendBoxId;
 
 
-
-            return resMessage;//DONE
+         //DONE
         }
 
 

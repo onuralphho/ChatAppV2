@@ -31,8 +31,13 @@ const ChatLog = (props: IProps) => {
       fromUserId: ctx?.user?.id,
       toUserId: props.talkingTo.id,
       friendBoxId: props.talkingTo.friendBoxId,
+      fromUser: {
+        name: ctx?.user?.name,
+        id: ctx?.user?.id,
+        picture: ctx?.user?.picture,
+      },
     };
-
+    console.log("before fetch message: ", sendMessagePayload);
     const res = await Fetcher({
       method: "POST",
       body: sendMessagePayload,

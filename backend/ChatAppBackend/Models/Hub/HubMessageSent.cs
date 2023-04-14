@@ -1,4 +1,6 @@
-﻿namespace ChatAppBackend.Models.Hub
+﻿using ChatAppBackend.Dto;
+
+namespace ChatAppBackend.Models.Hub
 {
     public class HubMessageSent
     {
@@ -12,5 +14,7 @@
         public int FriendBoxId { get; set; }
 
         public DateTime SentDate { get; set; } = DateTime.UtcNow;
+
+        public UpdateUserDto FromUser { get; set; }
     }
 }

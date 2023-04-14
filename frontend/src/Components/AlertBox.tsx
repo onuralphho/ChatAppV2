@@ -1,4 +1,3 @@
-
 import { TiTick } from "react-icons/ti";
 import { GiCancel } from "react-icons/gi";
 const AlertBox = (props: any) => {

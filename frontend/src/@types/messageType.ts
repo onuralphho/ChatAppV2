@@ -7,4 +7,9 @@ export interface IMessage {
     fromUserId:number,
     toUserId:number,
     friendBoxId:number
+    fromUser: {
+      id:number,
+      name:string,
+      picture:string
+    }
   }

@@ -105,7 +105,7 @@ const SideBar = (props: ISideBarProps) => {
         onClick={() => {
           setShowMenu((prev) => !prev);
         }}
-        className={`cursor-pointer  transition-all top-1 lg:top-6 z-[2]  w-10 h-12 rounded-r-lg flex items-center justify-center bg-green-500 absolute ${
+        className={`cursor-pointer  transition-all top-1  z-[2]  w-10 h-12 rounded-r-lg flex items-center justify-center bg-green-500 absolute ${
           showMenu ? "lg:translate-x-64" : "lg:translate-x-[4.5rem]"
         }   ${showMenu ? "max-lg:translate-x-64" : "max-lg:translate-x-0"} `}
       >
