@@ -20,27 +20,10 @@ const ChatPage = () => {
   const ctx = useAuth();
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const joinRoom = async () => {
-  //     if (!ctx?.talkingTo?.friendBoxId) return;
-  //     if (ctx?.talkingTo?.friendBoxId) {
-  //       ctx?.connection?.on("RecieveMessage", (message) => {
-  //         console.log("Recieve message Listening...", message);
-  //         ctx?.setMessages((prev) => [...(prev || []), message]);
-  //       });
-  //     }
-
-  //     console.log("JoinRoom isteği atıldı. Payload", ctx?.user?.id.toString());
-  //     await ctx?.connection?.invoke("JoinRoom", {
-  //       UserId: ctx.user?.id.toString(),
-  //     });
-  //   };
-  //   joinRoom();
-  // }, [ctx?.connection]);
+  
 
   useEffect(() => {
     const loginHub = async () => {
-      // connection.on methodunu fonksiyon içinde çağırın
       const receiveMessage = async (message: any) => {
         console.log("RecieveMessage Listening...", message);
         ctx?.setMessages((prev) => [...(prev || []), message]);

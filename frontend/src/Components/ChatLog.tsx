@@ -17,7 +17,7 @@ const ChatLog = (props: IProps) => {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const conCtx = useConnectionContext()
+  const conCtx = useConnectionContext();
   const ctx = useAuth();
 
   const messageChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,42 +84,53 @@ const ChatLog = (props: IProps) => {
       {/* LOG */}
 
       <div
-        className={`flex flex-1 flex-col h-20 gap-2 w-full overflow-y-scroll  px-2   pb-2 `}
+        className={`flex flex-1 flex-col  gap-0 w-full overflow-y-scroll  px-2   pb-2 `}
       >
         {props.messages
           ?.filter(
             (message) => message.friendBoxId === props.talkingTo.friendBoxId
           )
-          .map((message) => (
+          .map((message, index) => (
             <div
               key={message.id}
               className={` flex  rounded-lg gap-2 p-1 w-max  items-end    ${
-                ctx?.user && ctx.user.id === message.fromUserId
+                 ctx?.user?.id === message.fromUserId
                   ? "self-end  justify-end flex-row-reverse"
                   : "self-start justify-start"
               }`}
             >
-              <img
-                src={
-                  ctx?.user && ctx.user.id === message.fromUserId
-                    ? ctx?.user.picture
-                    : props.talkingTo.picture
+              {props.messages &&
+                
+                message.fromUserId !== props.messages[index+1]?.fromUserId ?
+                
+                 
+                  <img
+                    src={
+                      ctx?.user && ctx.user.id === message.fromUserId
+                        ? ctx?.user.picture
+                        : props.talkingTo.picture
+                    }
+                    className="w-8 rounded-full "
+                    alt=""
+                  />:<div className="w-8"></div>
                 }
-                className="w-8 rounded-full "
-                alt=""
-              />
-
+                
+              
               <div
-                className={` flex  rounded-lg bg-white mb-4 px-2 py-1 min-h-8 gap-2   w-max    ${
+                className={` flex  rounded-lg mb-3  px-3 py-1 min-h-8 gap-2   w-max    ${
                   ctx?.user && ctx.user.id === message.fromUserId
-                    ? " rounded-br-none "
-                    : " rounded-bl-none "
-                }`}
+                    ? "  bg-green-600 text-[#efefef] "
+                    : "  bg-[#efefef] text-black"
+                }   ${props.messages &&
+                
+                  message.fromUserId !== props.messages[index+1]?.fromUserId 
+                  ? ctx?.user && ctx.user.id === message.fromUserId ?  "   rounded-br-none ":"rounded-bl-none"
+                  : "" }`}
               >
-                <span className=" text-black  break-words whitespace-pre-line max-sm:max-w-[70dvw]  max-w-[450px]  ">
+                <span className="  break-words whitespace-pre-line max-sm:max-w-[70dvw]  max-w-[450px]  ">
                   {message.contentText}
                 </span>
-                <span className="text-neutral-500 text-xs italic self-end">
+                <span className="text-neutral-900 text-xs italic self-end">
                   {
                     message.sentDate
                       .toLocaleString()

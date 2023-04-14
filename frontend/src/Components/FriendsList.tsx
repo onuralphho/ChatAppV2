@@ -85,7 +85,8 @@ const FriendList = (props: Iprops) => {
 
   if (ctx?.friendList) {
     return (
-      <ul className="flex flex-col">
+      <ul className="flex flex-col overflow-y-auto max-h-[500px]">
+        
         {ctx?.friendList
           ?.sort((a: IFriendList, b: IFriendList) =>
             a.updateTime > b.updateTime ? -1 : 1

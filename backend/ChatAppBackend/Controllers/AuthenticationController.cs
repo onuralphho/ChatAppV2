@@ -82,6 +82,7 @@ namespace ChatAppBackend.Controllers
         public IActionResult Logout()
         {
             Response.Cookies.Delete("jwt");
+            //hub üzerinden grup silinecek !!!
             return Ok(new
             {
                 success = true
