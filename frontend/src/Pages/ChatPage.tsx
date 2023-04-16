@@ -6,22 +6,16 @@ import ChatLog from "../Components/ChatLog";
 import SideBar from "../Components/SideBar";
 import ProfileSettings from "../Components/ProfileSettings";
 import Welcome from "../Components/Welcome";
-
+import Notification from "../Components/Notification";
 import { IMessage } from "../@types/messageType";
 import { useConnectionContext } from "../Context/ConnectionProvider";
 import { sleep } from "../utils/sleep";
-import { ITalkingTo } from "../@types/talkingTo";
-
-type Notification = {
-  shown: boolean;
-  talkingTo?: ITalkingTo;
-  message?: IMessage;
-};
+import { INotification } from "../@types/notificationInterface";
 
 const ChatPage = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
-  const [notification, setNotification] = useState<Notification | undefined>(
+  const [notification, setNotification] = useState<INotification | undefined>(
     undefined
   );
 
@@ -33,6 +27,7 @@ const ChatPage = () => {
     const loginHub = async () => {
       const receiveMessage = async (message: any) => {
         console.log("RecieveMessage Listening...", message);
+
         ctx?.setMessages((prev) => [...(prev || []), message]);
       };
 
@@ -61,16 +56,29 @@ const ChatPage = () => {
         (ctx?.talkingTo && ctx.talkingTo.id !== message.fromUserId) ||
         !ctx?.talkingTo
       ) {
+        console.log(ctx?.talkingTo);
         setNotification({
           shown: true,
           message: message,
-          talkingTo: ctx?.talkingTo,
+          talkingTo: {
+            friendBoxId: message.friendBoxId,
+            id: message.fromUserId,
+            isApproved: true,
+            name: message.fromUser.name,
+            picture: message.fromUser.picture,
+          },
         });
-        await sleep(1500);
+        await sleep(2000);
         setNotification({
           shown: false,
           message: message,
-          talkingTo: ctx?.talkingTo,
+          talkingTo: {
+            friendBoxId: message.friendBoxId,
+            id: message.fromUserId,
+            isApproved: true,
+            name: message.fromUser.name,
+            picture: message.fromUser.picture,
+          },
         });
       }
     };
@@ -135,28 +143,12 @@ const ChatPage = () => {
         <div className="flex   lg:p-5 lg:px-10   xl:px-20  2xl:px-40   text-white h-full ">
           <div className="flex w-full relative max-w-[1920px] mx-auto lg:rounded-xl  overflow-hidden shadow-lg shadow-[rgba(0,0,0,0.5)]">
             {/* Notification */}
-            <div
-              className={`${
-                notification?.shown ? "translate-y-0" : "-translate-y-20"
-              } flex ease-out duration-500 items-center gap-3 absolute px-4 py-1 w-max   top-2 bg-[#efefef] border-purple-500 border-[2px] shadow-md rounded-lg text-black z-40 m-auto left-0 right-0 `}
-            >
-              <img
-                src={notification?.message?.fromUser.picture}
-                alt=""
-                className="w-10 aspect-square object-cover rounded-full"
-              />
-              <div className="flex flex-col">
-                <span className="text-lg font-semibold">
-                  {notification?.message?.fromUser.name}
-                </span>
-                <span className="truncate w-52">
-                  {notification?.message?.contentText}
-                </span>
-              </div>
-            </div>
+
+            <Notification notification={notification} />
 
             {/* SideBar */}
             <SideBar openProfile={openProfile} closeProfile={closeProfile} />
+
             {/* ChatLog */}
             {showProfile ? (
               <ProfileSettings closeProfile={closeProfile} />

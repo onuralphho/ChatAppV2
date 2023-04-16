@@ -98,7 +98,7 @@ const ChatLog = (props: IProps) => {
           .map((message, index) => (
             <div
               key={message.id}
-              className={` flex  rounded-lg gap-2 p-1 w-max  items-end    ${
+              className={` flex max-md:pr-3  rounded-lg gap-3 p-1 w-max  items-end    ${
                 ctx?.user?.id === message.fromUserId
                   ? "self-end  justify-end flex-row-reverse"
                   : "self-start justify-start"
@@ -130,7 +130,7 @@ const ChatLog = (props: IProps) => {
               )}
 
               <div
-                className={` flex  rounded-lg mb-3  px-3 py-1 min-h-8 gap-2   w-max    ${
+                className={`relative flex  rounded-lg mb-3  px-3 py-1 min-h-8 gap-2   w-max    ${
                   ctx?.user && ctx.user.id === message.fromUserId
                     ? "  bg-green-600 text-[#efefef] "
                     : "  bg-[#efefef] text-black"
@@ -138,8 +138,8 @@ const ChatLog = (props: IProps) => {
                   props.messages &&
                   message.fromUserId !== props.messages[index + 1]?.fromUserId
                     ? ctx?.user && ctx.user.id === message.fromUserId
-                      ? "   rounded-br-none "
-                      : "rounded-bl-none"
+                      ? "rounded-br-none right-tri"
+                      : "rounded-bl-none left-tri"
                     : ""
                 }`}
               >
