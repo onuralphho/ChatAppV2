@@ -39,7 +39,8 @@ const Notification: FC<Props> = ({ notification }) => {
             url: "/api/messages/" + talkingTo?.friendBoxId,
             token: ctx?.getCookie("jwt"),
           });
-
+          const lastMessage = res.pop();
+          console.log("Notification Fetch İşlemi:", res);
           ctx?.setMessages(res);
         }}
         className="text-3xl text-white bg-purple-500 px-2 rounded-md hover:scale-105 transition-all py-1"

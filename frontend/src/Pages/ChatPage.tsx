@@ -11,6 +11,7 @@ import { IMessage } from "../@types/messageType";
 import { useConnectionContext } from "../Context/ConnectionProvider";
 import { sleep } from "../utils/sleep";
 import { INotification } from "../@types/notificationInterface";
+import { IHubMessageResponse } from "../@types/hubMessageResponse";
 
 const ChatPage = () => {
   const [showProfile, setShowProfile] = useState(false);
@@ -25,10 +26,9 @@ const ChatPage = () => {
 
   useEffect(() => {
     const loginHub = async () => {
-      const receiveMessage = async (message: any) => {
-        console.log("RecieveMessage Listening...", message);
-
-        ctx?.setMessages((prev) => [...(prev || []), message]);
+      const receiveMessage = async (hubMessageResponse: IHubMessageResponse) => {
+        console.log("RecieveMessage Listening...", hubMessageResponse.hubMessageSent);
+        ctx?.setMessages((prev) => [...(prev || []), hubMessageResponse.hubMessageSent]);
       };
 
       conCtx?.connection?.on("RecieveMessage", receiveMessage);
@@ -48,36 +48,35 @@ const ChatPage = () => {
   }, [ctx?.user]);
 
   useEffect(() => {
-    const receiveMessage = async (message: IMessage) => {
-      console.log("Comparing:", ctx?.talkingTo?.id, message.fromUserId);
-      console.log(ctx?.talkingTo?.id !== message.fromUserId);
+    const receiveMessage = async (hubMessageResponse: IHubMessageResponse) => {
+     
 
       if (
-        (ctx?.talkingTo && ctx.talkingTo.id !== message.fromUserId) ||
+        (ctx?.talkingTo && ctx.talkingTo.id !== hubMessageResponse.hubMessageSent.fromUserId) ||
         !ctx?.talkingTo
       ) {
-        console.log(ctx?.talkingTo);
+        console.log("TalkingTo:",ctx?.talkingTo);
         setNotification({
           shown: true,
-          message: message,
+          message: hubMessageResponse.hubMessageSent,
           talkingTo: {
-            friendBoxId: message.friendBoxId,
-            id: message.fromUserId,
+            friendBoxId: hubMessageResponse.hubMessageSent.friendBoxId,
+            id: hubMessageResponse.hubMessageSent.fromUserId,
             isApproved: true,
-            name: message.fromUser.name,
-            picture: message.fromUser.picture,
+            name: hubMessageResponse.hubMessageSent.fromUser.name,
+            picture: hubMessageResponse.hubMessageSent.fromUser.picture,
           },
         });
         await sleep(2000);
         setNotification({
           shown: false,
-          message: message,
+          message: hubMessageResponse.hubMessageSent,
           talkingTo: {
-            friendBoxId: message.friendBoxId,
-            id: message.fromUserId,
+            friendBoxId: hubMessageResponse.hubMessageSent.friendBoxId,
+            id: hubMessageResponse.hubMessageSent.fromUserId,
             isApproved: true,
-            name: message.fromUser.name,
-            picture: message.fromUser.picture,
+            name: hubMessageResponse.hubMessageSent.fromUser.name,
+            picture: hubMessageResponse.hubMessageSent.fromUser.picture,
           },
         });
       }
