@@ -12,6 +12,7 @@ import { useConnectionContext } from "../Context/ConnectionProvider";
 import { sleep } from "../utils/sleep";
 import { INotification } from "../@types/notificationInterface";
 import { IHubMessageResponse } from "../@types/hubMessageResponse";
+import { IFriendList } from "../@types/friendBoxType";
 
 const ChatPage = () => {
   const [showProfile, setShowProfile] = useState(false);
@@ -27,8 +28,18 @@ const ChatPage = () => {
   useEffect(() => {
     const loginHub = async () => {
       const receiveMessage = async (hubMessageResponse: IHubMessageResponse) => {
-        console.log("RecieveMessage Listening...", hubMessageResponse.hubMessageSent);
+        console.log("RecieveMessage Listening...", hubMessageResponse.friendship);
         ctx?.setMessages((prev) => [...(prev || []), hubMessageResponse.hubMessageSent]);
+
+        ctx?.setFriendList((prev)=> {
+          let friend = prev?.find((f)=>f.id == hubMessageResponse.friendship.id)
+          if(friend){
+            friend.updateTime = hubMessageResponse.friendship.updateTime;
+            return [...(prev || [])]
+          }
+          return prev || []
+        })
+
       };
 
       conCtx?.connection?.on("RecieveMessage", receiveMessage);
@@ -67,7 +78,7 @@ const ChatPage = () => {
             picture: hubMessageResponse.hubMessageSent.fromUser.picture,
           },
         });
-        await sleep(2000);
+        await sleep(1500);
         setNotification({
           shown: false,
           message: hubMessageResponse.hubMessageSent,
@@ -81,7 +92,7 @@ const ChatPage = () => {
         });
       }
     };
-
+    
     conCtx?.connection?.on("RecieveMessage", receiveMessage);
 
     return () => {
@@ -115,7 +126,7 @@ const ChatPage = () => {
         url: "/api/friendboxes/friends",
         token: jwt,
       });
-
+      console.log("FriendsList first Fetch :",friendsData)
       ctx?.setFriendList(friendsData);
     };
 

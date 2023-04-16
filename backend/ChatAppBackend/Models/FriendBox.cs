@@ -11,9 +11,7 @@ namespace ChatAppBackend.Entities
         public int FromUserId { get; set; }
         public int ToUserId { get; set; }
         public DateTime UpdateTime { get; set; }
-
         public bool Approved {get;set;}
-
         public virtual User FromUser { get; set; }
         public virtual User ToUser { get; set; }
 

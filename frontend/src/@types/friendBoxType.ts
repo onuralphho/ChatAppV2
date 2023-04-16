@@ -12,7 +12,7 @@ export interface IFriendList {
     fromUserId: number;
     toUser: FriendUser;
     toUserId: number;
-    updateTime: Date;
+    updateTime: string;
     approved:boolean;
     newMessage?:number ;
 

@@ -73,7 +73,7 @@ namespace ChatAppBackend.Controllers
         [HttpGet("friends")]
         public List<FriendBoxFriendsResponse> GetUserFriendships()
         {
-            //TODO:sadece karşı taraf dönülecek 
+            
             int userId = _jwtService.UserId;
             var friendBoxes = _context.FriendBoxes
          .Include(f => f.FromUser)
@@ -82,7 +82,7 @@ namespace ChatAppBackend.Controllers
          .ToList();
 
    
-            return friendBoxes.Select((friendBox)=> _mapper.Map<FriendBoxFriendsResponse>(friendBox)).ToList(); //DONE
+            return friendBoxes.Select((friendBox)=> _mapper.Map<FriendBoxFriendsResponse>(friendBox)).ToList();
         }
 
         [HttpPut]

@@ -32,7 +32,8 @@ namespace ChatAppBackend.Hubs
         public async Task SendMessage(HubMessageSent hubMessageSent)
         {
 
-            var friendshipdb = await _context.FriendBoxes.FindAsync(hubMessageSent.FriendBoxId);
+            var friendshipdb = _context.FriendBoxes.Include(f => f.FromUser)
+         .Include(f => f.ToUser).FirstOrDefault((f)=> f.Id == hubMessageSent.FriendBoxId);
 
             var friendship = _mapper.Map<FriendBoxFriendsResponse>(friendshipdb);
 

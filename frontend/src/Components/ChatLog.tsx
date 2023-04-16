@@ -46,6 +46,17 @@ const ChatLog = (props: IProps) => {
     });
 
     ctx?.setMessages((prev) => [...(prev || []), res]);
+    let dateNow = new Date
+    ctx?.setFriendList((prev)=> {
+      let friend = prev?.find((f)=>f.id == props.talkingTo.friendBoxId)
+      if(friend){
+        friend.updateTime = dateNow.toISOString();
+        return [...(prev || [])]
+      }
+      return prev || []
+    })
+
+    
 
     console.log("SendMessage invoke", res);
     await conCtx?.connection?.invoke("SendMessage", res);
