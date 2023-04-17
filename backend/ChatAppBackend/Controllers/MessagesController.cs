@@ -13,6 +13,8 @@ using ChatAppBackend.Models.Message.Request;
 using ChatAppBackend.Models.User.Response;
 using AutoMapper;
 using ChatAppBackend.Dto;
+using ChatAppBackend.Models.FriendBox.Response;
+using ChatAppBackend.Helpers;
 
 namespace ChatAppBackend.Controllers
 {
@@ -26,11 +28,14 @@ namespace ChatAppBackend.Controllers
 
         public readonly IMapper _mapper;
 
+        public readonly JwtService _jwtservice;
 
-        public MessagesController(PostgreSqlDbContext context, IMapper mapper)
+
+        public MessagesController(PostgreSqlDbContext context, IMapper mapper, JwtService jwtservice)
         {
             _context = context;
             _mapper = mapper;
+            _jwtservice = jwtservice;
         }
 
         [HttpGet("{friendBoxId}")]
@@ -51,7 +56,7 @@ namespace ChatAppBackend.Controllers
 
 
 
-        [HttpPost("addmessage")] //sent message yapılacak
+        [HttpPost("addmessage")]
         public async Task<MessageSentResponse> AddMessage(MessageSentRequest message)
         {
             var friendship = await _context.FriendBoxes.FindAsync(message.FriendBoxId);
@@ -80,14 +85,37 @@ namespace ChatAppBackend.Controllers
 
             return resMessage;
 
-
-
-
-
-            //DONE
         }
 
+        [HttpGet("read/{friendBoxId}")]
+        public async Task<ActionResult>ReadMessages(int friendBoxId)
+        {
+            var userId = _jwtservice.UserId;
+            var messages = _context.Messages.Where((m)=> m.Friendship.Id == friendBoxId).ToList();
+            
 
 
-    }
+            foreach (var message in messages)
+            {
+                if (message.ToUserId == userId)
+                {
+                    message.IsRead = true;
+
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+
+            return Ok(new
+            {
+                message = "success"
+            });
+        }
+        
+
+        
+            
+
+}
 }

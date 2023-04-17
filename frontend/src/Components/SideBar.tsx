@@ -213,6 +213,8 @@ const SideBar = (props: ISideBarProps) => {
               <li
                 onClick={() => {
                   props.openProfile();
+                  ctx?.setTalkingTo(undefined);
+                  ctx?.setMessages(undefined);
                 }}
                 className="cursor-pointer        "
               >

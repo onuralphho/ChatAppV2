@@ -5,8 +5,6 @@ import { Fetcher } from "../utils/Fetcher";
 import { sleep } from "../utils/sleep";
 import { useAlertContext } from "../Context/AlertProvider";
 import { ITalkingTo } from "../@types/talkingTo";
-import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
-import { useState } from "react";
 
 interface Iprops {
   showMenu: boolean;
@@ -72,21 +70,40 @@ const FriendList = (props: Iprops) => {
       props.openMenu();
 
       ctx?.setTalkingTo(talkingTo);
-      
+
       const res = await Fetcher({
         method: "GET",
         url: "/api/messages/" + talkingTo.friendBoxId,
         token: ctx?.getCookie("jwt"),
       });
-      
+
+      // * Unread Mesaj sıfırlama
+      await Fetcher({
+        method: "GET",
+        url: "/api/messages/read/" + talkingTo.friendBoxId,
+        token: ctx?.getCookie("jwt"),
+      });
+
+      ctx?.setFriendList((prev) => {
+        const updatedFriendList = prev?.map((friendship) => {
+          if (friendship.id === talkingTo?.friendBoxId) {
+            return {
+              ...friendship,
+              unreadMessageCount: 0,
+            };
+          }
+          return friendship;
+        });
+        return updatedFriendList;
+      });
+
       ctx?.setMessages(res);
     }
   };
 
   if (ctx?.friendList) {
     return (
-      <ul className="flex flex-col overflow-y-auto max-h-[500px]">
-        
+      <ul className="flex flex-col overflow-y-auto max-h-[500px] overflow-x-hidden">
         {ctx?.friendList
           ?.sort((a: IFriendList, b: IFriendList) =>
             a.updateTime > b.updateTime ? -1 : 1
@@ -137,11 +154,15 @@ const FriendList = (props: Iprops) => {
                   </span>
                 )}
               </div>
-              {friendBox.newMessage && friendBox.newMessage > 0 && (
+
+              {friendBox.unreadMessageCount > 0 && (
                 <div className="bg-green-500 aspect-square text-xs font-semibold w-5 p-0.5 flex justify-center items-center rounded-full">
-                  <span className="truncate">1</span>
+                  <span className="truncate">
+                    {friendBox.unreadMessageCount}
+                  </span>
                 </div>
               )}
+
               {props.showMenu && !friendBox.approved ? (
                 ctx?.user?.id !== friendBox.fromUser.id ? (
                   <div className="flex gap-2">

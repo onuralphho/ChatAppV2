@@ -37,7 +37,7 @@ const ChatLog = (props: IProps) => {
         picture: ctx?.user?.picture,
       },
     };
-    console.log("before fetch message: ", sendMessagePayload);
+
     const res = await Fetcher({
       method: "POST",
       body: sendMessagePayload,
@@ -46,19 +46,16 @@ const ChatLog = (props: IProps) => {
     });
 
     ctx?.setMessages((prev) => [...(prev || []), res]);
-    let dateNow = new Date
-    ctx?.setFriendList((prev)=> {
-      let friend = prev?.find((f)=>f.id == props.talkingTo.friendBoxId)
-      if(friend){
+    let dateNow = new Date();
+    ctx?.setFriendList((prev) => {
+      let friend = prev?.find((f) => f.id == props.talkingTo.friendBoxId);
+      if (friend) {
         friend.updateTime = dateNow.toISOString();
-        return [...(prev || [])]
+        return [...(prev || [])];
       }
-      return prev || []
-    })
+      return prev || [];
+    });
 
-    
-
-    console.log("SendMessage invoke", res);
     await conCtx?.connection?.invoke("SendMessage", res);
     setCheckerVal(true);
     setMessageInput("");

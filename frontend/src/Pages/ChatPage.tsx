@@ -7,12 +7,12 @@ import SideBar from "../Components/SideBar";
 import ProfileSettings from "../Components/ProfileSettings";
 import Welcome from "../Components/Welcome";
 import Notification from "../Components/Notification";
-import { IMessage } from "../@types/messageType";
 import { useConnectionContext } from "../Context/ConnectionProvider";
 import { sleep } from "../utils/sleep";
 import { INotification } from "../@types/notificationInterface";
 import { IHubMessageResponse } from "../@types/hubMessageResponse";
 import { IFriendList } from "../@types/friendBoxType";
+import { ITalkingTo } from "../@types/talkingTo";
 
 const ChatPage = () => {
   const [showProfile, setShowProfile] = useState(false);
@@ -20,33 +20,47 @@ const ChatPage = () => {
   const [notification, setNotification] = useState<INotification | undefined>(
     undefined
   );
+  const [testTalkingTo, setTestTalkingTo] = useState<ITalkingTo>();
 
   const conCtx = useConnectionContext();
   const ctx = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
+    const receiveMessage = (hubMessageResponse: IHubMessageResponse) => {
+      //! Gelen Mesajın Chati İçindeysek mesajın read yapılması:
+      //!  TalkingTo Undefined geldiği için hangi chatin açık olduğu bilinmiyor
+
+      ctx?.setMessages((prev) => [
+        ...(prev || []),
+        hubMessageResponse.hubMessageSent,
+      ]);
+
+      ctx?.setFriendList((prev) => {
+        let friend = prev?.find(
+          (f) => f.id === hubMessageResponse.friendship.id
+        );
+        if (friend) {
+          friend.updateTime = hubMessageResponse.friendship.updateTime;
+          friend.unreadMessageCount = hubMessageResponse.unreadMessageCount;
+          return [...(prev || [])];
+        }
+        return prev || [];
+      });
+    };
+
+    conCtx?.connection?.on("RecieveMessage", receiveMessage);
+
+    return () => {
+      conCtx?.connection?.off("RecieveMessage", receiveMessage);
+    };
+  }, [ctx?.user]);
+
+  useEffect(() => {
     const loginHub = async () => {
-      const receiveMessage = async (hubMessageResponse: IHubMessageResponse) => {
-        console.log("RecieveMessage Listening...", hubMessageResponse.friendship);
-        ctx?.setMessages((prev) => [...(prev || []), hubMessageResponse.hubMessageSent]);
-
-        ctx?.setFriendList((prev)=> {
-          let friend = prev?.find((f)=>f.id == hubMessageResponse.friendship.id)
-          if(friend){
-            friend.updateTime = hubMessageResponse.friendship.updateTime;
-            return [...(prev || [])]
-          }
-          return prev || []
-        })
-
-      };
-
-      conCtx?.connection?.on("RecieveMessage", receiveMessage);
-
       if (ctx?.user?.id) {
         console.log(
-          "JoinRoom isteği atıldı. Payload",
+          "JoinRoom isteği atildi. Payload",
           ctx?.user?.id.toString()
         );
         await conCtx?.connection?.invoke("JoinRoom", {
@@ -56,17 +70,15 @@ const ChatPage = () => {
     };
 
     loginHub();
-  }, [ctx?.user]);
+  }, [ctx?.user?.id]);
 
   useEffect(() => {
     const receiveMessage = async (hubMessageResponse: IHubMessageResponse) => {
-     
-
       if (
-        (ctx?.talkingTo && ctx.talkingTo.id !== hubMessageResponse.hubMessageSent.fromUserId) ||
+        (ctx?.talkingTo &&
+          ctx.talkingTo.id !== hubMessageResponse.hubMessageSent.fromUserId) ||
         !ctx?.talkingTo
       ) {
-        console.log("TalkingTo:",ctx?.talkingTo);
         setNotification({
           shown: true,
           message: hubMessageResponse.hubMessageSent,
@@ -92,7 +104,7 @@ const ChatPage = () => {
         });
       }
     };
-    
+    setTestTalkingTo(ctx?.talkingTo);
     conCtx?.connection?.on("RecieveMessage", receiveMessage);
 
     return () => {
@@ -126,7 +138,7 @@ const ChatPage = () => {
         url: "/api/friendboxes/friends",
         token: jwt,
       });
-      console.log("FriendsList first Fetch :",friendsData)
+
       ctx?.setFriendList(friendsData);
     };
 
@@ -154,7 +166,7 @@ const ChatPage = () => {
           <div className="flex w-full relative max-w-[1920px] mx-auto lg:rounded-xl  overflow-hidden shadow-lg shadow-[rgba(0,0,0,0.5)]">
             {/* Notification */}
 
-            <Notification notification={notification} />
+            <Notification notification={notification} closeProfile={closeProfile}/>
 
             {/* SideBar */}
             <SideBar openProfile={openProfile} closeProfile={closeProfile} />

@@ -14,6 +14,6 @@ export interface IFriendList {
     toUserId: number;
     updateTime: string;
     approved:boolean;
-    newMessage?:number ;
+    unreadMessageCount: number ;
 
   }

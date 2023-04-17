@@ -6,7 +6,7 @@ import ConnectionProvider from "./Context/ConnectionProvider";
 import ChatPage from "./Pages/ChatPage";
 
 function App() {
-  console.log("App");
+ 
   return (
     <AuthProvider>
       <Routes>

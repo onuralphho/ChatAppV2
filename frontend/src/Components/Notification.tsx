@@ -6,9 +6,10 @@ import { useAuth } from "../Context/AuthProvider";
 import { Fetcher } from "../utils/Fetcher";
 interface Props {
   notification?: INotification;
+  closeProfile: () => void;
 }
 
-const Notification: FC<Props> = ({ notification }) => {
+const Notification: FC<Props> = ({ notification, closeProfile }) => {
   const ctx = useAuth();
   if (!notification) {
     return null;
@@ -33,15 +34,36 @@ const Notification: FC<Props> = ({ notification }) => {
       </div>
       <button
         onClick={async () => {
+          closeProfile();
           ctx?.setTalkingTo(talkingTo);
           const res = await Fetcher({
             method: "GET",
             url: "/api/messages/" + talkingTo?.friendBoxId,
             token: ctx?.getCookie("jwt"),
           });
-          const lastMessage = res.pop();
-          console.log("Notification Fetch İşlemi:", res);
+          res.pop(); // TODO:Pop değiştirilecek.
+          //!(notification butonu ile)  Şuanki haliyle (poplu) mesajın geldiği chat değilde başka bir chat açıksa gelen mesaj messages'a eklenmiyor. tahminen çalışma sarısından kaynaklı pop çalışıp geleni çıkarıyor
+          // ! Eğer başka bir chat yüklü değilse boştaysa chate beklendiği gibi gidiliyor
           ctx?.setMessages(res);
+
+          await Fetcher({
+            method: "GET",
+            url: "/api/messages/read/" + talkingTo?.friendBoxId,
+            token: ctx?.getCookie("jwt"),
+          });
+
+          ctx?.setFriendList((prev) => {
+            const updatedFriendList = prev?.map((friendship) => {
+              if (friendship.id === talkingTo?.friendBoxId) {
+                return {
+                  ...friendship,
+                  unreadMessageCount: 0,
+                };
+              }
+              return friendship;
+            });
+            return updatedFriendList;
+          });
         }}
         className="text-3xl text-white bg-purple-500 px-2 rounded-md hover:scale-105 transition-all py-1"
       >

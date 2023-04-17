@@ -13,6 +13,7 @@ using ChatAppBackend.Models.FriendBox.Request;
 using ChatAppBackend.Helpers;
 using ChatAppBackend.Models.FriendBox.DTO;
 using AutoMapper;
+using ChatAppBackend.Models.Hub;
 
 namespace ChatAppBackend.Controllers
 {
@@ -81,8 +82,21 @@ namespace ChatAppBackend.Controllers
          .Where(f => f.FromUserId == userId || f.ToUserId == userId)
          .ToList();
 
-   
-            return friendBoxes.Select((friendBox)=> _mapper.Map<FriendBoxFriendsResponse>(friendBox)).ToList();
+            var result = new List<FriendBoxFriendsResponse>();
+            foreach (var friendBox in friendBoxes)
+            {
+                int friendBoxId = friendBox.Id;
+
+                int unreadMessageCount = _context.Messages
+                    .Where(m => m.Friendship.Id == friendBoxId && m.ToUserId == userId && !m.IsRead)
+                    .Count();
+
+                var friendBoxResponse = _mapper.Map<FriendBoxFriendsResponse>(friendBox);
+                friendBoxResponse.UnreadMessageCount = unreadMessageCount;
+                result.Add(friendBoxResponse);
+            }
+
+            return result;
         }
 
         [HttpPut]

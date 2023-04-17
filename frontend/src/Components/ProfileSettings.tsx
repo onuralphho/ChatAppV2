@@ -68,8 +68,21 @@ const ProfileSettings = (props: IProfileProps) => {
       token: jwt,
     });
     alertCtx?.setAlert({ shown: true, type: res.success });
+    
+    // ! Profile Update yapıldıgında mesajarda duplicate problemi 
+    //*Çözüldü ChatPage reacieve mesajın oldugu useEffecte CleanUp yazıldı
+    ctx?.setUser((prev) => {
+      if (prev) {
+        return {
+          ...prev,
+          name: res.session.name,
+          picture: res.session.picture,
+          updateTime: res.session.updateTime,
+        };
+      }
+      return prev;
+    });
 
-    ctx?.setUser(res.session);
     await sleep(2000);
     alertCtx?.setAlert({ shown: false, type: res.success });
   };

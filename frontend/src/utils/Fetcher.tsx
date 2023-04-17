@@ -20,6 +20,7 @@ export const Fetcher = async (fetchReq: fetchReq) => {
       body: fetchReq.body !== null ? JSON.stringify(fetchReq.body) : null,
     }
   );
+  
   const data = await response.json();
 
   return data;

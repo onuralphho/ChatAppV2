@@ -26,7 +26,7 @@ interface AuthContextValue {
   >;
   messages?: IMessage[] | undefined;
   setMessages: React.Dispatch<React.SetStateAction<IMessage[] | undefined>>;
-  talkingTo?: ITalkingTo;
+  talkingTo?: ITalkingTo ;
   setTalkingTo: React.Dispatch<React.SetStateAction<ITalkingTo | undefined>>;
 }
 

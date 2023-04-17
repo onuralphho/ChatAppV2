@@ -37,7 +37,7 @@ const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({
         .build();
 
         await newConnection.start();
-        console.log("SignalR connect", newConnection);
+        
 
       setConnection(newConnection);
     };
@@ -45,7 +45,7 @@ const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({
     connect();
 
     return () => {
-      console.log("SignalR disconnect");
+   
       if (connection) {
         connection.off("ReceiveMessage");
         connection.stop();

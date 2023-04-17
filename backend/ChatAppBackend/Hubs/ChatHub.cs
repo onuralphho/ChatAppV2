@@ -37,11 +37,14 @@ namespace ChatAppBackend.Hubs
 
             var friendship = _mapper.Map<FriendBoxFriendsResponse>(friendshipdb);
 
+            int unreadMessageCount = _context.Messages.Where((f)=>f.Friendship.Id == hubMessageSent.FriendBoxId)
+            .Count(m => m.ToUserId == hubMessageSent.ToUserId && !m.IsRead);
 
             var obj = new
             {
                 hubMessageSent,
-                friendship
+                friendship,
+                unreadMessageCount
             };
 
 
