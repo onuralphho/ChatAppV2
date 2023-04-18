@@ -21,7 +21,7 @@ const Notification: FC<Props> = ({ notification, closeProfile }) => {
     <div
       className={`${
         shown ? "translate-y-0" : "-translate-y-20"
-      } flex ease-out duration-500 items-center gap-3 absolute px-4 py-1 w-max   top-2 bg-[#efefef] border-purple-500 border-[2px] shadow-md rounded-lg text-black z-40 m-auto left-0 right-0 `}
+      } flex ease-out duration-500 items-center gap-3 absolute px-4 py-1 w-max   top-2 bg-[#efefef] border-green-500 border-[2px] shadow-md rounded-lg text-black z-40 m-auto left-0 right-0 `}
     >
       <img
         src={message?.fromUser.picture}
@@ -41,9 +41,7 @@ const Notification: FC<Props> = ({ notification, closeProfile }) => {
             url: "/api/messages/" + talkingTo?.friendBoxId,
             token: ctx?.getCookie("jwt"),
           });
-          res.pop(); // TODO:Pop değiştirilecek.
-          //!(notification butonu ile)  Şuanki haliyle (poplu) mesajın geldiği chat değilde başka bir chat açıksa gelen mesaj messages'a eklenmiyor. tahminen çalışma sarısından kaynaklı pop çalışıp geleni çıkarıyor
-          // ! Eğer başka bir chat yüklü değilse boştaysa chate beklendiği gibi gidiliyor
+          
           ctx?.setMessages(res);
 
           await Fetcher({
@@ -65,7 +63,7 @@ const Notification: FC<Props> = ({ notification, closeProfile }) => {
             return updatedFriendList;
           });
         }}
-        className="text-3xl text-white bg-purple-500 px-2 rounded-md hover:scale-105 transition-all py-1"
+        className="text-3xl text-white bg-green-500 px-2 rounded-md hover:scale-105 transition-all py-1"
       >
         <RxCaretRight />
       </button>

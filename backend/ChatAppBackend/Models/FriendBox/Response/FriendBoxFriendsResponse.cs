@@ -10,6 +10,8 @@ public class FriendBoxFriendsResponse
     public DateTime UpdateTime { get; set; }
     public bool Approved { get; set; }
     public int UnreadMessageCount { get; set; }
+    public string LastMessage { get; set; }
+    public string LastMessageFrom { get; set; }
     public FriendBoxUserDTO FromUser { get; set; }
     public FriendBoxUserDTO ToUser { get; set; }
 

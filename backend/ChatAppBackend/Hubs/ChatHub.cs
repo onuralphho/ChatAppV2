@@ -35,6 +35,11 @@ namespace ChatAppBackend.Hubs
             var friendshipdb = _context.FriendBoxes.Include(f => f.FromUser)
          .Include(f => f.ToUser).FirstOrDefault((f)=> f.Id == hubMessageSent.FriendBoxId);
 
+            friendshipdb.LastMessage = hubMessageSent.ContentText;
+            friendshipdb.LastMessageFrom = hubMessageSent.FromUser.Name;
+
+            await _context.SaveChangesAsync();
+
             var friendship = _mapper.Map<FriendBoxFriendsResponse>(friendshipdb);
 
             int unreadMessageCount = _context.Messages.Where((f)=>f.Friendship.Id == hubMessageSent.FriendBoxId)

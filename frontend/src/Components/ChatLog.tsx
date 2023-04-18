@@ -51,6 +51,9 @@ const ChatLog = (props: IProps) => {
       let friend = prev?.find((f) => f.id == props.talkingTo.friendBoxId);
       if (friend) {
         friend.updateTime = dateNow.toISOString();
+        friend.lastMessage = res.contentText;
+        friend.lastMessageFrom = res.fromUser.name;
+
         return [...(prev || [])];
       }
       return prev || [];

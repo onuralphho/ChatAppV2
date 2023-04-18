@@ -22,58 +22,72 @@ const ChatPage = () => {
   );
   const [testTalkingTo, setTestTalkingTo] = useState<ITalkingTo>();
 
+  const notificationAudio = new Audio(
+    "https://assets.mixkit.co/active_storage/sfx/2870/2870-preview.mp3"
+  );
+  notificationAudio.volume = 0.2;
+
+  const messageAudio = new Audio(
+    "https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3"
+  );
+  messageAudio.volume = 0.2;
+
   const conCtx = useConnectionContext();
   const ctx = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const receiveMessage = (hubMessageResponse: IHubMessageResponse) => {
-      //! Gelen Mesajın Chati İçindeysek mesajın read yapılması:
-      //!  TalkingTo Undefined geldiği için hangi chatin açık olduğu bilinmiyor
+    const receiveMessage = async (hubMessageResponse: IHubMessageResponse) => {
+      if (
+        ctx?.talkingTo?.friendBoxId ===
+        hubMessageResponse.hubMessageSent.friendBoxId
+      ) {
+        messageAudio.play();
+        await Fetcher({
+          method: "GET",
+          url: "/api/messages/read/" + ctx.talkingTo?.friendBoxId,
+          token: ctx?.getCookie("jwt"),
+        });
+
+        ctx?.setFriendList((prev) => {
+          const updatedFriendList = prev?.map((friendship) => {
+            if (friendship.id === ctx.talkingTo?.friendBoxId) {
+              return {
+                ...friendship,
+                unreadMessageCount: 0,
+                lastMessage: hubMessageResponse.hubMessageSent.contentText,
+                lastMessageFrom:
+                  hubMessageResponse.hubMessageSent.fromUser.name,
+              };
+            }
+            return friendship;
+          });
+          return updatedFriendList;
+        });
+      } else {
+        notificationAudio.play();
+
+        ctx?.setFriendList((prev) => {
+          let friend = prev?.find(
+            (f) => f.id === hubMessageResponse.friendship.id
+          );
+          if (friend) {
+            friend.updateTime = hubMessageResponse.friendship.updateTime;
+            friend.unreadMessageCount = hubMessageResponse.unreadMessageCount;
+            friend.lastMessage = hubMessageResponse.hubMessageSent.contentText;
+            friend.lastMessageFrom =
+              hubMessageResponse.hubMessageSent.fromUser.name;
+            return [...(prev || [])];
+          }
+          return prev || [];
+        });
+      }
 
       ctx?.setMessages((prev) => [
         ...(prev || []),
         hubMessageResponse.hubMessageSent,
       ]);
 
-      ctx?.setFriendList((prev) => {
-        let friend = prev?.find(
-          (f) => f.id === hubMessageResponse.friendship.id
-        );
-        if (friend) {
-          friend.updateTime = hubMessageResponse.friendship.updateTime;
-          friend.unreadMessageCount = hubMessageResponse.unreadMessageCount;
-          return [...(prev || [])];
-        }
-        return prev || [];
-      });
-    };
-
-    conCtx?.connection?.on("RecieveMessage", receiveMessage);
-
-    return () => {
-      conCtx?.connection?.off("RecieveMessage", receiveMessage);
-    };
-  }, [ctx?.user]);
-
-  useEffect(() => {
-    const loginHub = async () => {
-      if (ctx?.user?.id) {
-        console.log(
-          "JoinRoom isteği atildi. Payload",
-          ctx?.user?.id.toString()
-        );
-        await conCtx?.connection?.invoke("JoinRoom", {
-          UserId: ctx.user?.id.toString(),
-        });
-      }
-    };
-
-    loginHub();
-  }, [ctx?.user?.id]);
-
-  useEffect(() => {
-    const receiveMessage = async (hubMessageResponse: IHubMessageResponse) => {
       if (
         (ctx?.talkingTo &&
           ctx.talkingTo.id !== hubMessageResponse.hubMessageSent.fromUserId) ||
@@ -90,7 +104,8 @@ const ChatPage = () => {
             picture: hubMessageResponse.hubMessageSent.fromUser.picture,
           },
         });
-        await sleep(1500);
+
+        await sleep(2000);
         setNotification({
           shown: false,
           message: hubMessageResponse.hubMessageSent,
@@ -104,13 +119,33 @@ const ChatPage = () => {
         });
       }
     };
-    setTestTalkingTo(ctx?.talkingTo);
-    conCtx?.connection?.on("RecieveMessage", receiveMessage);
 
-    return () => {
-      conCtx?.connection?.off("RecieveMessage", receiveMessage);
-    };
+    const connection = conCtx?.connection;
+
+    if (connection) {
+      connection.on("RecieveMessage", receiveMessage);
+
+      return () => {
+        connection.off("RecieveMessage", receiveMessage);
+      };
+    }
   }, [ctx?.talkingTo, conCtx?.connection]);
+
+  useEffect(() => {
+    const loginHub = async () => {
+      if (ctx?.user?.id) {
+        console.log(
+          "JoinRoom isteği atildi. Payload",
+          ctx?.user?.id.toString()
+        );
+        await conCtx?.connection?.invoke("JoinRoom", {
+          UserId: ctx.user?.id.toString(),
+        });
+      }
+    };
+
+    loginHub();
+  }, [ctx?.user?.id]);
 
   useEffect(() => {
     const getUser = async () => {
@@ -154,34 +189,28 @@ const ChatPage = () => {
 
   if (ctx?.user) {
     return (
-      <>
-        {/* TopBar Temp
-        <div className="bg-green-500 p-2 max-lg:hidden">
-          <ul className="flex justify-between px-4">
-            <li className="text-2xl text-white font-bold">Logo</li>
-          </ul>
-        </div> */}
+      <div className="flex   lg:p-5 lg:px-10   xl:px-20  2xl:px-40   text-white h-full ">
+        <div className="flex w-full relative max-w-[1920px] mx-auto lg:rounded-xl  overflow-hidden shadow-lg shadow-[rgba(0,0,0,0.5)]">
+          {/* Notification */}
 
-        <div className="flex   lg:p-5 lg:px-10   xl:px-20  2xl:px-40   text-white h-full ">
-          <div className="flex w-full relative max-w-[1920px] mx-auto lg:rounded-xl  overflow-hidden shadow-lg shadow-[rgba(0,0,0,0.5)]">
-            {/* Notification */}
+          <Notification
+            notification={notification}
+            closeProfile={closeProfile}
+          />
 
-            <Notification notification={notification} closeProfile={closeProfile}/>
+          {/* SideBar */}
+          <SideBar openProfile={openProfile} closeProfile={closeProfile} />
 
-            {/* SideBar */}
-            <SideBar openProfile={openProfile} closeProfile={closeProfile} />
-
-            {/* ChatLog */}
-            {showProfile ? (
-              <ProfileSettings closeProfile={closeProfile} />
-            ) : ctx.talkingTo && ctx.talkingTo.isApproved ? (
-              <ChatLog talkingTo={ctx.talkingTo} messages={ctx.messages} />
-            ) : (
-              showWelcome && <Welcome />
-            )}
-          </div>
+          {/* ChatLog */}
+          {showProfile ? (
+            <ProfileSettings closeProfile={closeProfile} />
+          ) : ctx.talkingTo && ctx.talkingTo.isApproved ? (
+            <ChatLog talkingTo={ctx.talkingTo} messages={ctx.messages} />
+          ) : (
+            showWelcome && <Welcome />
+          )}
         </div>
-      </>
+      </div>
     );
   } else {
     return (

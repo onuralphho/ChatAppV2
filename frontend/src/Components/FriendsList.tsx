@@ -132,7 +132,7 @@ const FriendList = (props: Iprops) => {
                 });
               }}
               key={friendBox.id}
-              className={`flex  items-center justify-between transition-all hover:bg-neutral-700 rounded-lg p-1 px-2 ${
+              className={`flex relative  items-center justify-between transition-all hover:bg-neutral-700 rounded-lg p-1 px-2 ${
                 friendBox.approved ? "cursor-pointer" : ""
               }`}
             >
@@ -146,22 +146,30 @@ const FriendList = (props: Iprops) => {
                   }
                   alt=""
                 />
+
                 {props.showMenu && (
-                  <span className="truncate select-none ">
-                    {ctx?.user?.id !== friendBox.fromUserId
-                      ? friendBox.fromUser.name
-                      : friendBox.toUser.name}
-                  </span>
+                  <div className="flex flex-col">
+                    <span className="truncate select-none ">
+                      {ctx?.user?.id !== friendBox.fromUserId
+                        ? friendBox.fromUser.name
+                        : friendBox.toUser.name}
+                    </span>
+                    {friendBox.lastMessage && (
+                      <span className="truncate select-none text-sm text-[#979797]">
+                        {friendBox.lastMessageFrom}:{friendBox.lastMessage}
+                      </span>
+                    )}
+                  </div>
                 )}
               </div>
 
-              {friendBox.unreadMessageCount > 0 && (
-                <div className="bg-green-500 aspect-square text-xs font-semibold w-5 p-0.5 flex justify-center items-center rounded-full">
-                  <span className="truncate">
-                    {friendBox.unreadMessageCount}
-                  </span>
-                </div>
-              )}
+              <div
+                className={`bg-green-500 aspect-square scale-0 transition-all  text-xs font-semibold w-5 p-0.5 flex justify-center items-center rounded-full  
+                ${props.showMenu ? "" : "absolute  top-0 right-0"}
+                ${friendBox.unreadMessageCount > 0 ? "scale-100" : ""}`}
+              >
+                <span className="truncate">{friendBox.unreadMessageCount}</span>
+              </div>
 
               {props.showMenu && !friendBox.approved ? (
                 ctx?.user?.id !== friendBox.fromUser.id ? (
