@@ -1,6 +1,6 @@
 import { RiChatSmile3Fill } from "react-icons/ri";
 import { IMessage } from "../@types/messageType";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useAuth } from "../Context/AuthProvider";
 import { ITalkingTo } from "../@types/talkingTo";
 import { Fetcher } from "../utils/Fetcher";
@@ -19,6 +19,11 @@ const ChatLog = (props: IProps) => {
 
   const conCtx = useConnectionContext();
   const ctx = useAuth();
+
+  const messageAudio = new Audio(
+    "https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3"
+  );
+  messageAudio.volume = 0.2;
 
   const messageChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessageInput(e.target.value);
@@ -45,10 +50,12 @@ const ChatLog = (props: IProps) => {
       token: ctx?.getCookie("jwt"),
     });
 
+    messageAudio.play();
+
     ctx?.setMessages((prev) => [...(prev || []), res]);
     let dateNow = new Date();
     ctx?.setFriendList((prev) => {
-      let friend = prev?.find((f) => f.id == props.talkingTo.friendBoxId);
+      let friend = prev?.find((f) => f.id === props.talkingTo.friendBoxId);
       if (friend) {
         friend.updateTime = dateNow.toISOString();
         friend.lastMessage = res.contentText;
@@ -64,7 +71,7 @@ const ChatLog = (props: IProps) => {
     setMessageInput("");
   };
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     if (checkerVal === false) {
       if (messagesEndRef.current) {
         messagesEndRef.current.scrollIntoView({ behavior: "auto" });
@@ -74,11 +81,11 @@ const ChatLog = (props: IProps) => {
         messagesEndRef.current.scrollIntoView({ behavior: "auto" });
       }
     }
-  };
+  }, [checkerVal, messagesEndRef]);
 
   useEffect(() => {
     scrollToBottom();
-  }, [ctx?.messages]);
+  }, [ctx?.messages, scrollToBottom]);
 
   return (
     <div className=" bg-[#363636]    flex-1  flex flex-col  h-full fade-in">
@@ -143,7 +150,7 @@ const ChatLog = (props: IProps) => {
               <div
                 className={`relative flex  rounded-lg mb-3  px-3 py-1 min-h-8 gap-2   w-max    ${
                   ctx?.user && ctx.user.id === message.fromUserId
-                    ? "  bg-green-600 text-[#efefef] "
+                    ? "  bg-green-700 text-[#efefef] "
                     : "  bg-[#efefef] text-black"
                 }   ${
                   props.messages &&
@@ -157,29 +164,56 @@ const ChatLog = (props: IProps) => {
                 <span className="text-lg  break-words whitespace-pre-line max-sm:max-w-[70dvw]  max-w-[450px]  ">
                   {message.contentText}
                 </span>
-                <span
-                  className={`text-xs italic self-end ${
-                    ctx?.user && ctx.user.id === message.fromUserId
-                      ? "text-[#efefef]"
-                      : ""
-                  } `}
-                >
-                  {
-                    message.sentDate
-                      .toLocaleString()
-                      .split("T")[1]
-                      .split(".")[0]
-                      .split(":")[0]
-                  }
-                  :
-                  {
-                    message.sentDate
-                      .toLocaleString()
-                      .split("T")[1]
-                      .split(".")[0]
-                      .split(":")[1]
-                  }
-                </span>
+                <div className="flex items-end gap-1.5 ">
+                  <span
+                    className={`text-xs italic self-end ${
+                      ctx?.user && ctx.user.id === message.fromUserId
+                        ? "text-[#efefef]"
+                        : ""
+                    } `}
+                  >
+                    {
+                      message.sentDate
+                        .toLocaleString()
+                        .split("T")[1]
+                        .split(".")[0]
+                        .split(":")[0]
+                    }
+                    :
+                    {
+                      message.sentDate
+                        .toLocaleString()
+                        .split("T")[1]
+                        .split(".")[0]
+                        .split(":")[1]
+                    }
+                  </span>
+                  <div
+                    className={`${
+                      message.fromUserId !== ctx?.user?.id && "hidden"
+                    } flex w-2 h-4  relative mx-1`}
+                  >
+                    <div
+                      className={`${
+                        message.isRead
+                          ? " border-r-blue-400 border-b-blue-300"
+                          : "border-r-neutral-400 border-b-neutral-300"
+                      } ${
+                        message.fromUserId !== ctx?.user?.id && "hidden"
+                      } absolute  w-1.5 h-4 border-[2.4px] border-t-transparent border-l-transparent  inline-block  rotate-[52deg] -right-[6px] -top-[1px] skew-x-12 `}
+                    ></div>
+                    <div
+                      className={` ${
+                        message.isRead
+                          ? " border-r-blue-400 border-b-blue-300"
+                          : "border-r-neutral-400 border-b-neutral-300"
+                      }
+                      ${
+                        message.fromUserId !== ctx?.user?.id && "hidden"
+                      } border-r-neutral-400 border-b-neutral-300 absolute  w-2 h-4 border-[2.5px] border-t-transparent border-l-transparent -top-[1px]  inline-block skew-x-12  rotate-[52deg]  `}
+                    ></div>
+                  </div>
+                </div>
               </div>
             </div>
           ))}

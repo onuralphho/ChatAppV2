@@ -20,7 +20,6 @@ const ChatPage = () => {
   const [notification, setNotification] = useState<INotification | undefined>(
     undefined
   );
-  const [testTalkingTo, setTestTalkingTo] = useState<ITalkingTo>();
 
   const notificationAudio = new Audio(
     "https://assets.mixkit.co/active_storage/sfx/2870/2870-preview.mp3"
@@ -35,6 +34,42 @@ const ChatPage = () => {
   const conCtx = useConnectionContext();
   const ctx = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const friendRequestListener = async (friendBox: IFriendList) => {
+      ctx?.setFriendList((prev) => [...(prev || []), friendBox]);
+    };
+    const approveFriendListener = async (friendBox: IFriendList) => {
+      console.log(friendBox);
+
+      ctx?.setFriendList((prev) => {
+        if (prev) {
+          const updatedList = prev.map((friend) => {
+            if (friend.id === friendBox.id) {
+              return {
+                ...friend,
+                approved: friendBox.approved,
+              };
+            }
+            return friend;
+          });
+          return updatedList;
+        }
+        return prev;
+      });
+    };
+
+    const connection = conCtx?.connection;
+
+    if (connection) {
+      connection.on("RecieveFriend", friendRequestListener);
+      connection.on("ApproveFriend", approveFriendListener);
+      return () => {
+        connection.off("RecieveFriend", friendRequestListener);
+        connection.off("ApproveFriend", approveFriendListener);
+      };
+    }
+  }, [conCtx?.connection]);
 
   useEffect(() => {
     const receiveMessage = async (hubMessageResponse: IHubMessageResponse) => {

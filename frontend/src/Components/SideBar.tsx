@@ -78,8 +78,14 @@ const SideBar = (props: ISideBarProps) => {
       url: "/api/FriendBoxes/addfriend",
       token: ctx?.getCookie("jwt"),
     });
+
+    conCtx?.connection?.send("FriendRequest",res.addedfriend);
+
     setSearchResult([]);
     setSearchInput("");
+
+    console.log(res);
+
     alertCtx?.setAlert({ shown: true, type: res.message });
     if (res.addedfriend) {
       ctx?.setFriendList((prev) => [...(prev ?? []), res.addedfriend]);

@@ -101,25 +101,25 @@ namespace ChatAppBackend.Controllers
 
         [HttpPut]
         [Route("approve/{friendBoxId}")]
-        public async Task<ActionResult> Update(int friendBoxId)
+        public async Task<FriendBoxFriendsResponse> Update(int friendBoxId)
         {
             Console.WriteLine(friendBoxId);
-            var friendbox = await _context.FriendBoxes.FirstOrDefaultAsync(f => f.Id == friendBoxId);
+            var friendbox = await _context.FriendBoxes
+                .Include(f => f.FromUser)
+                .Include(f => f.ToUser)
+                .FirstOrDefaultAsync(f => f.Id == friendBoxId);
 
 
             if (friendbox == null)
             {
-                return NotFound();
+                return null;
             }
 
             friendbox.Approved = true;
             friendbox.UpdateTime = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
-            return Ok(new
-            {
-                message = "You have a new friend!"
-            });
+            return _mapper.Map<FriendBoxFriendsResponse>(friendbox);
         }
         [HttpDelete]
         [Route("delete/{friendBoxId}")]

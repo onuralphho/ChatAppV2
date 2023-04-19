@@ -5,6 +5,7 @@ import { Fetcher } from "../utils/Fetcher";
 import { sleep } from "../utils/sleep";
 import { useAlertContext } from "../Context/AlertProvider";
 import { ITalkingTo } from "../@types/talkingTo";
+import { useConnectionContext } from "../Context/ConnectionProvider";
 
 interface Iprops {
   showMenu: boolean;
@@ -15,6 +16,7 @@ interface Iprops {
 const FriendList = (props: Iprops) => {
   const ctx = useAuth();
   const alertCtx = useAlertContext();
+  const conCtx = useConnectionContext();
 
   const approveFriendRequestHandler = async (
     e: React.MouseEvent<HTMLButtonElement>,
@@ -27,6 +29,8 @@ const FriendList = (props: Iprops) => {
       url: "/api/friendboxes/approve/" + id,
       token: ctx?.getCookie("jwt"),
     });
+
+    conCtx?.connection?.send("ApproveFriend", res);
 
     ctx?.setFriendList((prev) => {
       if (!prev) return prev;
@@ -96,7 +100,6 @@ const FriendList = (props: Iprops) => {
         });
         return updatedFriendList;
       });
-
       ctx?.setMessages(res);
     }
   };

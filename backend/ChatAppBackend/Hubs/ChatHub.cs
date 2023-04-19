@@ -2,6 +2,7 @@
 using ChatAppBackend.Context;
 using ChatAppBackend.Entities;
 using ChatAppBackend.Models;
+using ChatAppBackend.Models.FriendBox.Request;
 using ChatAppBackend.Models.FriendBox.Response;
 using ChatAppBackend.Models.Hub;
 using ChatAppBackend.Models.Message.Request;
@@ -28,8 +29,24 @@ namespace ChatAppBackend.Hubs
             await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.UserId);
         }
 
+        public async Task FriendRequest(FriendBoxFriendsResponse friendBox)
+        {
 
-        public async Task SendMessage(HubMessageSent hubMessageSent)
+            await Clients.Group(friendBox.ToUserId.ToString()).SendAsync("RecieveFriend", friendBox);
+      
+
+        }
+
+        public async Task ApproveFriend(FriendBoxFriendsResponse friendBox)
+        {
+
+
+            await Clients.Group(friendBox.FromUserId.ToString()).SendAsync("ApproveFriend", friendBox);
+
+        }
+
+
+            public async Task SendMessage(HubMessageSent hubMessageSent)
         {
 
             var friendshipdb = _context.FriendBoxes.Include(f => f.FromUser)

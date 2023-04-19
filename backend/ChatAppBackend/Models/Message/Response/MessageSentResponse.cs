@@ -15,7 +15,9 @@ namespace ChatAppBackend.Models.Message.Response
         public int ToUserId { get; set; }
 
         public int FriendBoxId { get; set; }
+        public bool IsRead { get; set; } = false;
 
+        public bool IsDeleted { get; set; } = false;
         public UpdateUserDto FromUser { get; set; }
                
     }

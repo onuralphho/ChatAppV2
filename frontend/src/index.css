@@ -128,7 +128,7 @@
   bottom: 0;
   border-style: solid;
   border-width: 15px 0 0 15px;
-  border-color: transparent transparent transparent #16a34a;
+  border-color: transparent transparent transparent rgb(21 128 61);
 }
 
 .left-tri::before{
