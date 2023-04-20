@@ -181,8 +181,8 @@ const SideBar = (props: ISideBarProps) => {
             showMenu ? "lg:pl-8 " : "lg:pl-6  aspect-square"
           }px-10 border-green-400 text-green-500 text-xl focus-within:border-purple-500 cursor-pointer  rounded-full`}
         >
-          <div className="absolute left-2.5 top-2.5 ">
-            <BiSearchAlt className="w-full h-full" />
+          <div className="absolute left-2.5 top-2.5 w-5">
+            <BiSearchAlt size={20} className="w-full h-full" />
           </div>
           <button
             onClick={(e) => {
