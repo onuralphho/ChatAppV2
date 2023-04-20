@@ -7,9 +7,14 @@ import { Fetcher } from "../utils/Fetcher";
 interface Props {
   notification?: INotification;
   closeProfile: () => void;
+  closeWelcome: () => void;
 }
 
-const Notification: FC<Props> = ({ notification, closeProfile }) => {
+const Notification: FC<Props> = ({
+  notification,
+  closeProfile,
+  closeWelcome,
+}) => {
   const ctx = useAuth();
   if (!notification) {
     return null;
@@ -35,13 +40,14 @@ const Notification: FC<Props> = ({ notification, closeProfile }) => {
       <button
         onClick={async () => {
           closeProfile();
+          closeWelcome();
           ctx?.setTalkingTo(talkingTo);
           const res = await Fetcher({
             method: "GET",
             url: "/api/messages/" + talkingTo?.friendBoxId,
             token: ctx?.getCookie("jwt"),
           });
-          
+
           ctx?.setMessages(res);
 
           await Fetcher({

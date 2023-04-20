@@ -6,19 +6,20 @@ import ConnectionProvider from "./Context/ConnectionProvider";
 import ChatPage from "./Pages/ChatPage";
 
 function App() {
-  
   return (
     <AuthProvider>
       <Routes>
         <Route index path="/" element={<AuthPage />} />
-
-
-
-          
-          <Route path="/chats">
-            <Route path="" element={<ConnectionProvider><ChatPage /></ConnectionProvider>} />
-          </Route>
-        
+        <Route path="/chats">
+          <Route
+            path=""
+            element={
+              <ConnectionProvider>
+                <ChatPage />
+              </ConnectionProvider>
+            }
+          />
+        </Route>
       </Routes>
     </AuthProvider>
   );
