@@ -1,11 +1,12 @@
-import FriendsList from "../Components/FriendsList";
 import { AiFillCaretRight, AiFillPlusCircle, AiFillHome } from "react-icons/ai";
+import { BiSearchAlt } from "react-icons/bi";
+import { IoCloseCircleOutline } from "react-icons/io5";
 import { useState } from "react";
+import FriendsList from "../Components/FriendsList";
 import { useAuth } from "../Context/AuthProvider";
 import Modal from "./Modal";
 import { useNavigate } from "react-router-dom";
 import { IoSettingsSharp, IoLogOutOutline } from "react-icons/io5";
-import { BiSearchAlt } from "react-icons/bi";
 import AlertBox from "./AlertBox";
 import { Fetcher } from "../utils/Fetcher";
 import { useAlertContext } from "../Context/AlertProvider";
@@ -16,7 +17,7 @@ interface ISideBarProps {
   openProfile: Function;
   closeProfile: Function;
   openWelcome: Function;
-  closeWelcome:Function;
+  closeWelcome: Function;
 }
 
 interface ISearchResult {
@@ -100,6 +101,15 @@ const SideBar = (props: ISideBarProps) => {
 
   return (
     <>
+      {searchResult.length > 0 && (
+        <div
+          onClick={() => {
+            setSearchResult([]);
+            setSearchInput("");
+          }}
+          className="absolute w-[100vw] h-[100vh] max-lg:hidden bg-black z-30 opacity-30 cursor-pointer"
+        ></div>
+      )}
       <AlertBox
         message={alertCtx?.alert.type}
         isShown={alertCtx?.alert.shown}
@@ -136,7 +146,7 @@ const SideBar = (props: ISideBarProps) => {
       )}
 
       <div
-        className={` p-2  bg-[#252525] z-[2] transition-all relative overflow-hidden  w-64  ${
+        className={` p-2  bg-[#252525] max-lg:z-20 transition-all relative overflow-hidden  w-64  ${
           !!showMenu ? "lg:w-80" : "lg:w-[4.5rem]"
         }  gap-6 flex flex-col  ${
           showMenu ? "max-lg:translate-0" : "max-lg:-translate-x-64"
@@ -160,19 +170,32 @@ const SideBar = (props: ISideBarProps) => {
           </div>
         </div>
 
-        {/* Search Bar */}
+        {/* //! Search Bar */}
+
         <label
           onClick={() => {
             setShowMenu(true);
           }}
           htmlFor="search"
-          className={`relative border py-1 ml-2 ${
-            showMenu ? "lg:pl-8 " : "lg:pl-6 mr-2 aspect-square"
-          }pl-9 border-green-400 text-green-500 text-xl focus-within:border-purple-500 cursor-pointer pr-4 rounded-full`}
+          className={`relative border py-1 mx-1 h-10 ${
+            showMenu ? "lg:pl-8 " : "lg:pl-6  aspect-square"
+          }px-10 border-green-400 text-green-500 text-xl focus-within:border-purple-500 cursor-pointer  rounded-full`}
         >
-          <div className="absolute left-2 top-2 ">
+          <div className="absolute left-2.5 top-2.5 ">
             <BiSearchAlt className="w-full h-full" />
           </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setSearchInput("");
+              setSearchResult([]);
+            }}
+            className={`${
+              showMenu ? "" : "hidden"
+            } ${searchInput.length<3 &&'hidden'} absolute right-2 top-2 text-red-600 `}
+          >
+            <IoCloseCircleOutline size={25} />
+          </button>
           <input
             id="search"
             onChange={searchHandler}
@@ -183,38 +206,40 @@ const SideBar = (props: ISideBarProps) => {
           <div
             className={`${
               searchResult.length > 0 ? "p-1" : ""
-            } bg-purple-600 z-20  transition-all flex flex-col  overflow-hidden absolute left-0 top-11 w-full  `}
+            } bg-purple-600 z-30  transition-all flex flex-col  overflow-hidden absolute left-0 top-11 w-full rounded-md  `}
           >
-            {searchResult.map((item: ISearchResult) =>
-              item.id !== ctx?.user?.id ? (
-                <div
-                  key={item.id}
-                  className=" hover:bg-[#363636]   select-none p-2 flex  justify-between items-center gap-2 bg-[#252525]"
-                >
-                  <div className="flex gap-2">
-                    <img
-                      src={item.picture}
-                      alt=""
-                      className="h-10 rounded-full"
+            <div className="rounded-md overflow-hidden">
+              {searchResult.map((item: ISearchResult) =>
+                item.id !== ctx?.user?.id ? (
+                  <div
+                    key={item.id}
+                    className=" hover:bg-[#363636] cursor-default   select-none p-2 flex  justify-between items-center gap-2 bg-[#252525]"
+                  >
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={item.picture}
+                        alt=""
+                        className="h-10 rounded-full"
+                      />
+                      <span className="text-white">{item.name}</span>
+                    </div>
+                    <AiFillPlusCircle
+                      onClick={() => {
+                        addFriendHandler(item.id);
+                      }}
+                      className="cursor-pointer"
                     />
-                    <span className="text-white">{item.name}</span>
                   </div>
-                  <AiFillPlusCircle
-                    onClick={() => {
-                      addFriendHandler(item.id);
-                    }}
-                    className="cursor-pointer"
-                  />
-                </div>
-              ) : null
-            )}
+                ) : null
+              )}
+            </div>
           </div>
         </label>
         {/* FRIEND LIST */}
         <FriendsList
           showMenu={showMenu}
           openMenu={openSideBar}
-          closeWelcome ={props.closeWelcome}
+          closeWelcome={props.closeWelcome}
           closeProfile={props.closeProfile}
         />
         {/* Bottom menu */}
