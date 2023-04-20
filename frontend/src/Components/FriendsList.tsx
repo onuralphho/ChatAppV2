@@ -160,7 +160,7 @@ const FriendList = (props: Iprops) => {
                         : friendBox.toUser.name}
                     </span>
                     {friendBox.lastMessage && (
-                      <span className="truncate w-56 select-none text-sm text-[#979797]">
+                      <span className="truncate w-40 lg:w-56 select-none text-sm text-[#979797]">
                         {friendBox.lastMessageFrom}:{friendBox.lastMessage}
                       </span>
                     )}

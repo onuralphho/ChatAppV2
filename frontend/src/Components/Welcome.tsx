@@ -7,14 +7,14 @@ const Welcome = (props: any) => {
 
   return (
     <div className="bg-[#363636] flex-1 h-full fade-in">
-      <div className="h-full flex flex-col justify-around items-center gap-4 ">
+      <div className="h-full flex flex-col justify-around items-center gap-4 px-2 ">
         <span>
           <span className="text-6xl"> Welcome</span>{" "}
           <span className="text-5xl salute">👋</span>
         </span>
         <div className="flex flex-col ">
           <h2>Last Chats</h2>
-          <div className="flex gap-2">
+          <div className="flex gap-2 ">
             {ctx?.friendList &&
               ctx.friendList.slice(0, 2).map((friendlist: IFriendList) => (
                 <div
@@ -65,7 +65,7 @@ const Welcome = (props: any) => {
                       return updatedFriendList;
                     });
                   }}
-                  className="flex gap-2 w-48 bg-neutral-600 px-2 py-2 rounded-md hover:bg-neutral-400 transition-all cursor-pointer"
+                  className="flex gap-2  bg-neutral-600 px-2 py-2 rounded-md hover:bg-neutral-400 transition-all cursor-pointer"
                 >
                   <img
                     src={
@@ -82,7 +82,7 @@ const Welcome = (props: any) => {
                         ? friendlist.toUser.name
                         : friendlist.fromUser.name}
                     </span>
-                    <span className="text-xs opacity-75 truncate w-32">
+                    <span className="text-xs opacity-75 truncate w-28">
                       {friendlist.lastMessage &&
                         friendlist.lastMessageFrom +
                           ":" +
