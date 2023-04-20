@@ -105,7 +105,7 @@ var app = builder.Build();
 
 
 app.UseCors(options => options
-    .WithOrigins("http://localhost:3000") 
+    .WithOrigins("https://soprahchat.onrender.com") 
     .AllowAnyHeader()
     .AllowAnyMethod()
     .AllowCredentials()
