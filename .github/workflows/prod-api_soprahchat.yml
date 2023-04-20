@@ -8,7 +8,11 @@ on:
     branches:
       - prod-api
   workflow_dispatch:
-
+  
+defaults:
+  run:
+    working-directory: ./backend
+  
 jobs:
   build:
     runs-on: windows-latest
