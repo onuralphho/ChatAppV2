@@ -8,6 +8,7 @@ import AlertBox from "./AlertBox";
 
 interface IProfileProps {
   closeProfile: Function;
+  openWelcome: Function;
 }
 
 const DROPDOWN_DATA = [
@@ -68,9 +69,7 @@ const ProfileSettings = (props: IProfileProps) => {
       token: jwt,
     });
     alertCtx?.setAlert({ shown: true, type: res.success });
-    
-    // ! Profile Update yapıldıgında mesajarda duplicate problemi 
-    //*Çözüldü ChatPage reacieve mesajın oldugu useEffecte CleanUp yazıldı
+
     ctx?.setUser((prev) => {
       if (prev) {
         return {
@@ -84,7 +83,7 @@ const ProfileSettings = (props: IProfileProps) => {
     });
 
     await sleep(2000);
-    alertCtx?.setAlert({ shown: false, type: res.success });
+    alertCtx?.setAlert({ shown: true, type: res.success });
   };
 
   return (
@@ -101,6 +100,7 @@ const ProfileSettings = (props: IProfileProps) => {
               className=" "
               onClick={() => {
                 props.closeProfile();
+                props.openWelcome();
               }}
             >
               <BiArrowBack size={40} className="text-red-500" />

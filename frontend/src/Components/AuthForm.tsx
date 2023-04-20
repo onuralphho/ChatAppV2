@@ -85,7 +85,7 @@ const AuthForm = (props: any) => {
       className="demo_wrapper rounded-xl w-max h-max px-10 py-5 pb-7 flex flex-col gap-5 bg-stone-800"
     >
       <h2 className="text-xl md:text-3xl font-bold text-green-300">
-        Welcome to Chatapp
+        Welcome to SoChat
         <span className="text-4xl md:text-5xl animate-pulse text-purple-500 ">
           v.2
         </span>

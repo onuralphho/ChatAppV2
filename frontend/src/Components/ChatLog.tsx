@@ -1,4 +1,6 @@
 import { RiChatSmile3Fill } from "react-icons/ri";
+import { HiPaperAirplane } from "react-icons/hi2";
+import {FiPaperclip} from "react-icons/fi"
 import { IMessage } from "../@types/messageType";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useAuth } from "../Context/AuthProvider";
@@ -222,23 +224,26 @@ const ChatLog = (props: IProps) => {
 
       <form
         onSubmit={sendMessageHandler}
-        className=" relative  bg-white h-12 border-t-4  focus-within:border-green-600 "
+        className=" p-1 px-1 h-12 flex gap-2 items-center"
       >
-        <div className="relative flex pl-2 h-full items-center  gap-2">
+        <button type="button" className="text-xl">
+          <FiPaperclip/>
+        </button>
+        <div className=" flex flex-1 px-2 h-full items-center  gap-2 bg-white rounded-lg ">
           <RiChatSmile3Fill size={20} className=" text-green-500" />
           <input
             type="text"
             onChange={messageChangeHandler}
             value={messageInput}
             placeholder="Say Hi!"
-            className="bg-transparent text-black w-full outline-none  "
+            className="bg-transparent  resize-none text-black w-full outline-none  "
           />
           <button
             type={"submit"}
             disabled={messageInput.length === 0 ? true : false}
-            className="disabled:bg-neutral-400 bg-green-500 h-full px-4 text-white font-semibold text-xl"
+            className="disabled:bg-neutral-400  bg-green-500 px-4 py-1 rounded-md text-white font-semibold text-2xl"
           >
-            Send
+            <HiPaperAirplane />
           </button>
         </div>
       </form>

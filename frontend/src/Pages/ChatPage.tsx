@@ -220,6 +220,16 @@ const ChatPage = () => {
   };
   const openProfile = () => {
     setShowProfile(true);
+    setShowWelcome(false);
+  };
+
+  const closeWelcome = () => {
+    setShowWelcome(false);
+  };
+
+  const openWelcome = () => {
+    setShowWelcome(true);
+    setShowProfile(false);
   };
 
   if (ctx?.user) {
@@ -231,19 +241,25 @@ const ChatPage = () => {
           <Notification
             notification={notification}
             closeProfile={closeProfile}
+            closeWelcome={closeWelcome}
           />
 
           {/* SideBar */}
-          <SideBar openProfile={openProfile} closeProfile={closeProfile} />
+          <SideBar
+            openProfile={openProfile}
+            closeProfile={closeProfile}
+            openWelcome={openWelcome}
+            closeWelcome={closeWelcome}
+          />
 
           {/* ChatLog */}
           {showProfile ? (
-            <ProfileSettings closeProfile={closeProfile} />
+            <ProfileSettings closeProfile={closeProfile} openWelcome={openWelcome} />
+          ) : showWelcome ? (
+            <Welcome  closeWelcome={closeWelcome}/>
           ) : ctx.talkingTo && ctx.talkingTo.isApproved ? (
             <ChatLog talkingTo={ctx.talkingTo} messages={ctx.messages} />
-          ) : (
-            showWelcome && <Welcome />
-          )}
+          ) : null}
         </div>
       </div>
     );
