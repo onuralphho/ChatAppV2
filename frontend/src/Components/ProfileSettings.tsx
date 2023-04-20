@@ -1,4 +1,4 @@
-import { BiArrowBack } from "react-icons/bi";
+import { HiArrowUturnLeft } from "react-icons/hi2";
 import { useAuth } from "../Context/AuthProvider";
 import React, { useState } from "react";
 import { Fetcher } from "../utils/Fetcher";
@@ -8,6 +8,7 @@ import AlertBox from "./AlertBox";
 
 interface IProfileProps {
   closeProfile: Function;
+  openWelcome: Function;
 }
 
 const DROPDOWN_DATA = [
@@ -68,9 +69,7 @@ const ProfileSettings = (props: IProfileProps) => {
       token: jwt,
     });
     alertCtx?.setAlert({ shown: true, type: res.success });
-    
-    // ! Profile Update yapıldıgında mesajarda duplicate problemi 
-    //*Çözüldü ChatPage reacieve mesajın oldugu useEffecte CleanUp yazıldı
+
     ctx?.setUser((prev) => {
       if (prev) {
         return {
@@ -84,7 +83,7 @@ const ProfileSettings = (props: IProfileProps) => {
     });
 
     await sleep(2000);
-    alertCtx?.setAlert({ shown: false, type: res.success });
+    alertCtx?.setAlert({ shown: true, type: res.success });
   };
 
   return (
@@ -95,15 +94,16 @@ const ProfileSettings = (props: IProfileProps) => {
         closeBox={alertCtx?.setAlert}
       />
       <div className="bg-[#363636] flex-1   h-full fade-in">
-        <div className="flex flex-col h-full">
-          <div className="flex py-2 px-10  items-center">
+        <div className="mt-12 flex flex-col h-full">
+          <div className="flex py-2 px-2  items-center">
             <button
-              className=" "
+              className="bg-green-500 px-2 rounded-md absolute bottom-2 lg:hidden "
               onClick={() => {
                 props.closeProfile();
+                props.openWelcome();
               }}
             >
-              <BiArrowBack size={40} className="text-red-500" />
+              <HiArrowUturnLeft size={35} className="" />
             </button>
           </div>
           <div className="mx-4">

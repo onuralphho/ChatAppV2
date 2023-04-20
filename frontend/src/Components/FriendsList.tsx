@@ -11,6 +11,7 @@ interface Iprops {
   showMenu: boolean;
   openMenu: Function;
   closeProfile: Function;
+  closeWelcome:Function
 }
 
 const FriendList = (props: Iprops) => {
@@ -114,6 +115,7 @@ const FriendList = (props: Iprops) => {
           .map((friendBox: IFriendList) => (
             <li
               onClick={() => {
+                props.closeWelcome();
                 if (!friendBox.approved) {
                   return;
                 }
@@ -135,7 +137,7 @@ const FriendList = (props: Iprops) => {
                 });
               }}
               key={friendBox.id}
-              className={`flex relative  items-center justify-between transition-all hover:bg-neutral-700 rounded-lg p-1 px-2 ${
+              className={`flex relative h-14  items-center justify-between transition-all hover:bg-neutral-700 rounded-lg p-1 px-2 ${
                 friendBox.approved ? "cursor-pointer" : ""
               }`}
             >
@@ -158,7 +160,7 @@ const FriendList = (props: Iprops) => {
                         : friendBox.toUser.name}
                     </span>
                     {friendBox.lastMessage && (
-                      <span className="truncate select-none text-sm text-[#979797]">
+                      <span className="truncate w-40 lg:w-56 select-none text-sm text-[#979797]">
                         {friendBox.lastMessageFrom}:{friendBox.lastMessage}
                       </span>
                     )}
