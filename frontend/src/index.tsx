@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import Layout from "./Layout/Layout";
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 import AlertProvider from "./Context/AlertProvider";
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -12,13 +12,13 @@ const root = ReactDOM.createRoot(
 
 root.render(
   
-    <BrowserRouter>
+    <HashRouter>
       <AlertProvider>
         <Layout>
           <App />
         </Layout>
       </AlertProvider>
-    </BrowserRouter>
+    </HashRouter>
   
 );
 
