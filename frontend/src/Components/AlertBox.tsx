@@ -1,5 +1,4 @@
-import { TiTick } from "react-icons/ti";
-import { GiCancel } from "react-icons/gi";
+
 const AlertBox = (props: any) => {
   return (
     <div
@@ -14,7 +13,6 @@ const AlertBox = (props: any) => {
     >
       <div className="flex gap-1 items-center text-2xl  ">
         {props.message}
-        {/* <TiTick /> */}
       </div>
     </div>
   );

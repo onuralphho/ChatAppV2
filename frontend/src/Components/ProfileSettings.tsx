@@ -83,7 +83,7 @@ const ProfileSettings = (props: IProfileProps) => {
     });
 
     await sleep(2000);
-    alertCtx?.setAlert({ shown: true, type: res.success });
+    alertCtx?.setAlert({ shown: false, type: res.success });
   };
 
   return (
