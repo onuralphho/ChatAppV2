@@ -12,8 +12,9 @@ import { sleep } from "../utils/sleep";
 import { INotification } from "../@types/notificationInterface";
 import { IHubMessageResponse } from "../@types/hubMessageResponse";
 import { IFriendList } from "../@types/friendBoxType";
-
+import { TabTitle } from "../utils/TabTitle";
 const ChatPage = () => {
+  
   const [showProfile, setShowProfile] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
   const [notification, setNotification] = useState<INotification | undefined>(
@@ -116,12 +117,13 @@ const ChatPage = () => {
           return prev || [];
         });
       }
-
+      
       ctx?.setMessages((prev) => [
         ...(prev || []),
         hubMessageResponse.hubMessageSent,
       ]);
-
+      
+      
       if (
         (ctx?.talkingTo &&
           ctx.talkingTo.id !== hubMessageResponse.hubMessageSent.fromUserId) ||
@@ -152,6 +154,9 @@ const ChatPage = () => {
           },
         });
       }
+      TabTitle("New Message: "+hubMessageResponse.hubMessageSent.fromUser.name)
+      await sleep(3000)
+      TabTitle("Soprah Chat")
     };
 
     const connection = conCtx?.connection;
