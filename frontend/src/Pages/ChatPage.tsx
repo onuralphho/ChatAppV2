@@ -180,7 +180,7 @@ const ChatPage = () => {
     };
 
     loginHub();
-  }, [ctx?.user?.id]);
+  }, [ctx?.user?.id,conCtx?.connection]);
 
   useEffect(() => {
     const getUser = async () => {
