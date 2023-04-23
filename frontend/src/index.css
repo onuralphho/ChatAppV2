@@ -197,9 +197,18 @@
   }
 }
 
+.chat_loader {
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  z-index: 1;
+}
+
 
 .chat_loader::before {
   content: " ";
+  z-index: 2;
   position: absolute;
   width: 70px;
   aspect-ratio: 1;
