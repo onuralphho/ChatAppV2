@@ -11,7 +11,7 @@ interface Iprops {
   showMenu: boolean;
   openMenu: Function;
   closeProfile: Function;
-  closeWelcome:Function
+  closeWelcome: Function;
 }
 
 const FriendList = (props: Iprops) => {
@@ -70,6 +70,13 @@ const FriendList = (props: Iprops) => {
   };
 
   const loadChatLogHandler = async (talkingTo: ITalkingTo) => {
+    
+    //TODO: açık olan chate tekrar açma isteği gönderilmesi engellenecek
+
+    if (talkingTo.id !== ctx?.talkingTo?.id) {
+      ctx?.setMessages(undefined);
+    }
+
     if (talkingTo.isApproved) {
       props.closeProfile();
       props.openMenu();
