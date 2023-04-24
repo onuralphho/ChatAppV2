@@ -89,8 +89,6 @@ const SideBar = (props: ISideBarProps) => {
     setSearchResult([]);
     setSearchInput("");
 
-    
-
     alertCtx?.setAlert({ shown: true, type: res.message });
     if (res.addedfriend) {
       ctx?.setFriendList((prev) => [...(prev ?? []), res.addedfriend]);
@@ -190,9 +188,9 @@ const SideBar = (props: ISideBarProps) => {
               setSearchInput("");
               setSearchResult([]);
             }}
-            className={`${
-              showMenu ? "" : "hidden"
-            } ${searchInput.length<3 &&'hidden'} absolute right-2 top-2 text-red-600 `}
+            className={`${showMenu ? "" : "hidden"} ${
+              searchInput.length < 3 && "hidden"
+            } absolute right-2 top-2 text-red-600 `}
           >
             <IoCloseCircleOutline size={25} />
           </button>
@@ -259,6 +257,8 @@ const SideBar = (props: ISideBarProps) => {
               <li
                 onClick={() => {
                   props.openWelcome();
+                  ctx?.setTalkingTo(undefined);
+                  ctx?.setMessages(undefined);
                 }}
                 className="cursor-pointer hover:bg-neutral-700 p-2 rounded-md"
               >
