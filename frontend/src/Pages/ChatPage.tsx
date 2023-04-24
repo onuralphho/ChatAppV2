@@ -257,7 +257,7 @@ const ChatPage = () => {
             <ProfileSettings closeProfile={closeProfile} openWelcome={openWelcome} />
           ) : showWelcome ? (
             <Welcome  closeWelcome={closeWelcome}/>
-          ) : ctx.talkingTo && ctx.talkingTo.isApproved ? (
+          ) : ctx?.talkingTo && ctx.talkingTo.isApproved ? (
             <ChatLog talkingTo={ctx.talkingTo} messages={ctx.messages} />
           ) : null}
         </div>
@@ -265,11 +265,17 @@ const ChatPage = () => {
     );
   } else {
     return (
+    
       <div className="flex lg:p-5 lg:px-10  xl:px-20  2xl:px-40   text-white h-full ">
         <div
           className={`flex  w-full max-w-[1920px] mx-auto lg:rounded-xl overflow-hidden shadow-lg shadow-[rgba(0,0,0,0.5)]`}
         >
-          <div
+          <div className="bg-[#252525] h-full w-full flex flex-col gap-2 justify-center items-center">
+            <span className="text-xl font-semibold">Your Chats are Loading...</span>
+            <div className="progress-bar"></div>
+            
+          </div>
+          {/* <div
             className={` p-2  bg-[#252525]  overflow-hidden relative  w-64 `}
           >
             <ul className="flex flex-col gap-1 ">
@@ -339,7 +345,7 @@ const ChatPage = () => {
               <span className="w-7 bg-green-500"></span>
               <span className="w-7 bg-green-500"></span>
             </span>
-          </div>
+          </div> */}
         </div>
       </div>
     );
