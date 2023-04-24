@@ -64,9 +64,9 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     // localStorage.removeItem("session");
     document.cookie = "jwt=;" + 0 + ";path=/";
     const res = await Fetcher({
-      body: null,
-      method: "POST",
+      method: "GET",
       url: "/api/authentication/logout",
+      token:getCookie('jwt')
     });
     return res;
   };
