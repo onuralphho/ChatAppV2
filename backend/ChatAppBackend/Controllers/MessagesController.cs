@@ -15,6 +15,7 @@ using AutoMapper;
 using ChatAppBackend.Dto;
 using ChatAppBackend.Models.FriendBox.Response;
 using ChatAppBackend.Helpers;
+using ChatAppBackend.Services;
 
 namespace ChatAppBackend.Controllers
 {
@@ -24,88 +25,37 @@ namespace ChatAppBackend.Controllers
     [Authorize]
     public class MessagesController : Controller
     {
-        private readonly PostgreSqlDbContext _context;
+       
+        public readonly IMessageService _messageservice;
 
-        public readonly IMapper _mapper;
-
-        public readonly JwtService _jwtservice;
-
-
-        public MessagesController(PostgreSqlDbContext context, IMapper mapper, JwtService jwtservice)
+        public MessagesController( IMessageService messageService)
         {
-            _context = context;
-            _mapper = mapper;
-            _jwtservice = jwtservice;
+        
+            
+            _messageservice = messageService;
         }
-
+        
         [HttpGet("{friendBoxId}")]
-        public async Task<List<MessageSentResponse>> Messages(int friendBoxId)
+        public Task<List<MessageSentResponse>> Messages(int friendBoxId)
         {
-            var messages = await _context.Messages
-                .Include(m => m.Friendship)
-                .Where(m => m.Friendship.Id == friendBoxId)
-                .ToListAsync();
-
-            return messages.Select((message) =>
-            {
-                var messageSentResponse = _mapper.Map<MessageSentResponse>(message);
-                messageSentResponse.FriendBoxId = message.Friendship.Id;
-                return messageSentResponse;
-            }).ToList();
+           return  _messageservice.GetMessages(friendBoxId);
         }
 
 
 
         [HttpPost("addmessage")]
-        public async Task<MessageSentResponse> AddMessage(MessageSentRequest message)
+        public Task<MessageSentResponse> AddMessage(MessageSentRequest message)
         {
-            var friendship = await _context.FriendBoxes.FindAsync(message.FriendBoxId);
 
-            friendship.UpdateTime = DateTime.UtcNow;
-
-            var newMessage = new Message
-            {
-                ContentText = message.ContentText,
-                SentDate = DateTime.UtcNow,
-                FromUserId = message.FromUserId,
-                ToUserId = message.ToUserId,
-                Friendship = friendship,
-
-            };
-
-
-            _context.Add(newMessage);
-            await _context.SaveChangesAsync();
-
-
-
-            var resMessage = _mapper.Map<MessageSentResponse>(newMessage);
-            resMessage.FriendBoxId = message.FriendBoxId;
-            resMessage.FromUser = message.FromUser;
-
-            return resMessage;
+            return  _messageservice.AddMessage(message);
 
         }
 
         [HttpGet("read/{friendBoxId}")]
         public async Task<ActionResult>ReadMessages(int friendBoxId)
         {
-            var userId = _jwtservice.UserId;
-            var messages = _context.Messages.Where((m)=> m.Friendship.Id == friendBoxId).ToList();
             
-
-
-            foreach (var message in messages)
-            {
-                if (message.ToUserId == userId)
-                {
-                    message.IsRead = true;
-
-                }
-            }
-
-            await _context.SaveChangesAsync();
-
+           await _messageservice.ReadMessage(friendBoxId);
 
             return Ok(new
             {
