@@ -1,6 +1,5 @@
 import { FC } from "react";
 import { INotification } from "../@types/notificationInterface";
-
 import { RxCaretRight } from "react-icons/rx";
 import { useAuth } from "../Context/AuthProvider";
 import { Fetcher } from "../utils/Fetcher";

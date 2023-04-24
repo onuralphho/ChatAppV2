@@ -12,9 +12,9 @@ import { sleep } from "../utils/sleep";
 import { INotification } from "../@types/notificationInterface";
 import { IHubMessageResponse } from "../@types/hubMessageResponse";
 import { IFriendList } from "../@types/friendBoxType";
-import { ITalkingTo } from "../@types/talkingTo";
-
+import { TabTitle } from "../utils/TabTitle";
 const ChatPage = () => {
+  
   const [showProfile, setShowProfile] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
   const [notification, setNotification] = useState<INotification | undefined>(
@@ -40,7 +40,7 @@ const ChatPage = () => {
       ctx?.setFriendList((prev) => [...(prev || []), friendBox]);
     };
     const approveFriendListener = async (friendBox: IFriendList) => {
-      console.log(friendBox);
+  
 
       ctx?.setFriendList((prev) => {
         if (prev) {
@@ -88,7 +88,7 @@ const ChatPage = () => {
           const updatedFriendList = prev?.map((friendship) => {
             if (friendship.id === ctx.talkingTo?.friendBoxId) {
               return {
-                ...friendship,
+                ...friendship, //TODO:UpdateTime güncellenecek 
                 unreadMessageCount: 0,
                 lastMessage: hubMessageResponse.hubMessageSent.contentText,
                 lastMessageFrom:
@@ -117,12 +117,13 @@ const ChatPage = () => {
           return prev || [];
         });
       }
-
+      
       ctx?.setMessages((prev) => [
         ...(prev || []),
         hubMessageResponse.hubMessageSent,
       ]);
-
+      
+      
       if (
         (ctx?.talkingTo &&
           ctx.talkingTo.id !== hubMessageResponse.hubMessageSent.fromUserId) ||
@@ -153,6 +154,9 @@ const ChatPage = () => {
           },
         });
       }
+      TabTitle("New Message: "+hubMessageResponse.hubMessageSent.fromUser.name)
+      await sleep(3000)
+      TabTitle("Soprah Chat")
     };
 
     const connection = conCtx?.connection;
@@ -169,10 +173,6 @@ const ChatPage = () => {
   useEffect(() => {
     const loginHub = async () => {
       if (ctx?.user?.id) {
-        console.log(
-          "JoinRoom isteği atildi. Payload",
-          ctx?.user?.id.toString()
-        );
         await conCtx?.connection?.invoke("JoinRoom", {
           UserId: ctx.user?.id.toString(),
         });
@@ -180,7 +180,7 @@ const ChatPage = () => {
     };
 
     loginHub();
-  }, [ctx?.user?.id]);
+  }, [ctx?.user?.id,conCtx?.connection]);
 
   useEffect(() => {
     const getUser = async () => {

@@ -4,7 +4,6 @@ import { Fetcher } from "../utils/Fetcher";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthProvider";
 const AuthForm = (props: any) => {
-  const ctx = useAuth();
 
   const [passwordInput, setPasswordInput] = useState("");
   const [emailInput, setEmailInput] = useState("");

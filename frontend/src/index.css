@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 :root {
   --x-angel: 0deg;
   --y-angel: 0deg;
@@ -10,8 +11,8 @@
 }
 
 ::-webkit-scrollbar {
-  width: 7px; 
-  
+  width: 7px;
+
 }
 
 /* Track */
@@ -40,23 +41,31 @@
 
 } */
 
+.animation-delay-500 {
+  animation-delay: 500ms;
+}
+
+.animation-delay-700 {
+  animation-delay: 700ms;
+}
+
 .dots {
   height: max-content;
   justify-content: center;
   display: flex;
 }
 
-.dots > span {
+.dots>span {
   aspect-ratio: 1;
   border-radius: 50%;
   animation: dotAnim 0.5s alternate infinite;
 }
 
-.dots > span:nth-child(2) {
+.dots>span:nth-child(2) {
   animation-delay: 0.2s;
 }
 
-.dots > span:nth-child(3) {
+.dots>span:nth-child(3) {
   animation-delay: 0.4s;
 }
 
@@ -75,6 +84,7 @@
   transform-style: preserve-3d;
   transform: perspective(4000px) rotateX(var(--x-angel)) rotateY(var(--y-angel));
 }
+
 .demo_wrapper::before {
   content: " ";
   position: absolute;
@@ -90,16 +100,16 @@
   position: absolute;
   inset: -15px;
   transform: translateZ(var(--drop-distance));
-  background: linear-gradient(
-    35deg,
-    rgba(134, 239, 172, 1) 17%,
-    rgba(168, 85, 247, 1) 85%
-  );
+  background: linear-gradient(35deg,
+      rgba(134, 239, 172, 1) 17%,
+      rgba(168, 85, 247, 1) 85%);
   border-radius: 1rem;
 }
+
 .mobile-menu {
   transform: translateX(var(--x-accel)) translateY(var(--y-accel));
 }
+
 @media screen and (max-width: 720) {
   .demo_wrapper {
     transform-style: flat;
@@ -115,6 +125,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -156,25 +167,69 @@
   0% {
     transform: rotate(0deg);
   }
+
   10% {
     transform: rotate(14deg);
   }
+
   20% {
     transform: rotate(-8deg);
   }
+
   30% {
     transform: rotate(14deg);
   }
+
   40% {
     transform: rotate(-4deg);
   }
+
   50% {
     transform: rotate(10deg);
   }
+
   60% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(0deg);
   }
+}
+
+.chat_loader {
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  z-index: 1;
+}
+
+
+.chat_loader::before {
+  content: " ";
+  z-index: 2;
+  position: absolute;
+  width: 70px;
+  aspect-ratio: 1;
+  left: 0;
+  top: -5px;
+  background-color: rgba(209, 209, 209, 0.274);
+  filter: blur(20px);
+  animation: chatlog_animation 1.5s infinite linear;
+}
+
+
+
+
+@keyframes chatlog_animation {
+  from {
+    transform: translateX(-100px);
+  }
+
+  to {
+
+    transform: translateX(250px);
+  }
+
 }

@@ -89,8 +89,6 @@ const SideBar = (props: ISideBarProps) => {
     setSearchResult([]);
     setSearchInput("");
 
-    console.log(res);
-
     alertCtx?.setAlert({ shown: true, type: res.message });
     if (res.addedfriend) {
       ctx?.setFriendList((prev) => [...(prev ?? []), res.addedfriend]);
@@ -181,8 +179,8 @@ const SideBar = (props: ISideBarProps) => {
             showMenu ? "lg:pl-8 " : "lg:pl-6  aspect-square"
           }px-10 border-green-400 text-green-500 text-xl focus-within:border-purple-500 cursor-pointer  rounded-full`}
         >
-          <div className="absolute left-2.5 top-2.5 ">
-            <BiSearchAlt className="w-full h-full" />
+          <div className="absolute left-2.5 top-2.5 w-5">
+            <BiSearchAlt size={20} className="w-full h-full" />
           </div>
           <button
             onClick={(e) => {
@@ -190,9 +188,9 @@ const SideBar = (props: ISideBarProps) => {
               setSearchInput("");
               setSearchResult([]);
             }}
-            className={`${
-              showMenu ? "" : "hidden"
-            } ${searchInput.length<3 &&'hidden'} absolute right-2 top-2 text-red-600 `}
+            className={`${showMenu ? "" : "hidden"} ${
+              searchInput.length < 3 && "hidden"
+            } absolute right-2 top-2 text-red-600 `}
           >
             <IoCloseCircleOutline size={25} />
           </button>
@@ -259,6 +257,8 @@ const SideBar = (props: ISideBarProps) => {
               <li
                 onClick={() => {
                   props.openWelcome();
+                  ctx?.setTalkingTo(undefined);
+                  ctx?.setMessages(undefined);
                 }}
                 className="cursor-pointer hover:bg-neutral-700 p-2 rounded-md"
               >

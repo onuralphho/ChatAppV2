@@ -11,7 +11,7 @@ interface Iprops {
   showMenu: boolean;
   openMenu: Function;
   closeProfile: Function;
-  closeWelcome:Function
+  closeWelcome: Function;
 }
 
 const FriendList = (props: Iprops) => {
@@ -70,6 +70,12 @@ const FriendList = (props: Iprops) => {
   };
 
   const loadChatLogHandler = async (talkingTo: ITalkingTo) => {
+    //TODO: açık olan chate tekrar açma isteği gönderilmesi engellenecek
+
+    if (talkingTo.id !== ctx?.talkingTo?.id) {
+      ctx?.setMessages(undefined);
+    }
+
     if (talkingTo.isApproved) {
       props.closeProfile();
       props.openMenu();
@@ -213,22 +219,51 @@ const FriendList = (props: Iprops) => {
     );
   } else {
     return (
-      <ul className="flex flex-col">
-        <li className="flex gap-4 items-center transition-all hover:bg-neutral-700 rounded-lg p-1 px-2 cursor-pointer">
-          <span className="w-10 h-10 object-cover rounded-full bg-green-500"></span>
-          {props.showMenu && <span className="truncate ">Loading...</span>}
+      <ul className="flex flex-col gap-2">
+        <li className="chat_loader overflow-hidden flex gap-4 items-center transition-all  hover:bg-neutral-700 rounded-lg p-2 px-2 cursor-pointer">
+          <span className="w-10 h-10 object-cover rounded-full bg-black opacity-30"></span>
+          {props.showMenu && (
+            <div className="relative overflow-hidden flex w-32 lg:w-52 gap-2 flex-col h-full justify-center rounded-lg ">
+              <div className="relative overflow-hidden bg-black opacity-30 w-full rounded-md h-2 "></div>
+              <div className="relative overflow-hidden bg-black opacity-30 w-20 lg:w-40 rounded-md h-2 "></div>
+            </div>
+          )}
         </li>
-        <li className="flex gap-4 items-center transition-all hover:bg-neutral-700 rounded-lg p-1 px-2 cursor-pointer">
-          <span className="w-10 h-10 object-cover rounded-full bg-green-500"></span>
-          {props.showMenu && <span className="truncate ">Loading...</span>}
+        <li className="chat_loader overflow-hidden flex gap-4 items-center transition-all  hover:bg-neutral-700 rounded-lg p-2 px-2 cursor-pointer">
+          <span className="w-10 h-10 object-cover rounded-full bg-black opacity-30"></span>
+          {props.showMenu && (
+            <div className="relative overflow-hidden flex w-32 lg:w-52 gap-2 flex-col h-full justify-center rounded-lg ">
+              <div className="relative overflow-hidden bg-black opacity-30 w-full rounded-md h-2 "></div>
+              <div className="relative overflow-hidden bg-black opacity-30 w-20 lg:w-40 rounded-md h-2 "></div>
+            </div>
+          )}
         </li>
-        <li className="flex gap-4 items-center transition-all hover:bg-neutral-700 rounded-lg p-1 px-2 cursor-pointer">
-          <span className="w-10 h-10 object-cover rounded-full bg-green-500"></span>
-          {props.showMenu && <span className="truncate ">Loading...</span>}
+        <li className="chat_loader overflow-hidden flex gap-4 items-center transition-all  hover:bg-neutral-700 rounded-lg p-2 px-2 cursor-pointer">
+          <span className="w-10 h-10 object-cover rounded-full bg-black opacity-30"></span>
+          {props.showMenu && (
+            <div className="relative overflow-hidden flex w-32 lg:w-52 gap-2 flex-col h-full justify-center rounded-lg ">
+              <div className="relative overflow-hidden bg-black opacity-30 w-full rounded-md h-2 "></div>
+              <div className="relative overflow-hidden bg-black opacity-30 w-20 lg:w-40 rounded-md h-2 "></div>
+            </div>
+          )}
         </li>
-        <li className="flex gap-4 items-center transition-all hover:bg-neutral-700 rounded-lg p-1 px-2 cursor-pointer">
-          <span className="w-10 h-10 object-cover rounded-full bg-green-500"></span>
-          {props.showMenu && <span className="truncate ">Loading...</span>}
+        <li className="chat_loader overflow-hidden flex gap-4 items-center transition-all  hover:bg-neutral-700 rounded-lg p-2 px-2 cursor-pointer">
+          <span className="w-10 h-10 object-cover rounded-full bg-black opacity-30"></span>
+          {props.showMenu && (
+            <div className="relative overflow-hidden flex w-32 lg:w-52 gap-2 flex-col h-full justify-center rounded-lg ">
+              <div className="relative overflow-hidden bg-black opacity-30 w-full rounded-md h-2 "></div>
+              <div className="relative overflow-hidden bg-black opacity-30 w-20 lg:w-40 rounded-md h-2 "></div>
+            </div>
+          )}
+        </li>
+        <li className="chat_loader overflow-hidden flex gap-4 items-center transition-all  hover:bg-neutral-700 rounded-lg p-2 px-2 cursor-pointer">
+          <span className="w-10 h-10 object-cover rounded-full bg-black opacity-30"></span>
+          {props.showMenu && (
+            <div className="relative overflow-hidden flex w-32 lg:w-52 gap-2 flex-col h-full justify-center rounded-lg ">
+              <div className="relative overflow-hidden bg-black opacity-30 w-full rounded-md h-2 "></div>
+              <div className="relative overflow-hidden bg-black opacity-30 w-20 lg:w-40 rounded-md h-2 "></div>
+            </div>
+          )}
         </li>
       </ul>
     );
