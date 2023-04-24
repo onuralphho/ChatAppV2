@@ -2,6 +2,7 @@ using ChatAppBackend.Context;
 using ChatAppBackend.Helpers;
 using ChatAppBackend.Hubs;
 using ChatAppBackend.Models;
+using ChatAppBackend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -91,17 +92,16 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddSignalR();
 
-builder.Services.AddSingleton<IDictionary<string, UserConnection>>(opts => new Dictionary<string, UserConnection>());
+builder.Services.AddScoped<IMessageService, MessageService>();
+
+builder.Services.AddScoped<IFriendBoxService, FriendBoxService>();
+
+builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
 
 var app = builder.Build();
-
-
-
-
-//app.UseCors(options =>
-//options.AllowAnyOrigin()
-//.AllowAnyMethod().AllowAnyHeader());
 
 
 app.UseCors(options => options
