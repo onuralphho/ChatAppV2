@@ -88,7 +88,7 @@ const ChatPage = () => {
           const updatedFriendList = prev?.map((friendship) => {
             if (friendship.id === ctx.talkingTo?.friendBoxId) {
               return {
-                ...friendship,
+                ...friendship, //TODO:UpdateTime güncellenecek 
                 unreadMessageCount: 0,
                 lastMessage: hubMessageResponse.hubMessageSent.contentText,
                 lastMessageFrom:
