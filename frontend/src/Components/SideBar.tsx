@@ -139,7 +139,7 @@ const SideBar = (props: ISideBarProps) => {
           onClick={() => {
             setShowMenu(false);
           }}
-          className="z-[1] w-[100dvw]  h-[100dvh] h-[100vh] w-[100vw] absolute left-0 top-0 bg-[rgba(0,0,0,0.4)] backdrop-blur-sm lg:hidden"
+          className="z-[1] w-full h-full absolute left-0 top-0 bg-[rgba(0,0,0,0.4)] backdrop-blur-sm lg:hidden"
         ></div>
       )}
 
