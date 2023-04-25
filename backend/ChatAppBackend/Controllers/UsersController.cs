@@ -31,7 +31,7 @@ namespace ChatAppBackend.Controllers
 
         private readonly IUserService _userService;
 
-        public UsersController(PostgreSqlDbContext context, IMapper mapper,IUserService userService)
+        public UsersController(PostgreSqlDbContext context, IMapper mapper, IUserService userService)
         {
 
             _context = context;
@@ -44,25 +44,19 @@ namespace ChatAppBackend.Controllers
 
         [HttpPost("register")]
         [AllowAnonymous]
-        public ActionResult Register(RegisterDto regUser)
+        public async Task<ActionResult> Register(RegisterDto regUser)
         {
-
-            var tmp = _context.Users.Where(x => x.Email == regUser.Email).FirstOrDefault();
-            if (tmp != null)
+            if (await _userService.Register(regUser))
             {
-
+                return Ok("Register Complete");
+            }
+            else
+            {
                 return BadRequest(new
                 {
-                    Message= "Email already exist"
+                    Message = "Email already exist"
                 });
             }
-
-            return Ok(new
-            {
-                success = _userService.Register(regUser)
-            });
-
-
         }
 
         [HttpPut("update")]
@@ -79,7 +73,7 @@ namespace ChatAppBackend.Controllers
 
         }
 
-        
+
 
     }
 }

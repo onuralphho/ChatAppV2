@@ -11,25 +11,31 @@ namespace ChatAppBackend.Services
 
     public interface IUserService
     {
-        Task<string> Register(RegisterDto regUser);
+        Task<bool> Register(RegisterDto regUser);
         Task<SessionUserDto> UpdateUser(UpdateUserDto updatedUser);
         List<UserSearchResponse> SearchUser(UserSearchRequest userSearch);
     }
-    public class UserService:IUserService
+    public class UserService : IUserService
     {
         private readonly PostgreSqlDbContext _context;
         private readonly IMapper _mapper;
 
-        public UserService(PostgreSqlDbContext context,IMapper mapper) {
-        
+        public UserService(PostgreSqlDbContext context, IMapper mapper)
+        {
+
             _context = context;
             _mapper = mapper;
-            
+
         }
 
-        async Task<string> IUserService.Register(RegisterDto regUser)
+        public async Task<bool> Register(RegisterDto regUser)
         {
-            
+            var tmp = _context.Users.Where(x => x.Email == regUser.Email).FirstOrDefault();
+            if (tmp != null)
+            {
+
+                return false;
+            }
             var reg_user = new User
             {
                 Email = regUser.Email,
@@ -45,11 +51,11 @@ namespace ChatAppBackend.Services
             _context.Users.Add(reg_user);
             await _context.SaveChangesAsync();
 
-            return "Register Complete";
+            return true;
         }
 
 
-        async Task<SessionUserDto> IUserService.UpdateUser(UpdateUserDto updatedUser)
+        public async Task<SessionUserDto> UpdateUser(UpdateUserDto updatedUser)
         {
             var user = await _context.Users.FindAsync(updatedUser.Id);
 
@@ -61,7 +67,7 @@ namespace ChatAppBackend.Services
 
             return _mapper.Map<SessionUserDto>(user);
         }
-        List<UserSearchResponse> IUserService.SearchUser(UserSearchRequest userSearch)
+        public List<UserSearchResponse> SearchUser(UserSearchRequest userSearch)
         {
 
             var matchingUsers = _context.Users.Where(u => u.Name.Contains(userSearch.searchValue)).Select(u => new UserSearchResponse { Id = u.Id, Name = u.Name, Picture = u.Picture }).ToList();
