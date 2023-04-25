@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ChatAppBackend.Context;
-using ChatAppBackend.Entities;
-using Newtonsoft.Json;
-using Microsoft.CodeAnalysis.VisualBasic.Syntax;
-using BCrypt.Net;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using ChatAppBackend.Dto;
 using ChatAppBackend.Models.User.Request;
@@ -25,17 +14,12 @@ namespace ChatAppBackend.Controllers
     [Authorize]
     public class UsersController : ControllerBase
     {
-        private readonly PostgreSqlDbContext _context;
-
-        private readonly IMapper _mapper;
 
         private readonly IUserService _userService;
 
-        public UsersController(PostgreSqlDbContext context, IMapper mapper, IUserService userService)
+        public UsersController(IUserService userService)
         {
 
-            _context = context;
-            _mapper = mapper;
             _userService = userService;
         }
 
@@ -48,7 +32,7 @@ namespace ChatAppBackend.Controllers
         {
             if (await _userService.Register(regUser))
             {
-                return Ok("Register Complete");
+                return Ok(new { success = "Register Complete" });
             }
             else
             {

@@ -54,6 +54,9 @@ const SideBar = (props: ISideBarProps) => {
   const openSideBar = () => {
     setShowMenu(true);
   };
+  const closeSideBar = () => {
+    setShowMenu(false)
+  }
 
   const searchHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
@@ -146,7 +149,7 @@ const SideBar = (props: ISideBarProps) => {
       <div
         className={` p-2  bg-[#252525] max-lg:z-20 transition-all relative overflow-hidden  w-64  ${
           !!showMenu ? "lg:w-80" : "lg:w-[4.5rem]"
-        }  gap-6 flex flex-col  ${
+        }  gap-4 flex flex-col  ${
           showMenu ? "max-lg:translate-0" : "max-lg:-translate-x-64"
         } max-lg:absolute max-lg:bottom-0 max-lg:top-0 `}
       >
@@ -233,15 +236,16 @@ const SideBar = (props: ISideBarProps) => {
             </div>
           </div>
         </label>
-        {/* FRIEND LIST */}
+        {/*//! FRIEND LIST */}
         <FriendsList
           showMenu={showMenu}
           openMenu={openSideBar}
+          closeMenu={closeSideBar}
           closeWelcome={props.closeWelcome}
           closeProfile={props.closeProfile}
         />
-        {/* Bottom menu */}
-        <div className="h-12 flex absolute bottom-0 py-2 left-0 right-0">
+        {/*//! Bottom menu */}
+        <div className="h-12 flex bottom-0 py-2 left-0 right-0">
           {showMenu ? (
             <ul className="flex w-full justify-around items-center">
               <li
