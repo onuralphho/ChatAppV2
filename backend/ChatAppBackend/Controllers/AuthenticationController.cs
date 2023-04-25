@@ -30,21 +30,17 @@ namespace ChatAppBackend.Controllers
         [AllowAnonymous]
         [HttpPost("login")]
 
-        public async Task<ActionResult<TokenDto>> Login(AuthDto auth) // async kaldır test et !!!
+        public ActionResult<TokenDto> Login(AuthDto auth) // async kaldır test et !!!
         {
 
-            var user = _context.Users.Where(x => x.Email == auth.Email).FirstOrDefault();
-
-            if (user == null)
+           if(_authenticationService.Login(auth) == null)
             {
-                return BadRequest(new  { Message = "Invalid Credentials" });
+                return BadRequest(new { Message = "Invalid Credentials" });
             }
-            if (!BCrypt.Net.BCrypt.Verify(auth.Password, user.Password))
+            else
             {
-                return BadRequest(new  { Message = "Invalid Credentials" });
+                return Ok(_authenticationService.Login(auth));
             }
-
-            return Ok(_authenticationService.Login(user.Id));
         }
 
         [HttpGet("session")]

@@ -30,7 +30,7 @@ namespace ChatAppBackend.Services
             _jwtservice = jwtService;
         }
 
-        async Task<MessageSentResponse> IMessageService.AddMessage(MessageSentRequest message)
+        public async Task<MessageSentResponse> AddMessage(MessageSentRequest message)
         {
             var friendship = await _context.FriendBoxes.FindAsync(message.FriendBoxId);
 
@@ -59,7 +59,7 @@ namespace ChatAppBackend.Services
             return resMessage;
         }
 
-        async Task<List<MessageSentResponse>> IMessageService.GetMessages(int friendBoxId)
+        public async Task<List<MessageSentResponse>> GetMessages(int friendBoxId)
         {
             var messages = await _context.Messages
                 .Include(m => m.Friendship)
@@ -74,7 +74,7 @@ namespace ChatAppBackend.Services
             }).ToList();
         }
 
-       async Task IMessageService.ReadMessage(int friendBoxId)
+        public async Task ReadMessage(int friendBoxId)
         {
             var userId = _jwtservice.UserId;
             var messages = _context.Messages.Where((m) => m.Friendship.Id == friendBoxId).ToList();
