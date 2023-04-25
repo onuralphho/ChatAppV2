@@ -16,41 +16,52 @@ namespace ChatAppBackend.Services
         Task<FriendBoxFriendsResponse> ApproveFriend(int friendBoxId);
         Task<string> DeleteFriend(int friendBoxId);
     }
-    public class FriendBoxService:IFriendBoxService
+    public class FriendBoxService : IFriendBoxService
     {
         private readonly PostgreSqlDbContext _context;
         private readonly JwtService _jwtService;
         private readonly IMapper _mapper;
-        public FriendBoxService(PostgreSqlDbContext context,IMapper mapper,JwtService jwtService)
+        public FriendBoxService(PostgreSqlDbContext context, IMapper mapper, JwtService jwtService)
         {
             _context = context;
-            _jwtService=jwtService;
+            _jwtService = jwtService;
             _mapper = mapper;
         }
 
-        async Task<FriendBoxFriendsResponse> IFriendBoxService.AddFriend(FriendBoxAddRequest friendBox)
+        public async Task<FriendBoxFriendsResponse> AddFriend(FriendBoxAddRequest friendBox)
         {
-            var user = await _context.Users.FindAsync(friendBox.FromId);
-            var friend = await _context.Users.FindAsync(friendBox.ToId);
+            var friendShip = await _context.FriendBoxes.FirstOrDefaultAsync(f => (f.FromUserId == friendBox.FromId && f.ToUserId == friendBox.ToId)
+                 || (f.FromUserId == friendBox.ToId && f.ToUserId == friendBox.FromId));
 
-
-
-            var friendShip = new FriendBox
+            if (friendShip == null)
             {
-                FromUser = user,
-                ToUser = friend,
-                UpdateTime = DateTime.UtcNow,
-            };
+                var user = await _context.Users.FindAsync(friendBox.FromId);
+                var friend = await _context.Users.FindAsync(friendBox.ToId);
 
-            _context.FriendBoxes.Add(friendShip);
-            await _context.SaveChangesAsync();
+                friendShip = new FriendBox
+                {
+                    FromUser = user,
+                    ToUser = friend,
+                    UpdateTime = DateTime.UtcNow,
+                };
+                Console.WriteLine(friendShip);
+                _context.FriendBoxes.Add(friendShip);
+                await _context.SaveChangesAsync();
+                Console.WriteLine(friendShip);
+                return _mapper.Map<FriendBoxFriendsResponse>(friendShip);
+            }
+            else
+            {
+                return null;
+            }
 
-            return _mapper.Map<FriendBoxFriendsResponse>(friendShip);
+
+
         }
 
-        
 
-        List<FriendBoxFriendsResponse> IFriendBoxService.GetFriends()
+
+        public List<FriendBoxFriendsResponse> GetFriends()
         {
             int userId = _jwtService.UserId;
             var friendBoxes = _context.FriendBoxes
@@ -76,7 +87,7 @@ namespace ChatAppBackend.Services
 
             return result;
         }
-        async Task<FriendBoxFriendsResponse> IFriendBoxService.ApproveFriend(int friendBoxId)
+        public async Task<FriendBoxFriendsResponse> ApproveFriend(int friendBoxId)
         {
             var friendbox = await _context.FriendBoxes
                 .Include(f => f.FromUser)
@@ -96,7 +107,7 @@ namespace ChatAppBackend.Services
             return _mapper.Map<FriendBoxFriendsResponse>(friendbox);
         }
 
-        async Task<string> IFriendBoxService.DeleteFriend(int friendBoxId)
+        public async Task<string> DeleteFriend(int friendBoxId)
         {
             var friendbox = await _context.FriendBoxes.FirstOrDefaultAsync(f => f.Id == friendBoxId);
 

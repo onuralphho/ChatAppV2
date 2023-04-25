@@ -6,10 +6,11 @@ import { sleep } from "../utils/sleep";
 import { useAlertContext } from "../Context/AlertProvider";
 import { ITalkingTo } from "../@types/talkingTo";
 import { useConnectionContext } from "../Context/ConnectionProvider";
-
+import { motion } from "framer-motion";
 interface Iprops {
   showMenu: boolean;
   openMenu: Function;
+  closeMenu: Function;
   closeProfile: Function;
   closeWelcome: Function;
 }
@@ -18,6 +19,25 @@ const FriendList = (props: Iprops) => {
   const ctx = useAuth();
   const alertCtx = useAlertContext();
   const conCtx = useConnectionContext();
+
+  const container = {
+    hidden: { opacity: 1 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.2,
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const item = {
+    hidden: { y: 30, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+    },
+  };
 
   const approveFriendRequestHandler = async (
     e: React.MouseEvent<HTMLButtonElement>,
@@ -78,8 +98,6 @@ const FriendList = (props: Iprops) => {
 
     if (talkingTo.isApproved) {
       props.closeProfile();
-      props.openMenu();
-
       ctx?.setTalkingTo(talkingTo);
 
       const res = await Fetcher({
@@ -113,18 +131,25 @@ const FriendList = (props: Iprops) => {
 
   if (ctx?.friendList) {
     return (
-      <ul className="flex flex-col overflow-y-auto max-h-[500px] overflow-x-hidden">
+      <motion.ul
+        variants={container}
+        initial="hidden"
+        animate="visible"
+        className="flex flex-col  flex-1 overflow-y-auto  overflow-x-hidden"
+      >
         {ctx?.friendList
           ?.sort((a: IFriendList, b: IFriendList) =>
             a.updateTime > b.updateTime ? -1 : 1
           )
           .map((friendBox: IFriendList) => (
-            <li
+            <motion.li
+              variants={item}
               onClick={() => {
-                props.closeWelcome();
                 if (!friendBox.approved) {
                   return;
                 }
+                props.closeMenu();
+                props.closeWelcome();
                 loadChatLogHandler({
                   id:
                     ctx?.user?.id !== friendBox.fromUserId
@@ -143,7 +168,7 @@ const FriendList = (props: Iprops) => {
                 });
               }}
               key={friendBox.id}
-              className={`flex relative h-14  items-center justify-between transition-all hover:bg-neutral-700 rounded-lg p-1 px-2 ${
+              className={`flex  relative h-14 transition-colors  items-center justify-between  hover:bg-neutral-700 rounded-lg p-1 px-2 ${
                 friendBox.approved ? "cursor-pointer" : ""
               }`}
             >
@@ -213,58 +238,27 @@ const FriendList = (props: Iprops) => {
               ) : (
                 ""
               )}
-            </li>
+            </motion.li>
           ))}
-      </ul>
+      </motion.ul>
     );
   } else {
     return (
-      <ul className="flex flex-col gap-2">
-        <li className="chat_loader overflow-hidden flex gap-4 items-center transition-all  hover:bg-neutral-700 rounded-lg p-2 px-2 cursor-pointer">
-          <span className="w-10 h-10 object-cover rounded-full bg-black opacity-30"></span>
-          {props.showMenu && (
-            <div className="relative overflow-hidden flex w-32 lg:w-52 gap-2 flex-col h-full justify-center rounded-lg ">
-              <div className="relative overflow-hidden bg-black opacity-30 w-full rounded-md h-2 "></div>
-              <div className="relative overflow-hidden bg-black opacity-30 w-20 lg:w-40 rounded-md h-2 "></div>
-            </div>
-          )}
-        </li>
-        <li className="chat_loader overflow-hidden flex gap-4 items-center transition-all  hover:bg-neutral-700 rounded-lg p-2 px-2 cursor-pointer">
-          <span className="w-10 h-10 object-cover rounded-full bg-black opacity-30"></span>
-          {props.showMenu && (
-            <div className="relative overflow-hidden flex w-32 lg:w-52 gap-2 flex-col h-full justify-center rounded-lg ">
-              <div className="relative overflow-hidden bg-black opacity-30 w-full rounded-md h-2 "></div>
-              <div className="relative overflow-hidden bg-black opacity-30 w-20 lg:w-40 rounded-md h-2 "></div>
-            </div>
-          )}
-        </li>
-        <li className="chat_loader overflow-hidden flex gap-4 items-center transition-all  hover:bg-neutral-700 rounded-lg p-2 px-2 cursor-pointer">
-          <span className="w-10 h-10 object-cover rounded-full bg-black opacity-30"></span>
-          {props.showMenu && (
-            <div className="relative overflow-hidden flex w-32 lg:w-52 gap-2 flex-col h-full justify-center rounded-lg ">
-              <div className="relative overflow-hidden bg-black opacity-30 w-full rounded-md h-2 "></div>
-              <div className="relative overflow-hidden bg-black opacity-30 w-20 lg:w-40 rounded-md h-2 "></div>
-            </div>
-          )}
-        </li>
-        <li className="chat_loader overflow-hidden flex gap-4 items-center transition-all  hover:bg-neutral-700 rounded-lg p-2 px-2 cursor-pointer">
-          <span className="w-10 h-10 object-cover rounded-full bg-black opacity-30"></span>
-          {props.showMenu && (
-            <div className="relative overflow-hidden flex w-32 lg:w-52 gap-2 flex-col h-full justify-center rounded-lg ">
-              <div className="relative overflow-hidden bg-black opacity-30 w-full rounded-md h-2 "></div>
-              <div className="relative overflow-hidden bg-black opacity-30 w-20 lg:w-40 rounded-md h-2 "></div>
-            </div>
-          )}
-        </li>
-        <li className="chat_loader overflow-hidden flex gap-4 items-center transition-all  hover:bg-neutral-700 rounded-lg p-2 px-2 cursor-pointer">
-          <span className="w-10 h-10 object-cover rounded-full bg-black opacity-30"></span>
-          {props.showMenu && (
-            <div className="relative overflow-hidden flex w-32 lg:w-52 gap-2 flex-col h-full justify-center rounded-lg ">
-              <div className="relative overflow-hidden bg-black opacity-30 w-full rounded-md h-2 "></div>
-              <div className="relative overflow-hidden bg-black opacity-30 w-20 lg:w-40 rounded-md h-2 "></div>
-            </div>
-          )}
-        </li>
+      <ul className="flex flex-col gap-2 flex-1">
+        {new Array(7).fill(null).map((e, i) => (
+          <li
+            key={i}
+            className="chat_loader border-[#ffffff57] border-l-[1px] border-t-[1px]  overflow-hidden flex gap-4 items-center transition-all  hover:bg-neutral-700 rounded-lg p-2 px-2 cursor-pointer"
+          >
+            <span className="w-10 h-10 object-cover rounded-full bg-black opacity-30"></span>
+            {props.showMenu && (
+              <div className="relative overflow-hidden flex w-32 lg:w-52 gap-2 flex-col h-full justify-center rounded-lg ">
+                <div className="relative overflow-hidden bg-black opacity-30 w-full rounded-md h-2 "></div>
+                <div className="relative overflow-hidden bg-black opacity-30 w-20 lg:w-40 rounded-md h-2 "></div>
+              </div>
+            )}
+          </li>
+        ))}
       </ul>
     );
   }

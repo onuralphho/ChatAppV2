@@ -13,34 +13,37 @@ namespace ChatAppBackend.Controllers
     [Authorize]
     public class FriendBoxesController : Controller
     {
-        private readonly PostgreSqlDbContext _context;
         private readonly IFriendBoxService _friendBoxService;
 
-        public FriendBoxesController(PostgreSqlDbContext context,IFriendBoxService friendBoxService)
+        public FriendBoxesController(IFriendBoxService friendBoxService)
         {
 
-            _context = context;
+         
             _friendBoxService = friendBoxService;
         }
 
         [HttpPost("addfriend")]
         public async Task<ActionResult> AddFriend(FriendBoxAddRequest friendBox)
         {
-            var friendShip = await _context.FriendBoxes.FirstOrDefaultAsync(f => (f.FromUserId == friendBox.FromId && f.ToUserId == friendBox.ToId)
-                 || (f.FromUserId == friendBox.ToId && f.ToUserId == friendBox.FromId));
+            var FriendBoxData = await _friendBoxService.AddFriend(friendBox);
 
-
-            if (friendShip != null)
+            if (FriendBoxData == null)
             {
-                return Ok(new { message = "Already your friend" });
+                return Ok(new { Message = "Already your friend" });
+                
+
+            }
+            else
+            {
+                return Ok(new
+                {
+                    addedfriend = FriendBoxData,
+                    message = "Friend request sent",
+
+                });
             }
 
-            return Ok(new
-            {
-                addedfriend = await _friendBoxService.AddFriend(friendBox),
-                message = "Friend request sent",
-
-            });
+            
         }
 
         [HttpGet("friends")]
@@ -52,10 +55,10 @@ namespace ChatAppBackend.Controllers
 
         [HttpPut]
         [Route("approve/{friendBoxId}")]
-        public  Task<FriendBoxFriendsResponse> Update(int friendBoxId)
+        public Task<FriendBoxFriendsResponse> Update(int friendBoxId)
         {
-           return  _friendBoxService.ApproveFriend(friendBoxId);
-            
+            return _friendBoxService.ApproveFriend(friendBoxId);
+
         }
 
 
