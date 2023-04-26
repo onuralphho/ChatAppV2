@@ -73,7 +73,7 @@ const ChatLog = (props: IProps) => {
         picture: ctx?.user?.picture,
       },
     };
-
+  
     const res = await Fetcher({
       method: "POST",
       body: sendMessagePayload,
@@ -99,7 +99,7 @@ const ChatLog = (props: IProps) => {
       return prev || [];
     });
 
-    await conCtx?.connection?.invoke("SendMessage", res);
+    await conCtx?.connection?.invoke("SendMessage", data);
     setCheckerVal(true);
     setMessageInput("");
   };
