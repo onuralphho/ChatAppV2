@@ -52,7 +52,7 @@ const FriendList = (props: Iprops) => {
     });
     const data = await res.json()
 
-    conCtx?.connection?.send("ApproveFriend", res);
+    conCtx?.connection?.send("ApproveFriend", data);
 
     ctx?.setFriendList((prev) => {
       if (!prev) return prev;
