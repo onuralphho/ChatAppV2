@@ -5,6 +5,7 @@ using ChatAppBackend.Models.User.Request;
 using ChatAppBackend.Models.User.Response;
 using AutoMapper;
 using ChatAppBackend.Services;
+using System.Net;
 
 namespace ChatAppBackend.Controllers
 {
@@ -25,22 +26,14 @@ namespace ChatAppBackend.Controllers
 
 
 
-
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpPost("register")]
         [AllowAnonymous]
         public async Task<ActionResult> Register(RegisterDto regUser)
         {
-            if (await _userService.Register(regUser))
-            {
-                return Ok(new { success = "Register Complete" });
-            }
-            else
-            {
-                return BadRequest(new
-                {
-                    Message = "Email already exist"
-                });
-            }
+            await _userService.Register(regUser);
+            return NoContent();
+            
         }
 
         [HttpPut("update")]

@@ -66,8 +66,10 @@ const AuthForm = (props: any) => {
       const res = await props.ctx.login(emailInput, passwordInput);
       setLoading2(false);
 
-      if (res.message) {
-        setErrorMessage(res.message);
+      console.log(res)
+
+      if (res.status === 401) {
+        setErrorMessage(res.detail);
         return;
       }
       setPasswordInput("");
