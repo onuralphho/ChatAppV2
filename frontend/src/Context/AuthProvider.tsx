@@ -4,6 +4,7 @@ import { IFriendList } from "../@types/friendBoxType";
 import { IMessage } from "../@types/messageType";
 import { ITalkingTo } from "../@types/talkingTo";
 
+
 interface IUser {
   id: number;
   name: string;
@@ -15,10 +16,9 @@ interface IUser {
 interface AuthContextValue {
   setUser: React.Dispatch<React.SetStateAction<IUser | undefined>>;
   user?: IUser | undefined;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<Response>;
   logout: () => void;
-  token: string | undefined;
-  setToken: React.Dispatch<React.SetStateAction<string | undefined>>;
+  
   getCookie: (name: string) => string | undefined;
   friendList?: IFriendList[];
   setFriendList: React.Dispatch<
@@ -26,7 +26,7 @@ interface AuthContextValue {
   >;
   messages?: IMessage[] | undefined;
   setMessages: React.Dispatch<React.SetStateAction<IMessage[] | undefined>>;
-  talkingTo?: ITalkingTo ;
+  talkingTo?: ITalkingTo;
   setTalkingTo: React.Dispatch<React.SetStateAction<ITalkingTo | undefined>>;
 }
 
@@ -41,32 +41,45 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [friendList, setFriendList] = useState<IFriendList[] | undefined>(
     undefined
   );
-  const [token, setToken] = useState<string | undefined>();
+
 
   const login = async (email: string, password: string) => {
-    const res = await Fetcher({
-      body: { email, password },
-      method: "POST",
-      url: "/api/authentication/login",
-    });
-    const d = new Date();
-    d.setTime(d.getTime() + 24 * 60 * 60 * 1000);
+    // const res = await Fetcher({
+    //   body: { email, password },
+    //   method: "POST",
+    //   url: "/api/authentication/login",
+    // });
 
-    const expires = "expires=" + d.toUTCString();
-    document.cookie = "jwt=" + res.tokenValue + ";" + expires + ";path=/";
+    const res = await fetch(
+      `${process.env.REACT_APP_ENDPOINT_URL}/api/authentication/login`,
+      {
+        method: "POST",
+        body: JSON.stringify({ email: email, password: password }),
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    const data = await res.json();
 
-    return res;
+    if (res.status !== 401) {
+      
+      const d = new Date();
+      d.setTime(d.getTime() + 24 * 60 * 60 * 1000);
+
+      const expires = "expires=" + d.toUTCString();
+      document.cookie = "jwt=" + data.tokenValue + ";" + expires + ";path=/";
+    }
+
+    return data;
   };
 
   const logout = async () => {
     setUser(undefined);
 
-    // localStorage.removeItem("session");
     document.cookie = "jwt=;" + 0 + ";path=/";
     const res = await Fetcher({
       method: "GET",
       url: "/api/authentication/logout",
-      token:getCookie('jwt')
+      token: getCookie("jwt"),
     });
     return res;
   };
@@ -86,8 +99,6 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         setUser,
         login,
         logout,
-        token,
-        setToken,
         getCookie,
         setFriendList,
         friendList,

@@ -42,11 +42,12 @@ const AuthForm = (props: any) => {
         method: "POST",
         url: "/api/users/register",
       });
+      const data = await res.json();
 
       setLoading(false);
 
-      if (res.message) {
-        setErrorMessage(res.message);
+      if (data.message) {
+        setErrorMessage(data.message);
         return;
       }
       setPasswordInput("");

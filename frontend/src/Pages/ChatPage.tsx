@@ -14,7 +14,6 @@ import { IHubMessageResponse } from "../@types/hubMessageResponse";
 import { IFriendList } from "../@types/friendBoxType";
 import { TabTitle } from "../utils/TabTitle";
 const ChatPage = () => {
-  
   const [showProfile, setShowProfile] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
   const [notification, setNotification] = useState<INotification | undefined>(
@@ -40,8 +39,6 @@ const ChatPage = () => {
       ctx?.setFriendList((prev) => [...(prev || []), friendBox]);
     };
     const approveFriendListener = async (friendBox: IFriendList) => {
-  
-
       ctx?.setFriendList((prev) => {
         if (prev) {
           const updatedList = prev.map((friend) => {
@@ -88,7 +85,7 @@ const ChatPage = () => {
           const updatedFriendList = prev?.map((friendship) => {
             if (friendship.id === ctx.talkingTo?.friendBoxId) {
               return {
-                ...friendship, //TODO:UpdateTime güncellenecek 
+                ...friendship, //TODO:UpdateTime güncellenecek
                 unreadMessageCount: 0,
                 lastMessage: hubMessageResponse.hubMessageSent.contentText,
                 lastMessageFrom:
@@ -117,13 +114,12 @@ const ChatPage = () => {
           return prev || [];
         });
       }
-      
+
       ctx?.setMessages((prev) => [
         ...(prev || []),
         hubMessageResponse.hubMessageSent,
       ]);
-      
-      
+
       if (
         (ctx?.talkingTo &&
           ctx.talkingTo.id !== hubMessageResponse.hubMessageSent.fromUserId) ||
@@ -154,9 +150,11 @@ const ChatPage = () => {
           },
         });
       }
-      TabTitle("New Message: "+hubMessageResponse.hubMessageSent.fromUser.name)
-      await sleep(3000)
-      TabTitle("Soprah Chat")
+      TabTitle(
+        "New Message: " + hubMessageResponse.hubMessageSent.fromUser.name
+      );
+      await sleep(3000);
+      TabTitle("Soprah Chat");
     };
 
     const connection = conCtx?.connection;
@@ -180,7 +178,7 @@ const ChatPage = () => {
     };
 
     loginHub();
-  }, [ctx?.user?.id,conCtx?.connection]);
+  }, [ctx?.user?.id, conCtx?.connection]);
 
   useEffect(() => {
     const getUser = async () => {
@@ -191,23 +189,33 @@ const ChatPage = () => {
         return;
       }
 
-      const sessionData = await Fetcher({
-        body: null,
+      const res = await Fetcher({
         method: "GET",
         url: "/api/authentication/session",
         token: jwt,
       });
 
-      if (sessionData?.status !== 401) {
-        ctx?.setUser(sessionData);
+      if (res.status === 401) {
+        navigate("/");
+      }
+      if(res.status === 200){
+        
+      }
+      const data = await res.json();
+      console.log(data)
+
+      if (data) {
+        ctx?.setUser(data);
+      } else {
+        navigate("/");
       }
 
-      const friendsData = await Fetcher({
-        body: null,
+      const friendsRes = await Fetcher({
         method: "GET",
         url: "/api/friendboxes/friends",
         token: jwt,
       });
+      const friendsData = await friendsRes.json();
 
       ctx?.setFriendList(friendsData);
     };
@@ -254,9 +262,12 @@ const ChatPage = () => {
 
           {/* ChatLog */}
           {showProfile ? (
-            <ProfileSettings closeProfile={closeProfile} openWelcome={openWelcome} />
+            <ProfileSettings
+              closeProfile={closeProfile}
+              openWelcome={openWelcome}
+            />
           ) : showWelcome ? (
-            <Welcome  closeWelcome={closeWelcome}/>
+            <Welcome closeWelcome={closeWelcome} />
           ) : ctx?.talkingTo && ctx.talkingTo.isApproved ? (
             <ChatLog talkingTo={ctx.talkingTo} messages={ctx.messages} />
           ) : null}
@@ -265,15 +276,15 @@ const ChatPage = () => {
     );
   } else {
     return (
-    
       <div className="flex lg:p-5 lg:px-10  xl:px-20  2xl:px-40   text-white h-full ">
         <div
           className={`flex  w-full max-w-[1920px] mx-auto lg:rounded-xl overflow-hidden shadow-lg shadow-[rgba(0,0,0,0.5)]`}
         >
           <div className="bg-[#252525] h-full w-full flex flex-col gap-2 justify-center items-center">
-            <span className="text-xl font-semibold">Your Chats are Loading...</span>
+            <span className="text-xl font-semibold">
+              Your Chats are Loading...
+            </span>
             <div className="progress-bar"></div>
-            
           </div>
           {/* <div
             className={` p-2  bg-[#252525]  overflow-hidden relative  w-64 `}

@@ -74,7 +74,8 @@ const SideBar = (props: ISideBarProps) => {
       url: "/api/users/search",
       token: ctx?.getCookie("jwt"),
     });
-    setSearchResult(res);
+    const data = await res.json()
+    setSearchResult(data);
   };
 
   const addFriendHandler = async (friendId: number) => {
@@ -84,20 +85,21 @@ const SideBar = (props: ISideBarProps) => {
       url: "/api/FriendBoxes/addfriend",
       token: ctx?.getCookie("jwt"),
     });
+    const data = await res.json();
 
-    if (res.addedfriend) {
-      conCtx?.connection?.send("FriendRequest", res.addedfriend);
+    if (data.addedfriend) {
+      conCtx?.connection?.send("FriendRequest", data.addedfriend);
     }
 
     setSearchResult([]);
     setSearchInput("");
 
-    alertCtx?.setAlert({ shown: true, type: res.message });
-    if (res.addedfriend) {
-      ctx?.setFriendList((prev) => [...(prev ?? []), res.addedfriend]);
+    alertCtx?.setAlert({ shown: true, type: data.message });
+    if (data.addedfriend) {
+      ctx?.setFriendList((prev) => [...(prev ?? []), data.addedfriend]);
     }
     await sleep(2000);
-    alertCtx?.setAlert({ shown: false, type: res.message });
+    alertCtx?.setAlert({ shown: false, type: data.message });
   };
 
   return (

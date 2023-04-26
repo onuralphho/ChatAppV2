@@ -30,16 +30,16 @@ namespace ChatAppBackend.Controllers
         [AllowAnonymous]
         [HttpPost("login")]
 
-        public ActionResult<TokenDto> Login(AuthDto auth) // async kaldır test et !!!
+        public ActionResult<TokenDto> Login(AuthDto auth) 
         {
-
-           if(_authenticationService.Login(auth) == null)
+            var token = _authenticationService.Login(auth);
+           if (token == null)
             {
-                return BadRequest(new { Message = "Invalid Credentials" });
+                return Unauthorized(new { Message = "Invalid Credentials" });
             }
             else
             {
-                return Ok(_authenticationService.Login(auth));
+                return Ok(token);
             }
         }
 
