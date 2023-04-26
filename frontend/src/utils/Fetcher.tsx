@@ -21,7 +21,7 @@ export const Fetcher = async (fetchReq: fetchReq) => {
     }
   );
   
-  const data = await response.json();
+  // const data = await response.json();
 
-  return data;
+  return response;
 };

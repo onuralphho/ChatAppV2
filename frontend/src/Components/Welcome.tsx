@@ -43,8 +43,8 @@ const Welcome = (props: any) => {
                       url: "/api/messages/" + friendlist.id,
                       token: ctx?.getCookie("jwt"),
                     });
-
-                    ctx?.setMessages(res);
+                    const data = await res.json()
+                    ctx?.setMessages(data);
 
                     await Fetcher({
                       method: "GET",

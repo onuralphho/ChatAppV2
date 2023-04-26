@@ -50,6 +50,7 @@ const FriendList = (props: Iprops) => {
       url: "/api/friendboxes/approve/" + id,
       token: ctx?.getCookie("jwt"),
     });
+    const data = await res.json()
 
     conCtx?.connection?.send("ApproveFriend", res);
 
@@ -64,9 +65,9 @@ const FriendList = (props: Iprops) => {
       });
     });
 
-    alertCtx?.setAlert({ shown: true, type: res.message });
+    alertCtx?.setAlert({ shown: true, type: data.message });
     sleep(2000);
-    alertCtx?.setAlert({ shown: false, type: res.message });
+    alertCtx?.setAlert({ shown: false, type: data.message });
   };
 
   const RejectFriendRequestHandler = async (
@@ -105,6 +106,7 @@ const FriendList = (props: Iprops) => {
         url: "/api/messages/" + talkingTo.friendBoxId,
         token: ctx?.getCookie("jwt"),
       });
+      const data = await res.json();
 
       // * Unread Mesaj sıfırlama
       await Fetcher({
@@ -112,6 +114,7 @@ const FriendList = (props: Iprops) => {
         url: "/api/messages/read/" + talkingTo.friendBoxId,
         token: ctx?.getCookie("jwt"),
       });
+
 
       ctx?.setFriendList((prev) => {
         const updatedFriendList = prev?.map((friendship) => {
@@ -125,7 +128,7 @@ const FriendList = (props: Iprops) => {
         });
         return updatedFriendList;
       });
-      ctx?.setMessages(res);
+      ctx?.setMessages(data);
     }
   };
 

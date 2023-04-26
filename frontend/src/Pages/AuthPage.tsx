@@ -3,16 +3,31 @@ import humanImage from "../Assets/human.svg";
 import { useAuth } from "../Context/AuthProvider";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { Fetcher } from "../utils/Fetcher";
 const AuthPage = () => {
   const ctx = useAuth();
   const navigate = useNavigate();
+
   useEffect(() => {
     const jwt = ctx?.getCookie("jwt");
-    if (jwt) {
-      navigate("/chats");
+    const protection = async () => {
+      const res = await Fetcher({
+        method: "GET",
+        url: "/api/authentication/session",
+        token: jwt,
+      });
+      
+      if (res.status === 401) {
+        navigate("/");
+      }
+      if(res.status === 200){
+        navigate('/chats')
+      }
     }
+    protection();
+  },[ctx,navigate])
 
+  useEffect(() => {
 
     const pre = document.getElementById("pre");
     function rotateElement(event: any, element: any) {

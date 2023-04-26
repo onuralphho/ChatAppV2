@@ -81,16 +81,18 @@ const ChatLog = (props: IProps) => {
       token: ctx?.getCookie("jwt"),
     });
 
+    const data = await res.json()
+
     messageAudio.play();
 
-    ctx?.setMessages((prev) => [...(prev || []), res]);
+    ctx?.setMessages((prev) => [...(prev || []), data]);
     let dateNow = new Date();
     ctx?.setFriendList((prev) => {
       let friend = prev?.find((f) => f.id === props.talkingTo.friendBoxId);
       if (friend) {
         friend.updateTime = dateNow.toISOString();
-        friend.lastMessage = res.contentText;
-        friend.lastMessageFrom = res.fromUser.name;
+        friend.lastMessage = data.contentText;
+        friend.lastMessageFrom = data.fromUser.name;
 
         return [...(prev || [])];
       }
