@@ -272,15 +272,15 @@
   }
 
 }
-
-
-/* 
-.test{
+.file-upload::before{
+  content: "";
   position: absolute;
-  width: 200px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  top: 200px;
-  background: linear-gradient(45deg,red,blue);
-  z-index: 5;
-} */
+  left: 2px;
+  bottom: -7px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 10px 10px 0 10px;
+  border-color: #ffff transparent transparent transparent;
+}
+

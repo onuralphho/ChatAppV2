@@ -1,6 +1,7 @@
 import { RiChatSmile3Fill } from "react-icons/ri";
 import { HiPaperAirplane } from "react-icons/hi2";
 import { FiPaperclip } from "react-icons/fi";
+import { HiPhoto } from "react-icons/hi2";
 import { IMessage } from "../@types/messageType";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useAuth } from "../Context/AuthProvider";
@@ -8,7 +9,8 @@ import { ITalkingTo } from "../@types/talkingTo";
 import { Fetcher } from "../utils/Fetcher";
 import { useConnectionContext } from "../Context/ConnectionProvider";
 import ChatLoader from "./ChatLoader";
-
+import AWS from "aws-sdk";
+import { motion } from "framer-motion";
 
 interface IProps {
   talkingTo: ITalkingTo;
@@ -18,7 +20,8 @@ interface IProps {
 const ChatLog = (props: IProps) => {
   const [messageInput, setMessageInput] = useState("");
   const [checkerVal, setCheckerVal] = useState(false);
-
+  const [showFileInput, setShowFileInput] = useState(false);
+  const [fileInput, setFileInput] = useState<any>();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const conCtx = useConnectionContext();
@@ -29,12 +32,36 @@ const ChatLog = (props: IProps) => {
   );
   messageAudio.volume = 0.2;
 
+  const s3 = new AWS.S3();
+  AWS.config.update({
+    accessKeyId: "AKIA6H5KPEMDWXWIF3IM",
+    secretAccessKey: "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",
+  });
+
   const messageChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessageInput(e.target.value);
   };
 
   const sendMessageHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (fileInput) {
+      const params = {
+        Bucket: "chatappv2/",
+        Key: fileInput.name,
+        Body: fileInput,
+        ACL: "public-read",
+      };
+
+      s3.upload(params, (err: any, data: any) => {
+        if (err) {
+          console.log("Error:", err);
+        } else {
+          console.log("File uploaded successfully:", data.Location);
+        }
+      });
+    }
+
     const sendMessagePayload = {
       contentText: messageInput,
       fromUserId: ctx?.user?.id,
@@ -46,7 +73,7 @@ const ChatLog = (props: IProps) => {
         picture: ctx?.user?.picture,
       },
     };
-
+  
     const res = await Fetcher({
       method: "POST",
       body: sendMessagePayload,
@@ -54,23 +81,25 @@ const ChatLog = (props: IProps) => {
       token: ctx?.getCookie("jwt"),
     });
 
+    const data = await res.json()
+
     messageAudio.play();
 
-    ctx?.setMessages((prev) => [...(prev || []), res]);
+    ctx?.setMessages((prev) => [...(prev || []), data]);
     let dateNow = new Date();
     ctx?.setFriendList((prev) => {
       let friend = prev?.find((f) => f.id === props.talkingTo.friendBoxId);
       if (friend) {
         friend.updateTime = dateNow.toISOString();
-        friend.lastMessage = res.contentText;
-        friend.lastMessageFrom = res.fromUser.name;
+        friend.lastMessage = data.contentText;
+        friend.lastMessageFrom = data.fromUser.name;
 
         return [...(prev || [])];
       }
       return prev || [];
     });
 
-    await conCtx?.connection?.invoke("SendMessage", res);
+    await conCtx?.connection?.invoke("SendMessage", data);
     setCheckerVal(true);
     setMessageInput("");
   };
@@ -244,7 +273,35 @@ const ChatLog = (props: IProps) => {
         onSubmit={sendMessageHandler}
         className=" p-1  h-12 flex gap-2 items-center"
       >
-        <button type="button" className="text-xl">
+        <button
+          onClick={(e) => {
+            setShowFileInput((prev) => !prev);
+          }}
+          type="button"
+          className="text-xl relative"
+        >
+          {showFileInput && (
+            <motion.div className="file-upload absolute -top-[4.5rem] z-10 bg-[#ffffff] backdrop-blur-lg text-sm w-12 h-14 cursor-default  px-1 py-2 rounded-lg ">
+              <label
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+                htmlFor="file-upload"
+                className=" h-10 w-10 overflow-hidden cursor-pointer"
+              >
+                <HiPhoto size={40} className="  text-green-500" />
+                <input
+                  id="file-upload"
+                  type="file"
+                  size={2}
+                  className="opacity-0 hidden"
+                  onChange={(e) => {
+                    setFileInput(e.target.files && e.target.files[0]);
+                  }}
+                />
+              </label>
+            </motion.div>
+          )}
           <FiPaperclip />
         </button>
         <div className=" flex flex-1 px-2 h-full items-center  gap-2 bg-white rounded-lg ">

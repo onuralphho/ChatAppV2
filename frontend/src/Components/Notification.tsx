@@ -46,8 +46,8 @@ const Notification: FC<Props> = ({
             url: "/api/messages/" + talkingTo?.friendBoxId,
             token: ctx?.getCookie("jwt"),
           });
-
-          ctx?.setMessages(res);
+          const data = await res.json()
+          ctx?.setMessages(data);
 
           await Fetcher({
             method: "GET",
