@@ -190,6 +190,7 @@ const ChatPage = () => {
         navigate("/");
         return;
       }
+      
 
       const sessionData = await Fetcher({
         body: null,
@@ -198,8 +199,11 @@ const ChatPage = () => {
         token: jwt,
       });
 
+
       if (sessionData?.status !== 401) {
         ctx?.setUser(sessionData);
+      }else{
+        navigate('/')
       }
 
       const friendsData = await Fetcher({
