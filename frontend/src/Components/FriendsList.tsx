@@ -80,12 +80,15 @@ const FriendList = (props: Iprops) => {
       url: "/api/friendboxes/delete/" + id,
       token: ctx?.getCookie("jwt"),
     });
+    const data = await res.json()
+
+
 
     ctx?.setFriendList((prev) => {
       if (!prev) return prev;
 
       return prev.filter((friendBox) => {
-        return friendBox.id !== id;
+        return friendBox.id !== data.friendBoxId;
       });
     });
   };

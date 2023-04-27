@@ -4,7 +4,6 @@ import { Fetcher } from "../utils/Fetcher";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthProvider";
 const AuthForm = (props: any) => {
-
   const [passwordInput, setPasswordInput] = useState("");
   const [emailInput, setEmailInput] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -42,18 +41,22 @@ const AuthForm = (props: any) => {
         method: "POST",
         url: "/api/users/register",
       });
+      
+      if(res.status === 204){
+        setPasswordInput("");
+        setEmailInput("");
+        await props.ctx.login(emailInput, passwordInput);
+        navigate("/chats");
+        
+      }
       const data = await res.json();
-
-      setLoading(false);
-
-      if (data.message) {
-        setErrorMessage(data.message);
+      
+      if (data.status === 400) {
+        setErrorMessage(data.title);
+        setLoading(false);
         return;
       }
-      setPasswordInput("");
-      setEmailInput("");
-      await props.ctx.login(emailInput, passwordInput);
-      navigate("/chats");
+      
     } else {
       setErrorMessage("Provide credentials");
     }
@@ -66,15 +69,15 @@ const AuthForm = (props: any) => {
       const res = await props.ctx.login(emailInput, passwordInput);
       setLoading2(false);
 
-      console.log(res)
+    
 
-      if (res.status === 401) {
-        setErrorMessage(res.detail);
+      if (res.status === 400) {
+        setErrorMessage(res.title);
         return;
       }
       setPasswordInput("");
       setEmailInput("");
-      
+
       navigate("/chats");
     } else {
       setErrorMessage("Provide credentials");
@@ -118,10 +121,10 @@ const AuthForm = (props: any) => {
         >
           {Loading2 ? (
             <span className="dots gap-1">
-            <span className="w-3 bg-white"></span>
-            <span className="w-3 bg-white"></span>
-            <span className="w-3 bg-white"></span>
-          </span>
+              <span className="w-3 bg-white"></span>
+              <span className="w-3 bg-white"></span>
+              <span className="w-3 bg-white"></span>
+            </span>
           ) : (
             "Login"
           )}

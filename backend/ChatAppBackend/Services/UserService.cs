@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using ChatAppBackend.Context;
-using ChatAppBackend.Dto;
 using ChatAppBackend.Entities;
 using ChatAppBackend.Exceptions;
 using ChatAppBackend.Models.User.Request;
@@ -57,7 +56,6 @@ namespace ChatAppBackend.Services
         public async Task<SessionUserDto> UpdateUser(UpdateUserDto updatedUser)
         {
             var user = await _context.Users.FindAsync(updatedUser.Id);
-
             user.UpdateTime = DateTime.UtcNow;
             user.Name = updatedUser.Name;
             user.Picture = updatedUser.Picture;
@@ -66,14 +64,16 @@ namespace ChatAppBackend.Services
 
             return _mapper.Map<SessionUserDto>(user);
         }
+
+
         public List<UserSearchResponse> SearchUser(UserSearchRequest userSearch)
         {
 
-            var matchingUsers = _context.Users.Where(u => u.Name.Contains(userSearch.searchValue)).Select(u => new UserSearchResponse { Id = u.Id, Name = u.Name, Picture = u.Picture }).ToList();
+            var matchingUsers = _context.Users.Where(u => u.Name.Contains(userSearch.SearchValue)).Select(u => new UserSearchResponse { Id = u.Id, Name = u.Name, Picture = u.Picture }).ToList();
 
 
 
-            matchingUsers = matchingUsers.OrderByDescending(u => GetSimilarity(u.Name, userSearch.searchValue)).ToList();
+            matchingUsers = matchingUsers.OrderByDescending(u => GetSimilarity(u.Name, userSearch.SearchValue)).ToList();
 
 
             return matchingUsers.Select((matchingUser) => _mapper.Map<UserSearchResponse>(matchingUser)).ToList();

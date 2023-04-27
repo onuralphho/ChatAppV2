@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using ChatAppBackend.Models.FriendBox.Response;
 using ChatAppBackend.Models.FriendBox.Request;
 using ChatAppBackend.Services;
+using ChatAppBackend.Exceptions;
 
 namespace ChatAppBackend.Controllers
 {
@@ -18,32 +19,23 @@ namespace ChatAppBackend.Controllers
         public FriendBoxesController(IFriendBoxService friendBoxService)
         {
 
-         
+
             _friendBoxService = friendBoxService;
         }
 
         [HttpPost("addfriend")]
-        public async Task<ActionResult> AddFriend(FriendBoxAddRequest friendBox)
+        public async Task<FriendBoxAddResponse> AddFriend(FriendBoxAddRequest friendBox)
         {
             var FriendBoxData = await _friendBoxService.AddFriend(friendBox);
-
             if (FriendBoxData == null)
             {
-                return Ok(new { Message = "Already your friend" });
-                
-
+                throw new BadRequestException("Already your friend");
             }
             else
             {
-                return Ok(new
-                {
-                    addedfriend = FriendBoxData,
-                    message = "Friend request sent",
-
-                });
+                var Response = new FriendBoxAddResponse { Friend = FriendBoxData, Message = "Friend request sent" };
+                return Response;
             }
-
-            
         }
 
         [HttpGet("friends")]
@@ -64,12 +56,12 @@ namespace ChatAppBackend.Controllers
 
         [HttpDelete]
         [Route("delete/{friendBoxId}")]
-        public async Task<ActionResult> Delete(int friendBoxId)
+        public async Task<FriendBoxDeleteResponse> Delete(int friendBoxId)
         {
-            return Ok(new
-            {
-                message = await _friendBoxService.DeleteFriend(friendBoxId),
-            });
+            var Response = new FriendBoxDeleteResponse { FriendBoxId = await _friendBoxService.DeleteFriend(friendBoxId) };
+            return Response;
+            
+           
         }
     }
 }

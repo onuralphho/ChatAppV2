@@ -4,6 +4,7 @@ import AuthPage from "./Pages/AuthPage";
 import { AuthProvider } from "./Context/AuthProvider";
 import ConnectionProvider from "./Context/ConnectionProvider";
 import ChatPage from "./Pages/ChatPage";
+import NoMatch from "./Pages/NoMatch";
 
 function App() {
   return (
@@ -20,6 +21,8 @@ function App() {
             }
           />
         </Route>
+        <Route />
+        <Route path="*" element={<NoMatch />} />
       </Routes>
     </AuthProvider>
   );

@@ -10,7 +10,7 @@ namespace ChatAppBackend.Services
     {
         TokenDto Login(AuthDto auth);
         SessionUserDto GetSession();
-        string LogOut();
+       
     }
     public class AuthenticationService : IAuthenticationService
     {
@@ -55,16 +55,6 @@ namespace ChatAppBackend.Services
             return session;
         }
 
-        public string LogOut()
-        {
-            //Cookie silme işlemi çalışmıyor
-
-            _httpContextAccessor.HttpContext.Response.Cookies.Delete("jwt");
-            _httpContextAccessor.HttpContext.Response.Cookies.Append("jwt", "", new CookieOptions
-            {
-                Expires = DateTime.Now.AddDays(-1)
-            });
-            return "Logout Successful";
-        }
+        
     }
 }

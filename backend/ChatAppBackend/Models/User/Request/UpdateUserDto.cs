@@ -1,4 +1,4 @@
-﻿namespace ChatAppBackend.Dto
+﻿namespace ChatAppBackend.Models.User.Request
 {
     public class UpdateUserDto
     {

@@ -38,17 +38,13 @@ namespace ChatAppBackend.Controllers
             return _messageservice.AddMessage(message);
 
         }
-
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpGet("read/{friendBoxId}")]
         public async Task<ActionResult> ReadMessages(int friendBoxId)
         {
-
+            //Canlı mesaj okuma yapısı kurulunca düzenlenicek
             await _messageservice.ReadMessage(friendBoxId);
-
-            return Ok(new
-            {
-                message = "success"
-            });
+            return NoContent();
         }
 
 

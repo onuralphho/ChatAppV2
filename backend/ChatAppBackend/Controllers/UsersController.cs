@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using ChatAppBackend.Dto;
 using ChatAppBackend.Models.User.Request;
 using ChatAppBackend.Models.User.Response;
 using AutoMapper;
@@ -33,13 +32,14 @@ namespace ChatAppBackend.Controllers
         {
             await _userService.Register(regUser);
             return NoContent();
-            
+
         }
 
         [HttpPut("update")]
-        public async Task<ActionResult> Update(UpdateUserDto updatedUser)
+        public async Task<UserUpdateResponse> Update(UpdateUserDto updatedUser)
         {
-            return Ok(new { session = await _userService.UpdateUser(updatedUser), success = "User updated successfully" });
+            var response = new UserUpdateResponse { Message = "User updated", SessionUser = await _userService.UpdateUser(updatedUser) };
+            return response;
         }
 
 

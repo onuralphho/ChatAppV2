@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ChatAppBackend.Context;
 using ChatAppBackend.Entities;
+using ChatAppBackend.Exceptions;
 using ChatAppBackend.Helpers;
 using ChatAppBackend.Models.FriendBox.Request;
 using ChatAppBackend.Models.FriendBox.Response;
@@ -14,7 +15,7 @@ namespace ChatAppBackend.Services
         Task<FriendBoxFriendsResponse> AddFriend(FriendBoxAddRequest friendBox);
         List<FriendBoxFriendsResponse> GetFriends();
         Task<FriendBoxFriendsResponse> ApproveFriend(int friendBoxId);
-        Task<string> DeleteFriend(int friendBoxId);
+        Task<int> DeleteFriend(int friendBoxId);
     }
     public class FriendBoxService : IFriendBoxService
     {
@@ -54,12 +55,7 @@ namespace ChatAppBackend.Services
             {
                 return null;
             }
-
-
-
         }
-
-
 
         public List<FriendBoxFriendsResponse> GetFriends()
         {
@@ -107,20 +103,22 @@ namespace ChatAppBackend.Services
             return _mapper.Map<FriendBoxFriendsResponse>(friendbox);
         }
 
-        public async Task<string> DeleteFriend(int friendBoxId)
+        public async Task<int> DeleteFriend(int friendBoxId)
         {
             var friendbox = await _context.FriendBoxes.FirstOrDefaultAsync(f => f.Id == friendBoxId);
 
             if (friendbox == null)
             {
-                return "Something went wrong";
+                throw new BadRequestException("Friend could not be found");
             }
 
             _context.FriendBoxes.Remove(friendbox);
 
 
             await _context.SaveChangesAsync();
-            return "Friend Rejected";
+
+            
+            return friendBoxId;
         }
     }
 }
