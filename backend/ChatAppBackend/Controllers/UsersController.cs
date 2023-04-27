@@ -48,7 +48,6 @@ namespace ChatAppBackend.Controllers
         [HttpPost("search")]
         public List<UserSearchResponse> SearchUsers(UserSearchRequest userSearch)
         {
-            this.configuration.GetConnectionString("DefaultConnection");
             return _userService.SearchUser(userSearch);
 
         }
