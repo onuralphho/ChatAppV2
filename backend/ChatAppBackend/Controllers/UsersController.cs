@@ -16,11 +16,13 @@ namespace ChatAppBackend.Controllers
     {
 
         private readonly IUserService _userService;
+        private readonly IConfiguration configuration;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, IConfiguration configuration)
         {
 
             _userService = userService;
+            this.configuration = configuration;
         }
 
 
@@ -46,11 +48,20 @@ namespace ChatAppBackend.Controllers
         [HttpPost("search")]
         public List<UserSearchResponse> SearchUsers(UserSearchRequest userSearch)
         {
+            this.configuration.GetConnectionString("DefaultConnection");
             return _userService.SearchUser(userSearch);
 
         }
 
-
-
+        [HttpGet("GetConnection")]
+        [AllowAnonymous]
+        public ActionResult GetConnection()
+        {
+            var con = this.configuration.GetConnectionString("DefaultConnection");
+            return Ok(new
+            {
+                connectionString = con
+            });
+        }
     }
 }
