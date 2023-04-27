@@ -4,7 +4,6 @@ import { IFriendList } from "../@types/friendBoxType";
 import { IMessage } from "../@types/messageType";
 import { ITalkingTo } from "../@types/talkingTo";
 
-
 interface IUser {
   id: number;
   name: string;
@@ -18,7 +17,7 @@ interface AuthContextValue {
   user?: IUser | undefined;
   login: (email: string, password: string) => Promise<Response>;
   logout: () => void;
-  
+
   getCookie: (name: string) => string | undefined;
   friendList?: IFriendList[];
   setFriendList: React.Dispatch<
@@ -42,26 +41,17 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     undefined
   );
 
-
   const login = async (email: string, password: string) => {
-    // const res = await Fetcher({
-    //   body: { email, password },
-    //   method: "POST",
-    //   url: "/api/authentication/login",
-    // });
+    
+    const res = await Fetcher({
+      body: { email, password },
+      method: "POST",
+      url: "/api/authentication/login",
+    });
 
-    const res = await fetch(
-      `${process.env.REACT_APP_ENDPOINT_URL}/api/authentication/login`,
-      {
-        method: "POST",
-        body: JSON.stringify({ email: email, password: password }),
-        headers: { "Content-Type": "application/json" },
-      }
-    );
     const data = await res.json();
 
-    if (res.status !== 401) {
-      
+    if (data.status !== 401) {
       const d = new Date();
       d.setTime(d.getTime() + 24 * 60 * 60 * 1000);
 

@@ -7,12 +7,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using ChatAppBackend.Hubs;
 using ChatAppBackend.Services;
+using ChatAppBackend.Exceptions;
 
 namespace ChatAppBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    
     public class AuthenticationController : ControllerBase 
     {
 
@@ -33,9 +35,12 @@ namespace ChatAppBackend.Controllers
         public ActionResult<TokenDto> Login(AuthDto auth) 
         {
             var token = _authenticationService.Login(auth);
-           if (token == null)
+
+            //return token == null ? throw new Exception("Token cannot be generated.") :Ok(token) ; 
+            if (token == null)
             {
-                return Unauthorized(new { Message = "Invalid Credentials" });
+                throw new BadRequestException("Invalid Credentials");
+                //return Unauthorized(new { Message = "Invalid Credentials" });
             }
             else
             {
@@ -44,7 +49,7 @@ namespace ChatAppBackend.Controllers
         }
 
         [HttpGet("session")]
-        public ActionResult Session()
+        public ActionResult<SessionUserDto> Session()
         {
      
             return Ok(_authenticationService.GetSession());

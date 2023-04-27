@@ -2,6 +2,7 @@
 using ChatAppBackend.Context;
 using ChatAppBackend.Dto;
 using ChatAppBackend.Entities;
+using ChatAppBackend.Exceptions;
 using ChatAppBackend.Models.User.Request;
 using ChatAppBackend.Models.User.Response;
 
@@ -11,7 +12,7 @@ namespace ChatAppBackend.Services
 
     public interface IUserService
     {
-        Task<bool> Register(RegisterDto regUser);
+        Task Register(RegisterDto regUser);
         Task<SessionUserDto> UpdateUser(UpdateUserDto updatedUser);
         List<UserSearchResponse> SearchUser(UserSearchRequest userSearch);
     }
@@ -28,13 +29,13 @@ namespace ChatAppBackend.Services
 
         }
 
-        public async Task<bool> Register(RegisterDto regUser)
+        public async Task Register(RegisterDto regUser)
         {
             var tmp = _context.Users.Where(x => x.Email == regUser.Email).FirstOrDefault();
             if (tmp != null)
             {
-
-                return false;
+                throw new BadRequestException("Email already exist");
+                
             }
             var reg_user = new User
             {
@@ -46,12 +47,10 @@ namespace ChatAppBackend.Services
                 Picture = regUser.Picture
             };
 
-
-
             _context.Users.Add(reg_user);
             await _context.SaveChangesAsync();
 
-            return true;
+          
         }
 
 
