@@ -119,7 +119,7 @@ Kullanıcılar farklı sohbet odalarına katılabilir, yeni sohbet odaları olu�
     <td>Uygulamanın sunucu tarafındaki kodunu otomatik olarak derlemek için kullandığı GitHub'ın bir servisi</th>
   </tr>
   <tr>
-    <td><img src="https://www.pscom.gr/wp-content/uploads/2020/02/Azure.png" alt="TailwindCss logo" width="50" height="40"> Azure Web Deploy(.NET Project)</th>
+    <td><img src="https://download.logo.wine/logo/Microsoft_Azure/Microsoft_Azure-Logo.wine.png" width="80" height="60"> Azure Web Deploy(.NET Project)</th>
     <td>Uygulamanın sunucu tarafındaki kodunu yayınlamak için kullandığı Microsoft Azure'un bir servisi</th>
   </tr><tr>
     <td><img src="https://github.githubassets.com/images/modules/site/icons/footer/github-mark.svg" alt="TailwindCss logo" width="50" height="50"> Git Source Control</th>
