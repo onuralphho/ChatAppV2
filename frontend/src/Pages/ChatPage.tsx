@@ -268,7 +268,7 @@ const ChatPage = () => {
         >
           <div className="bg-[#252525] h-full w-full flex flex-col gap-2 justify-center items-center">
             <span className="text-xl font-semibold">
-              Your Chats are Loading...
+              Your chats are loading...
             </span>
             <div className="progress-bar"></div>
           </div>

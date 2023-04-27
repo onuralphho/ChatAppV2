@@ -15,21 +15,6 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-
-//string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
-
-//var Configuration = new ConfigurationBuilder()
-//    .AddConfiguration(builder.Configuration)
-//    .SetBasePath(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location))
-//    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-//    .AddJsonFile($"appsettings.{environment}.json", optional: true)
-//    .AddEnvironmentVariables()
-//    .Build();
-
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -103,7 +88,7 @@ builder.Services.AddHttpContextAccessor();
 var settings = builder.Configuration.GetSection("ConnectionStrings").Get<Connection>();
 
 var allowedOrigin = builder.Configuration.GetSection("AllowedOrigin").Value;
-//builder.Configuration.GetConnectionString("DefaultConnection")
+
 builder.Services.AddDbContext<PostgreSqlDbContext>(options => options.UseNpgsql(settings.DefaultConnection)); 
 
 builder.Services.AddScoped<JwtService>();

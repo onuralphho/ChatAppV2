@@ -16,13 +16,13 @@ namespace ChatAppBackend.Controllers
     {
 
         private readonly IUserService _userService;
-        private readonly IConfiguration configuration;
+        
 
-        public UsersController(IUserService userService, IConfiguration configuration)
+        public UsersController(IUserService userService)
         {
 
             _userService = userService;
-            this.configuration = configuration;
+           
         }
 
 
@@ -52,15 +52,6 @@ namespace ChatAppBackend.Controllers
 
         }
 
-        [HttpGet("GetConnection")]
-        [AllowAnonymous]
-        public ActionResult GetConnection()
-        {
-            var con = this.configuration.GetConnectionString("DefaultConnection");
-            return Ok(new
-            {
-                connectionString = con
-            });
-        }
+       
     }
 }
