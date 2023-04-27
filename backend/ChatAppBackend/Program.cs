@@ -10,16 +10,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
+//Swagger
 builder.Services.AddSwaggerGen(s =>
 {
     s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -52,6 +52,7 @@ builder.Services.AddSwaggerGen(s =>
                   });
 });
 
+//JWT
 #region Authentication
 var jwtOption = builder.Configuration.GetSection(JwtOptions.Jwt).Get<JwtOptions>();
 
@@ -88,7 +89,7 @@ var settings = builder.Configuration.GetSection("ConnectionStrings").Get<Connect
 
 var allowedOrigin = builder.Configuration.GetSection("AllowedOrigin").Value;
 
-builder.Services.AddDbContext<PostgreSqlDbContext>(options => options.UseNpgsql(settings.DefaultConnection)); //TODO:appsettingsden çekilecek // DONE
+builder.Services.AddDbContext<PostgreSqlDbContext>(options => options.UseNpgsql(settings.DefaultConnection)); 
 
 builder.Services.AddScoped<JwtService>();
 

@@ -110,8 +110,11 @@ const FriendList = (props: Iprops) => {
         token: ctx?.getCookie("jwt"),
       });
       const data = await res.json();
+      
+      ctx?.setMessages(data);
 
       // * Unread Mesaj sıfırlama
+
       await Fetcher({
         method: "GET",
         url: "/api/messages/read/" + talkingTo.friendBoxId,
@@ -131,7 +134,7 @@ const FriendList = (props: Iprops) => {
         });
         return updatedFriendList;
       });
-      ctx?.setMessages(data);
+      
     }
   };
 

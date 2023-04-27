@@ -16,11 +16,13 @@ namespace ChatAppBackend.Controllers
     {
 
         private readonly IUserService _userService;
+        
 
         public UsersController(IUserService userService)
         {
 
             _userService = userService;
+           
         }
 
 
@@ -50,7 +52,6 @@ namespace ChatAppBackend.Controllers
 
         }
 
-
-
+       
     }
 }
