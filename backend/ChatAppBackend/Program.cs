@@ -1,9 +1,12 @@
 using ChatAppBackend.Context;
+using ChatAppBackend.Exceptions;
+using ChatAppBackend.Filters;
 using ChatAppBackend.Helpers;
 using ChatAppBackend.Hubs;
 using ChatAppBackend.Models;
 using ChatAppBackend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -63,7 +66,8 @@ builder.Services.AddAuthentication(x =>
     x.SaveToken = true;
     x.Events = new JwtBearerEvents()
     {
-        OnAuthenticationFailed = field => {
+        OnAuthenticationFailed = field =>
+        {
             return Task.CompletedTask;
         }
     };
@@ -81,6 +85,8 @@ builder.Services.AddAuthentication(x =>
 builder.Services.AddHttpContextAccessor();
 
 var settings = builder.Configuration.GetSection("ConnectionStrings").Get<Connection>();
+
+var allowedOrigin = builder.Configuration.GetSection("AllowedOrigin").Value;
 
 builder.Services.AddDbContext<PostgreSqlDbContext>(options => options.UseNpgsql(settings.DefaultConnection)); //TODO:appsettingsden çekilecek // DONE
 
@@ -100,12 +106,21 @@ builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ErrorHandlingFilter>();
+    options.Filters.Add(new ProducesResponseTypeAttribute(typeof(ProblemDetails), StatusCodes.Status400BadRequest));
+    options.Filters.Add(new ProducesResponseTypeAttribute(typeof(ProblemDetails), StatusCodes.Status404NotFound));
+    options.Filters.Add(new ProducesResponseTypeAttribute(typeof(ProblemDetails), StatusCodes.Status500InternalServerError));
+    options.Filters.Add(new ProducesResponseTypeAttribute( StatusCodes.Status200OK));
+});
 
 var app = builder.Build();
 
 
+
 app.UseCors(options => options
-    .WithOrigins("https://soprahchat.onrender.com") 
+    .WithOrigins(allowedOrigin)
     .AllowAnyHeader()
     .AllowAnyMethod()
     .AllowCredentials()

@@ -1,4 +1,4 @@
-﻿using ChatAppBackend.Dto;
+﻿using ChatAppBackend.Models.User.Request;
 
 namespace ChatAppBackend.Models.Message.Response
 {

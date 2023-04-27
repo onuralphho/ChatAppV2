@@ -7,12 +7,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using ChatAppBackend.Hubs;
 using ChatAppBackend.Services;
+using ChatAppBackend.Exceptions;
 
 namespace ChatAppBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    
     public class AuthenticationController : ControllerBase 
     {
 
@@ -30,34 +32,40 @@ namespace ChatAppBackend.Controllers
         [AllowAnonymous]
         [HttpPost("login")]
 
-        public ActionResult<TokenDto> Login(AuthDto auth) 
+        public TokenDto Login(AuthDto auth) 
         {
             var token = _authenticationService.Login(auth);
-           if (token == null)
+
+            if (token == null)
             {
-                return Unauthorized(new { Message = "Invalid Credentials" });
+                throw new BadRequestException("Invalid Credentials");    
             }
             else
             {
-                return Ok(token);
+                return token;
             }
         }
 
         [HttpGet("session")]
-        public ActionResult Session()
+        public SessionUserDto Session()
         {
      
-            return Ok(_authenticationService.GetSession());
+            return _authenticationService.GetSession();
         }
 
         [HttpGet("logout")]
         public ActionResult Logout()
         {
+
+            //Cookie silme işlemi çalışmıyor
             
-            return Ok(new
-            {
-                success =_authenticationService.LogOut(),
-            });
+            //_httpContextAccessor.HttpContext.Response.Cookies.Delete("jwt");
+            //_httpContextAccessor.HttpContext.Response.Cookies.Append("jwt", "", new CookieOptions
+            //{
+            //    Expires = DateTime.Now.AddDays(-1)
+            //});
+
+            return Ok();
         }
 
 

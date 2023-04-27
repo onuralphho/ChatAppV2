@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using ChatAppBackend.Context;
-using ChatAppBackend.Dto;
 using ChatAppBackend.Entities;
+using ChatAppBackend.Exceptions;
 using ChatAppBackend.Models.User.Request;
 using ChatAppBackend.Models.User.Response;
 
@@ -11,7 +11,7 @@ namespace ChatAppBackend.Services
 
     public interface IUserService
     {
-        Task<bool> Register(RegisterDto regUser);
+        Task Register(RegisterDto regUser);
         Task<SessionUserDto> UpdateUser(UpdateUserDto updatedUser);
         List<UserSearchResponse> SearchUser(UserSearchRequest userSearch);
     }
@@ -28,13 +28,13 @@ namespace ChatAppBackend.Services
 
         }
 
-        public async Task<bool> Register(RegisterDto regUser)
+        public async Task Register(RegisterDto regUser)
         {
             var tmp = _context.Users.Where(x => x.Email == regUser.Email).FirstOrDefault();
             if (tmp != null)
             {
-
-                return false;
+                throw new BadRequestException("Email already exist");
+                
             }
             var reg_user = new User
             {
@@ -46,19 +46,16 @@ namespace ChatAppBackend.Services
                 Picture = regUser.Picture
             };
 
-
-
             _context.Users.Add(reg_user);
             await _context.SaveChangesAsync();
 
-            return true;
+          
         }
 
 
         public async Task<SessionUserDto> UpdateUser(UpdateUserDto updatedUser)
         {
             var user = await _context.Users.FindAsync(updatedUser.Id);
-
             user.UpdateTime = DateTime.UtcNow;
             user.Name = updatedUser.Name;
             user.Picture = updatedUser.Picture;
@@ -67,14 +64,16 @@ namespace ChatAppBackend.Services
 
             return _mapper.Map<SessionUserDto>(user);
         }
+
+
         public List<UserSearchResponse> SearchUser(UserSearchRequest userSearch)
         {
 
-            var matchingUsers = _context.Users.Where(u => u.Name.Contains(userSearch.searchValue)).Select(u => new UserSearchResponse { Id = u.Id, Name = u.Name, Picture = u.Picture }).ToList();
+            var matchingUsers = _context.Users.Where(u => u.Name.Contains(userSearch.SearchValue)).Select(u => new UserSearchResponse { Id = u.Id, Name = u.Name, Picture = u.Picture }).ToList();
 
 
 
-            matchingUsers = matchingUsers.OrderByDescending(u => GetSimilarity(u.Name, userSearch.searchValue)).ToList();
+            matchingUsers = matchingUsers.OrderByDescending(u => GetSimilarity(u.Name, userSearch.SearchValue)).ToList();
 
 
             return matchingUsers.Select((matchingUser) => _mapper.Map<UserSearchResponse>(matchingUser)).ToList();

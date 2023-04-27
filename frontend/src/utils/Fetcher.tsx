@@ -1,12 +1,11 @@
 interface fetchReq {
-  body?: Record<string, unknown> | string | number |  null;
+  body?: Record<string, unknown> | string | number | null;
   method: string;
   url: string;
   token?: string | null;
 }
 
 export const Fetcher = async (fetchReq: fetchReq) => {
-
   const response = await fetch(
     `${process.env.REACT_APP_ENDPOINT_URL}${fetchReq.url}`,
     {
@@ -20,8 +19,10 @@ export const Fetcher = async (fetchReq: fetchReq) => {
       body: fetchReq.body !== null ? JSON.stringify(fetchReq.body) : null,
     }
   );
-  
-  // const data = await response.json();
+
+  if (response.status === 401) {
+    window.location.href = "/#"; //! REACT için uygun değil fakat hook kullanımı yapılamıyor component olmayan fonksiyonlarda
+  }
 
   return response;
 };
