@@ -11,16 +11,16 @@ function App() {
     <AuthProvider>
       <Routes>
         <Route index path="/" element={<AuthPage />} />
-        <Route path="/chats">
-          <Route
-            path=""
-            element={
-              <ConnectionProvider>
-                <ChatPage />
-              </ConnectionProvider>
-            }
-          />
-        </Route>
+
+        <Route
+          path="/chats"
+          element={
+            <ConnectionProvider>
+              <ChatPage />
+            </ConnectionProvider>
+          }
+        />
+
         <Route />
         <Route path="*" element={<NoMatch />} />
       </Routes>
