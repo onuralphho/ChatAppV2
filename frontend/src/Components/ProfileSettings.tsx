@@ -69,22 +69,22 @@ const ProfileSettings = (props: IProfileProps) => {
       token: jwt,
     });
     const data = await res.json();
-    alertCtx?.setAlert({ shown: true, type: data.success });
+    alertCtx?.setAlert({ shown: true, type: data.message});
 
     ctx?.setUser((prev) => {
       if (prev) {
         return {
           ...prev,
-          name: data.session.name,
-          picture: data.session.picture,
-          updateTime: data.session.updateTime,
+          name: data.sessionUser.name,
+          picture: data.sessionUser.picture,
+          updateTime: data.sessionUser.updateTime,
         };
       }
       return prev;
     });
 
     await sleep(2000);
-    alertCtx?.setAlert({ shown: false, type: data.success });
+    alertCtx?.setAlert({ shown: false, type: data.message });
   };
 
   return (

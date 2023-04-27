@@ -55,8 +55,8 @@ const SideBar = (props: ISideBarProps) => {
     setShowMenu(true);
   };
   const closeSideBar = () => {
-    setShowMenu(false)
-  }
+    setShowMenu(false);
+  };
 
   const searchHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
@@ -74,7 +74,7 @@ const SideBar = (props: ISideBarProps) => {
       url: "/api/users/search",
       token: ctx?.getCookie("jwt"),
     });
-    const data = await res.json()
+    const data = await res.json();
     setSearchResult(data);
   };
 
@@ -87,19 +87,25 @@ const SideBar = (props: ISideBarProps) => {
     });
     const data = await res.json();
 
-    if (data.addedfriend) {
-      conCtx?.connection?.send("FriendRequest", data.addedfriend);
-    }
 
-    setSearchResult([]);
-    setSearchInput("");
 
-    alertCtx?.setAlert({ shown: true, type: data.message });
-    if (data.addedfriend) {
-      ctx?.setFriendList((prev) => [...(prev ?? []), data.addedfriend]);
+    if (data.friend) {
+      conCtx?.connection?.send("FriendRequest", data.friend);
+      setSearchResult([]);
+      setSearchInput("");
+
+      alertCtx?.setAlert({ shown: true, type: data.message });
+
+      ctx?.setFriendList((prev) => [...(prev ?? []), data.friend]);
+
+      await sleep(2000);
+      alertCtx?.setAlert({ shown: false, type: data.message });
     }
-    await sleep(2000);
-    alertCtx?.setAlert({ shown: false, type: data.message });
+    if(data.status === 400){
+      alertCtx?.setAlert({ shown: true, type: data.title });
+      await sleep(2000);
+      alertCtx?.setAlert({ shown: false, type: data.title });
+    }
   };
 
   return (

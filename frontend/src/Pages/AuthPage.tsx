@@ -9,22 +9,22 @@ const AuthPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const jwt = ctx?.getCookie("jwt");
-    const protection = async () => {
-      const res = await Fetcher({
-        method: "GET",
-        url: "/api/authentication/session",
-        token: jwt,
-      });
+    // const jwt = ctx?.getCookie("jwt");
+    // const protection = async () => {
+    //   const res = await Fetcher({
+    //     method: "GET",
+    //     url: "/api/authentication/session",
+    //     token: jwt,
+    //   });
       
-      if (res.status === 401) {
-        navigate("/");
-      }
-      if(res.status === 200){
-        navigate('/chats')
-      }
-    }
-    protection();
+    //   if (res.status === 401) {
+    //     navigate("/");
+    //   }
+    //   if(res.status === 200){
+    //     navigate('/chats')
+    //   }
+    // }
+    // protection();
   },[ctx,navigate])
 
   useEffect(() => {

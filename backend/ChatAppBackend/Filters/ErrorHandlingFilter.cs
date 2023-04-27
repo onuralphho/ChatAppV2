@@ -18,7 +18,7 @@ namespace ChatAppBackend.Filters
                 problemDetails.Status = (int)HttpStatusCode.BadRequest;
 
             }
-            else if(exception is NotFoundException) 
+            else if (exception is NotFoundException)
             {
                 problemDetails.Title = exception.Message;
                 problemDetails.Status = (int)HttpStatusCode.NotFound;

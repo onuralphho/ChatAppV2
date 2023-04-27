@@ -42,7 +42,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   );
 
   const login = async (email: string, password: string) => {
-    
+
     const res = await Fetcher({
       body: { email, password },
       method: "POST",
@@ -58,18 +58,17 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       const expires = "expires=" + d.toUTCString();
       document.cookie = "jwt=" + data.tokenValue + ";" + expires + ";path=/";
     }
-
     return data;
   };
 
   const logout = async () => {
     setUser(undefined);
-
+    var token = getCookie("jwt");
     document.cookie = "jwt=;" + 0 + ";path=/";
     const res = await Fetcher({
       method: "GET",
       url: "/api/authentication/logout",
-      token: getCookie("jwt"),
+      token: token,
     });
     return res;
   };

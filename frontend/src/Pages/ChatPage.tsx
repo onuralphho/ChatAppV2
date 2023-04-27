@@ -184,30 +184,16 @@ const ChatPage = () => {
     const getUser = async () => {
       const jwt = ctx?.getCookie("jwt");
 
-      if (!jwt) {
-        navigate("/");
-        return;
-      }
-
       const res = await Fetcher({
         method: "GET",
         url: "/api/authentication/session",
         token: jwt,
       });
-
-      if (res.status === 401) {
-        navigate("/");
-      }
-      if(res.status === 200){
-        
-      }
+      
       const data = await res.json();
-      console.log(data)
 
       if (data) {
         ctx?.setUser(data);
-      } else {
-        navigate("/");
       }
 
       const friendsRes = await Fetcher({

@@ -86,6 +86,8 @@ builder.Services.AddHttpContextAccessor();
 
 var settings = builder.Configuration.GetSection("ConnectionStrings").Get<Connection>();
 
+var allowedOrigin = builder.Configuration.GetSection("AllowedOrigin").Value;
+
 builder.Services.AddDbContext<PostgreSqlDbContext>(options => options.UseNpgsql(settings.DefaultConnection)); //TODO:appsettingsden çekilecek // DONE
 
 builder.Services.AddScoped<JwtService>();
@@ -116,8 +118,9 @@ builder.Services.AddControllers(options =>
 var app = builder.Build();
 
 
+
 app.UseCors(options => options
-    .WithOrigins("http://localhost:3000")
+    .WithOrigins(allowedOrigin)
     .AllowAnyHeader()
     .AllowAnyMethod()
     .AllowCredentials()
