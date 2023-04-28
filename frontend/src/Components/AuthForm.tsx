@@ -68,9 +68,7 @@ const AuthForm = (props: any) => {
       setLoading2(true);
       const res = await props.ctx.login(emailInput, passwordInput);
       setLoading2(false);
-
-    
-
+      
       if (res.status === 400) {
         setErrorMessage(res.title);
         return;
