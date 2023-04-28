@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using ChatAppBackend.Context;
 using ChatAppBackend.Entities;
-using ChatAppBackend.Models;
 using ChatAppBackend.Models.FriendBox.Request;
 using ChatAppBackend.Models.FriendBox.Response;
 using ChatAppBackend.Models.Hub;
