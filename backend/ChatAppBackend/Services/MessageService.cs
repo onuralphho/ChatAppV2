@@ -39,6 +39,7 @@ namespace ChatAppBackend.Services
             var newMessage = new Message
             {
                 ContentText = message.ContentText,
+                ContentImageUrl = message.ContentImageUrl,
                 SentDate = DateTime.UtcNow,
                 FromUserId = message.FromUserId,
                 ToUserId = message.ToUserId,

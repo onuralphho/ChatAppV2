@@ -10,6 +10,8 @@ namespace ChatAppBackend.Models.Message.Response
 
         public string ContentText { get; set; }
 
+        public string ContentImageUrl { get; set; }
+
         public int FromUserId { get; set; }
 
         public int ToUserId { get; set; }

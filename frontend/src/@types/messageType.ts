@@ -2,6 +2,7 @@ export interface IMessage {
   id: number;
   sentDate: string;
   contentText: string;
+  contentImageUrl: string;
   fromUserId: number;
   toUserId: number;
   friendBoxId: number;

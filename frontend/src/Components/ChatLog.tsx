@@ -11,6 +11,7 @@ import { useConnectionContext } from "../Context/ConnectionProvider";
 import ChatLoader from "./ChatLoader";
 import AWS from "aws-sdk";
 import { motion } from "framer-motion";
+import { truncate } from "fs";
 
 interface IProps {
   talkingTo: ITalkingTo;
@@ -21,7 +22,8 @@ const ChatLog = (props: IProps) => {
   const [messageInput, setMessageInput] = useState("");
   const [checkerVal, setCheckerVal] = useState(false);
   const [showFileInput, setShowFileInput] = useState(false);
-  const [fileInput, setFileInput] = useState<any>();
+  const [fileInput, setFileInput] = useState<File | undefined>(undefined);
+  const [imageUrlS3, setImageUrlS3] = useState<string>();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const conCtx = useConnectionContext();
@@ -32,12 +34,11 @@ const ChatLog = (props: IProps) => {
   );
   messageAudio.volume = 0.2;
 
-  const s3 = new AWS.S3();
-  AWS.config.update({
+  const s3 = new AWS.S3({
+    region: "eu-central-1",
     accessKeyId: "AKIA6H5KPEMDWXWIF3IM",
     secretAccessKey: "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",
   });
-
   const messageChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessageInput(e.target.value);
   };
@@ -52,56 +53,82 @@ const ChatLog = (props: IProps) => {
         Body: fileInput,
         ACL: "public-read",
       };
-
-      s3.upload(params, (err: any, data: any) => {
-        if (err) {
-          console.log("Error:", err);
-        } else {
-          console.log("File uploaded successfully:", data.Location);
-        }
+      const dataS3 = await s3.upload(params).promise();
+      const sendMessagePayload = {
+        contentText: messageInput,
+        fromUserId: ctx?.user?.id,
+        toUserId: props.talkingTo.id,
+        friendBoxId: props.talkingTo.friendBoxId,
+        fromUser: {
+          name: ctx?.user?.name,
+          id: ctx?.user?.id,
+          picture: ctx?.user?.picture,
+        },
+        contentImageUrl: fileInput && dataS3.Location,
+      };
+      const res = await Fetcher({
+        method: "POST",
+        body: sendMessagePayload,
+        url: "/api/messages/addmessage",
+        token: ctx?.getCookie("jwt"),
       });
+      const data = await res.json();
+      messageAudio.play();
+
+      ctx?.setMessages((prev) => [...(prev || []), data]);
+      let dateNow = new Date();
+      ctx?.setFriendList((prev) => {
+        let friend = prev?.find((f) => f.id === props.talkingTo.friendBoxId);
+        if (friend) {
+          friend.updateTime = dateNow.toISOString();
+          friend.lastMessage = data.contentText;
+          friend.lastMessageFrom = data.fromUser.name;
+
+          return [...(prev || [])];
+        }
+        return prev || [];
+      });
+      await conCtx?.connection?.invoke("SendMessage", data);
+    } else {
+      const sendMessagePayload = {
+        contentText: messageInput,
+        fromUserId: ctx?.user?.id,
+        toUserId: props.talkingTo.id,
+        friendBoxId: props.talkingTo.friendBoxId,
+        fromUser: {
+          name: ctx?.user?.name,
+          id: ctx?.user?.id,
+          picture: ctx?.user?.picture,
+        },
+      };
+      const res = await Fetcher({
+        method: "POST",
+        body: sendMessagePayload,
+        url: "/api/messages/addmessage",
+        token: ctx?.getCookie("jwt"),
+      });
+      const data = await res.json();
+      messageAudio.play();
+
+      ctx?.setMessages((prev) => [...(prev || []), data]);
+      let dateNow = new Date();
+      ctx?.setFriendList((prev) => {
+        let friend = prev?.find((f) => f.id === props.talkingTo.friendBoxId);
+        if (friend) {
+          friend.updateTime = dateNow.toISOString();
+          friend.lastMessage = data.contentText;
+          friend.lastMessageFrom = data.fromUser.name;
+
+          return [...(prev || [])];
+        }
+        return prev || [];
+      });
+      await conCtx?.connection?.invoke("SendMessage", data);
     }
 
-    const sendMessagePayload = {
-      contentText: messageInput,
-      fromUserId: ctx?.user?.id,
-      toUserId: props.talkingTo.id,
-      friendBoxId: props.talkingTo.friendBoxId,
-      fromUser: {
-        name: ctx?.user?.name,
-        id: ctx?.user?.id,
-        picture: ctx?.user?.picture,
-      },
-    };
-  
-    const res = await Fetcher({
-      method: "POST",
-      body: sendMessagePayload,
-      url: "/api/messages/addmessage",
-      token: ctx?.getCookie("jwt"),
-    });
-
-    const data = await res.json()
-
-    messageAudio.play();
-
-    ctx?.setMessages((prev) => [...(prev || []), data]);
-    let dateNow = new Date();
-    ctx?.setFriendList((prev) => {
-      let friend = prev?.find((f) => f.id === props.talkingTo.friendBoxId);
-      if (friend) {
-        friend.updateTime = dateNow.toISOString();
-        friend.lastMessage = data.contentText;
-        friend.lastMessageFrom = data.fromUser.name;
-
-        return [...(prev || [])];
-      }
-      return prev || [];
-    });
-
-    await conCtx?.connection?.invoke("SendMessage", data);
     setCheckerVal(true);
     setMessageInput("");
+    setFileInput(undefined);
   };
 
   const scrollToBottom = useCallback(() => {
@@ -183,7 +210,7 @@ const ChatLog = (props: IProps) => {
                   )}
 
                   <div
-                    className={`relative flex  rounded-lg mb-3  px-3 py-1 min-h-8 gap-2   w-max     ${
+                    className={`relative flex  rounded-lg mb-3 p-1 min-h-8 gap-2   w-max max-w-[300px] sm:max-w-sm  md:max-w-md  lg:max-w-lg     ${
                       ctx?.user && ctx.user.id === message.fromUserId
                         ? "  bg-green-700 text-[#efefef] "
                         : "  bg-[#efefef] text-black"
@@ -197,57 +224,68 @@ const ChatLog = (props: IProps) => {
                         : ""
                     }`}
                   >
-                    <span className="text-lg  break-words whitespace-pre-line max-sm:max-w-[60dvw]  max-w-[450px]  ">
-                      {message.contentText}
-                    </span>
-                    <div className="flex items-end gap-1.5 ">
-                      <span
-                        className={`text-xs italic self-end ${
-                          ctx?.user && ctx.user.id === message.fromUserId
-                            ? "text-[#efefef]"
-                            : ""
-                        } `}
-                      >
-                        {
-                          message.sentDate
-                            .toLocaleString()
-                            .split("T")[1]
-                            .split(".")[0]
-                            .split(":")[0]
-                        }
-                        :
-                        {
-                          message.sentDate
-                            .toLocaleString()
-                            .split("T")[1]
-                            .split(".")[0]
-                            .split(":")[1]
-                        }
-                      </span>
-                      <div
-                        className={`${
+                    <div className="flex flex-col">
+                      {message.contentImageUrl && (
+                        <img
+                          className="h-auto max-w-full rounded-md "
+                          src={message.contentImageUrl}
+                        />
+                      )}
+
+                      <div className="flex  justify-between gap-3">
+                        <span className="text-lg  break-words whitespace-pre-line max-sm:max-w-[60dvw]  max-w-[450px]  ">
+                          {message.contentText}
+                        </span>
+                        <div className="flex items-end gap-1.5 ">
+                          <span
+                            className={`text-xs italic self-end ${
+                              ctx?.user && ctx.user.id === message.fromUserId
+                                ? "text-[#efefef]"
+                                : ""
+                            } `}
+                          >
+                            {
+                              message.sentDate
+                                .toLocaleString()
+                                .split("T")[1]
+                                .split(".")[0]
+                                .split(":")[0]
+                            }
+                            :
+                            {
+                              message.sentDate
+                                .toLocaleString()
+                                .split("T")[1]
+                                .split(".")[0]
+                                .split(":")[1]
+                            }
+                          </span>
+                          <div
+                            className={`${
+                              message.fromUserId !== ctx?.user?.id && "hidden"
+                            } flex w-1 h-3  relative mx-1`}
+                          >
+                            <div
+                              className={`${
+                                message.isRead
+                                  ? " border-r-blue-400 border-b-blue-400"
+                                  : "border-r-neutral-300 border-b-neutral-300"
+                              } ${
+                                message.fromUserId !== ctx?.user?.id && "hidden"
+                              } absolute  w-1 h-3 border-[2.3px] border-t-transparent border-l-transparent  inline-block  rotate-[52deg] -right-[1px] -top-[1px] skew-x-12 `}
+                            ></div>
+                            <div
+                              className={` ${
+                                message.isRead
+                                  ? " border-r-blue-400 border-b-blue-300"
+                                  : "border-r-neutral-300 border-b-neutral-300"
+                              }
+                        ${
                           message.fromUserId !== ctx?.user?.id && "hidden"
-                        } flex w-2 h-4  relative mx-1`}
-                      >
-                        <div
-                          className={`${
-                            message.isRead
-                              ? " border-r-blue-400 border-b-blue-400"
-                              : "border-r-neutral-300 border-b-neutral-300"
-                          } ${
-                            message.fromUserId !== ctx?.user?.id && "hidden"
-                          } absolute  w-1.5 h-4 border-[2.4px] border-t-transparent border-l-transparent  inline-block  rotate-[52deg] -right-[6px] -top-[1px] skew-x-12 `}
-                        ></div>
-                        <div
-                          className={` ${
-                            message.isRead
-                              ? " border-r-blue-400 border-b-blue-300"
-                              : "border-r-neutral-300 border-b-neutral-300"
-                          }
-                      ${
-                        message.fromUserId !== ctx?.user?.id && "hidden"
-                      } border-r-neutral-300 border-b-neutral-300 absolute  w-2 h-4 border-[2.5px] border-t-transparent border-l-transparent -top-[1px]  inline-block skew-x-12  rotate-[52deg]  `}
-                        ></div>
+                        } border-r-neutral-300 border-b-neutral-300 absolute  w-1.5 h-3 border-[2.5px] border-t-transparent border-l-transparent -top-[1px] right-1  inline-block skew-x-12  rotate-[52deg]  `}
+                            ></div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -276,6 +314,7 @@ const ChatLog = (props: IProps) => {
         <button
           onClick={(e) => {
             setShowFileInput((prev) => !prev);
+            console.log(fileInput);
           }}
           type="button"
           className="text-xl relative"
@@ -295,8 +334,13 @@ const ChatLog = (props: IProps) => {
                   type="file"
                   size={2}
                   className="opacity-0 hidden"
+                  accept="image/png, image/webp, image/*"
                   onChange={(e) => {
-                    setFileInput(e.target.files && e.target.files[0]);
+                    setShowFileInput(false);
+                    console.log(e.target.files && e.target.files[0]);
+                    if (e.target.files && e.target.files[0]) {
+                      setFileInput(e.target.files[0]);
+                    }
                   }}
                 />
               </label>
@@ -315,7 +359,7 @@ const ChatLog = (props: IProps) => {
           />
           <button
             type={"submit"}
-            disabled={messageInput.length === 0 ? true : false}
+            disabled={fileInput || messageInput.length > 0 ? false : true}
             className="disabled:bg-neutral-400  bg-green-500 px-4 py-1 rounded-md text-white font-semibold text-2xl"
           >
             <HiPaperAirplane />

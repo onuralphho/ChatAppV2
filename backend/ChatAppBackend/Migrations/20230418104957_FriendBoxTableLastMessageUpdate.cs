@@ -10,9 +10,6 @@ namespace ChatAppBackend.Migrations
         {
            
 
-           
-
-            
 
             migrationBuilder.AddColumn<string>(
                 name: "LastMessage",
@@ -25,8 +22,6 @@ namespace ChatAppBackend.Migrations
                 table: "FriendBoxes",
                 type: "text",
                 nullable: true);
-
-            
 
             
         }

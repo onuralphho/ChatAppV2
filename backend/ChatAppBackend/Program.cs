@@ -120,6 +120,10 @@ var app = builder.Build();
 
 
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+
 app.UseCors(options => options
     .WithOrigins(allowedOrigin)
     .AllowAnyHeader()
