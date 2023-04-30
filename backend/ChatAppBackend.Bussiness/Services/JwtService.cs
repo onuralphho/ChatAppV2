@@ -14,9 +14,9 @@ namespace ChatAppBackend.Helpers
 
 
         private readonly IOptions<JwtOptions> _options;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor;
 
-        public JwtService(IOptions<JwtOptions> options, IHttpContextAccessor httpContextAccessor)
+        public JwtService(IOptions<JwtOptions> options, Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor)
         {
             _options = options;
             _httpContextAccessor = httpContextAccessor;

@@ -83,7 +83,6 @@ builder.Services.AddAuthentication(x =>
 });
 #endregion
 
-builder.Services.AddHttpContextAccessor();
 
 var settings = builder.Configuration.GetSection("ConnectionStrings").Get<Connection>();
 
@@ -92,6 +91,8 @@ var allowedOrigin = builder.Configuration.GetSection("AllowedOrigin").Value;
 builder.Services.AddDbContext<PostgreSqlDbContext>(options => options.UseNpgsql(settings.DefaultConnection)); 
 
 builder.Services.AddScoped<JwtService>();
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.Jwt));
 
