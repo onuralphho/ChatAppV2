@@ -38,10 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ChatAppBackend.Bussiness\ChatAppBackend.Bussiness.csproj" />
     <ProjectReference Include="..\ChatAppBackend.Entities\ChatAppBackend.Entities.csproj" />
   </ItemGroup>
