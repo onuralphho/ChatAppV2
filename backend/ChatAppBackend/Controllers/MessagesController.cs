@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ChatAppBackend.Models.Message.Response;
 using Microsoft.AspNetCore.Authorization;
-using ChatAppBackend.Models.Message.Request;
-
-using ChatAppBackend.Services;
+using ChatAppBackend.Bussiness.Services;
+using ChatAppBackend.Core.Models.Message.Request;
+using ChatAppBackend.Core.Models.Message.Response;
 
 namespace ChatAppBackend.Controllers
 {

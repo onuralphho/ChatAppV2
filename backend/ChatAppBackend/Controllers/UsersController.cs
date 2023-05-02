@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using ChatAppBackend.Models.User.Request;
-using ChatAppBackend.Models.User.Response;
 using AutoMapper;
-using ChatAppBackend.Services;
 using System.Net;
+using ChatAppBackend.Bussiness.Services;
+using ChatAppBackend.Core.Models.User.Response;
+using ChatAppBackend.Core.Models.User.Request;
 
 namespace ChatAppBackend.Controllers
 {

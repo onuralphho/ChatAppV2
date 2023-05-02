@@ -1,10 +1,9 @@
-using ChatAppBackend.Context;
-using ChatAppBackend.Exceptions;
+using ChatAppBackend.Bussiness.Hubs;
+using ChatAppBackend.Bussiness.Services;
+using ChatAppBackend.Core.Models;
+using ChatAppBackend.DataAccess.Context;
+using ChatAppBackend.Core.Exceptions;
 using ChatAppBackend.Filters;
-using ChatAppBackend.Helpers;
-using ChatAppBackend.Hubs;
-using ChatAppBackend.Models;
-using ChatAppBackend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -83,7 +82,6 @@ builder.Services.AddAuthentication(x =>
 });
 #endregion
 
-builder.Services.AddHttpContextAccessor();
 
 var settings = builder.Configuration.GetSection("ConnectionStrings").Get<Connection>();
 
@@ -92,6 +90,8 @@ var allowedOrigin = builder.Configuration.GetSection("AllowedOrigin").Value;
 builder.Services.AddDbContext<PostgreSqlDbContext>(options => options.UseNpgsql(settings.DefaultConnection)); 
 
 builder.Services.AddScoped<JwtService>();
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.Jwt));
 
