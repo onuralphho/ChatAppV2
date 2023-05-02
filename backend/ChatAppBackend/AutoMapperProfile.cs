@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using ChatAppBackend.Entities;
-using ChatAppBackend.Models.FriendBox.DTO;
-using ChatAppBackend.Models.FriendBox.Response;
-using ChatAppBackend.Models.Message.Response;
+using ChatAppBackend.Core.Entities;
+using ChatAppBackend.Core.Models.FriendBox.DTO;
+using ChatAppBackend.Core.Models.FriendBox.Response;
+using ChatAppBackend.Core.Models.Message.Response;
 
 namespace ChatAppBackend
 {

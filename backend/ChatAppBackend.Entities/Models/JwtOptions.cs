@@ -1,4 +1,4 @@
-﻿namespace ChatAppBackend.Models
+﻿namespace ChatAppBackend.Core.Models
 {
     public class JwtOptions
     {

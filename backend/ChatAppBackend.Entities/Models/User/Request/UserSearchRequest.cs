@@ -1,4 +1,4 @@
-﻿namespace ChatAppBackend.Models.User.Request
+﻿namespace ChatAppBackend.Core.Models.User.Request
 {
     public class UserSearchRequest
     {

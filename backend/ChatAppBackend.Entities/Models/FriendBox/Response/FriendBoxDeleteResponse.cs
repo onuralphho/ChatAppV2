@@ -1,4 +1,4 @@
-﻿namespace ChatAppBackend.Models.FriendBox.Response
+﻿namespace ChatAppBackend.Core.Models.FriendBox.Response
 {
     public class FriendBoxDeleteResponse
     {

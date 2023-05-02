@@ -8,7 +8,7 @@ import { useAuth } from "../Context/AuthProvider";
 import { ITalkingTo } from "../@types/talkingTo";
 import { Fetcher } from "../utils/Fetcher";
 import { useConnectionContext } from "../Context/ConnectionProvider";
-import ChatLoader from "./ChatLoader";
+import ChatLoader from "./UI/ChatLoader";
 import AWS from "aws-sdk";
 import { motion } from "framer-motion";
 
@@ -36,8 +36,8 @@ const ChatLog = (props: IProps) => {
 
   const s3 = new AWS.S3({
     region: "eu-central-1",
-    accessKeyId: "AKIA6H5KPEMDWXWIF3IM",
-    secretAccessKey: "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",
+    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESSKEY,
   });
   const messageChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessageInput(e.target.value);
@@ -173,7 +173,7 @@ const ChatLog = (props: IProps) => {
     },
   };
   return (
-    <div className=" bg-[#363636] w-full    flex-1  flex flex-col  h-full fade-in">
+    <div className=" bg-[#363636] w-full relative   flex-1  flex flex-col  h-full fade-in">
       {/* TALKINGTO */}
 
       <div className="flex items-center w-full gap-3 p-2 pl-12 ">
@@ -277,7 +277,7 @@ const ChatLog = (props: IProps) => {
                           }}
                           className="h-auto max-w-full rounded-md cursor-pointer"
                           src={message.contentImageUrl}
-                          alt="image"
+                          alt=""
                         />
                       )}
 

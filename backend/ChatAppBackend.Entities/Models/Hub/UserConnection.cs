@@ -1,4 +1,4 @@
-﻿namespace ChatAppBackend.Models.Hub
+﻿namespace ChatAppBackend.Core.Models.Hub
 {
     public class UserConnection
     {

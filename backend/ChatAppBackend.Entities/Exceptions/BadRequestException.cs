@@ -1,6 +1,6 @@
-﻿namespace ChatAppBackend.Exceptions
+﻿namespace ChatAppBackend.Core.Exceptions
 {
-    public class BadRequestException:System.Exception
+    public class BadRequestException : Exception
     {
         public BadRequestException(string message) : base(message)
         {

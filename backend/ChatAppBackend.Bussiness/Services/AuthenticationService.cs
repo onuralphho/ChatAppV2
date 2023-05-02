@@ -1,16 +1,15 @@
-﻿using ChatAppBackend.Context;
-using ChatAppBackend.Helpers;
+﻿using ChatAppBackend.DataAccess.Context;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 
-namespace ChatAppBackend.Services
+namespace ChatAppBackend.Bussiness.Services
 {
     public interface IAuthenticationService
     {
         TokenDto Login(AuthDto auth);
         SessionUserDto GetSession();
-       
+
     }
     public class AuthenticationService : IAuthenticationService
     {
@@ -55,6 +54,6 @@ namespace ChatAppBackend.Services
             return session;
         }
 
-        
+
     }
 }

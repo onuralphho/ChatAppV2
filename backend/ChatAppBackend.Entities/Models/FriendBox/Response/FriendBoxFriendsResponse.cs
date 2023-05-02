@@ -1,7 +1,6 @@
-using ChatAppBackend.Models.FriendBox.DTO;
+using ChatAppBackend.Core.Models.FriendBox.DTO;
 
-
-namespace ChatAppBackend.Models.FriendBox.Response;
+namespace ChatAppBackend.Core.Models.FriendBox.Response;
 public class FriendBoxFriendsResponse
 {
     public int Id { get; set; }

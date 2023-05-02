@@ -1,6 +1,6 @@
-﻿using ChatAppBackend.Models.User.Request;
+﻿using ChatAppBackend.Core.Models.User.Request;
 
-namespace ChatAppBackend.Models.Message.Request
+namespace ChatAppBackend.Core.Models.Message.Request
 {
     public class MessageSentRequest
     {

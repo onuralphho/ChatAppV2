@@ -1,4 +1,4 @@
-﻿using ChatAppBackend.Exceptions;
+﻿using ChatAppBackend.Core.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;

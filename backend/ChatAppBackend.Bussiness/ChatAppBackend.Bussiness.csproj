@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ChatAppBackend.DataAccess\ChatAppBackend.DataAccess.csproj" />
-    <ProjectReference Include="..\ChatAppBackend.Entities\ChatAppBackend.Entities.csproj" />
+    <ProjectReference Include="..\ChatAppBackend.Entities\ChatAppBackend.Core.csproj" />
   </ItemGroup>
 
 </Project>

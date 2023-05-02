@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Fetcher } from "../utils/Fetcher";
 import { sleep } from "../utils/sleep";
 import { useAlertContext } from "../Context/AlertProvider";
-import AlertBox from "./AlertBox";
+import AlertBox from "./UI/AlertBox";
 
 interface IProfileProps {
   closeProfile: Function;

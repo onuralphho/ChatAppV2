@@ -1,8 +1,8 @@
 import { FC } from "react";
-import { INotification } from "../@types/notificationInterface";
+import { INotification } from "../../@types/notificationInterface";
 import { RxCaretRight } from "react-icons/rx";
-import { useAuth } from "../Context/AuthProvider";
-import { Fetcher } from "../utils/Fetcher";
+import { useAuth } from "../../Context/AuthProvider";
+import { Fetcher } from "../../utils/Fetcher";
 interface Props {
   notification?: INotification;
   closeProfile: () => void;
@@ -30,11 +30,11 @@ const Notification: FC<Props> = ({
       <img
         src={message?.fromUser.picture}
         alt=""
-        className="w-10 aspect-square object-cover rounded-full"
+        className="object-cover w-10 rounded-full aspect-square"
       />
       <div className="flex flex-col">
         <span className="text-lg font-semibold">{message?.fromUser.name}</span>
-        <span className="truncate w-32">{message?.contentText}</span>
+        <span className="w-32 truncate">{message?.contentText}</span>
       </div>
       <button
         onClick={async () => {
@@ -68,7 +68,7 @@ const Notification: FC<Props> = ({
             return updatedFriendList;
           });
         }}
-        className="text-3xl text-white bg-green-500 px-2 rounded-md hover:scale-105 transition-all py-1"
+        className="px-2 py-1 text-3xl text-white transition-all bg-green-500 rounded-md hover:scale-105"
       >
         <RxCaretRight />
       </button>

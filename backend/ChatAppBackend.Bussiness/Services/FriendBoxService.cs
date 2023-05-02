@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
-using ChatAppBackend.Context;
+using ChatAppBackend.Core.Models.FriendBox.Request;
+using ChatAppBackend.Core.Models.FriendBox.Response;
+using ChatAppBackend.DataAccess.Context;
 using ChatAppBackend.Entities;
 using ChatAppBackend.Exceptions;
-using ChatAppBackend.Helpers;
-using ChatAppBackend.Models.FriendBox.Request;
-using ChatAppBackend.Models.FriendBox.Response;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace ChatAppBackend.Services
+namespace ChatAppBackend.Bussiness.Services
 {
     public interface IFriendBoxService
     {
@@ -31,8 +30,8 @@ namespace ChatAppBackend.Services
 
         public async Task<FriendBoxFriendsResponse> AddFriend(FriendBoxAddRequest friendBox)
         {
-            var friendShip = await _context.FriendBoxes.FirstOrDefaultAsync(f => (f.FromUserId == friendBox.FromId && f.ToUserId == friendBox.ToId)
-                 || (f.FromUserId == friendBox.ToId && f.ToUserId == friendBox.FromId));
+            var friendShip = await _context.FriendBoxes.FirstOrDefaultAsync(f => f.FromUserId == friendBox.FromId && f.ToUserId == friendBox.ToId
+                 || f.FromUserId == friendBox.ToId && f.ToUserId == friendBox.FromId);
 
             if (friendShip == null)
             {
@@ -117,7 +116,7 @@ namespace ChatAppBackend.Services
 
             await _context.SaveChangesAsync();
 
-            
+
             return friendBoxId;
         }
     }

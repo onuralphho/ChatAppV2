@@ -1,4 +1,4 @@
-﻿namespace ChatAppBackend.Models.FriendBox.Request
+﻿namespace ChatAppBackend.Core.Models.FriendBox.Request
 {
     public class FriendBoxAddRequest
     {

@@ -1,4 +1,4 @@
-﻿namespace ChatAppBackend.Models.User.Response
+﻿namespace ChatAppBackend.Core.Models.User.Response
 {
     public class UserSearchResponse
     {

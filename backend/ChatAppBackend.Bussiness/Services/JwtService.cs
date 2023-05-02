@@ -5,9 +5,9 @@ using Microsoft.Extensions.Configuration;
 using ChatAppBackend.Entities;
 using System.Security.Claims;
 using Microsoft.Extensions.Options;
-using ChatAppBackend.Models;
+using ChatAppBackend.Core.Models;
 
-namespace ChatAppBackend.Helpers
+namespace ChatAppBackend.Bussiness.Services
 {
     public class JwtService
     {

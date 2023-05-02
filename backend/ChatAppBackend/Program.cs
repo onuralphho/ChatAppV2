@@ -1,10 +1,9 @@
-using ChatAppBackend.Context;
+using ChatAppBackend.Bussiness.Hubs;
+using ChatAppBackend.Bussiness.Services;
+using ChatAppBackend.Core.Models;
+using ChatAppBackend.DataAccess.Context;
 using ChatAppBackend.Exceptions;
 using ChatAppBackend.Filters;
-using ChatAppBackend.Helpers;
-using ChatAppBackend.Hubs;
-using ChatAppBackend.Models;
-using ChatAppBackend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

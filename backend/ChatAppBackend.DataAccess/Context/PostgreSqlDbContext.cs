@@ -1,7 +1,7 @@
-﻿using ChatAppBackend.Entities;
+﻿using ChatAppBackend.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace ChatAppBackend.Context
+namespace ChatAppBackend.DataAccess.Context
 {
     public class PostgreSqlDbContext : DbContext
     {

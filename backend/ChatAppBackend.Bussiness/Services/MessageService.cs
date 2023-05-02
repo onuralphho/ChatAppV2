@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
-using ChatAppBackend.Context;
+using ChatAppBackend.Core.Models.Message.Request;
+using ChatAppBackend.Core.Models.Message.Response;
+using ChatAppBackend.DataAccess.Context;
 using ChatAppBackend.Entities;
-using ChatAppBackend.Helpers;
-using ChatAppBackend.Models.Message.Request;
-using ChatAppBackend.Models.Message.Response;
 using Microsoft.EntityFrameworkCore;
 
-namespace ChatAppBackend.Services
+namespace ChatAppBackend.Bussiness.Services
 {
 
     public interface IMessageService
@@ -16,15 +15,15 @@ namespace ChatAppBackend.Services
         Task ReadMessage(int friendBoxId);
 
     }
-    public class MessageService:IMessageService
+    public class MessageService : IMessageService
     {
         private readonly PostgreSqlDbContext _context;
         private readonly JwtService _jwtservice;
         private readonly IMapper _mapper;
 
-        public MessageService(PostgreSqlDbContext context,IMapper mapper,JwtService jwtService)
+        public MessageService(PostgreSqlDbContext context, IMapper mapper, JwtService jwtService)
         {
-            
+
             _context = context;
             _mapper = mapper;
             _jwtservice = jwtService;

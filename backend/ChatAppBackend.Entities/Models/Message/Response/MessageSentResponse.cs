@@ -1,10 +1,10 @@
-﻿using ChatAppBackend.Models.User.Request;
+﻿using ChatAppBackend.Core.Models.User.Request;
 
-namespace ChatAppBackend.Models.Message.Response
+namespace ChatAppBackend.Core.Models.Message.Response
 {
     public class MessageSentResponse
     {
-        
+
         public int Id { get; set; }
         public DateTime SentDate { get; set; } = DateTime.UtcNow;
 
@@ -21,6 +21,6 @@ namespace ChatAppBackend.Models.Message.Response
 
         public bool IsDeleted { get; set; } = false;
         public UpdateUserDto FromUser { get; set; }
-               
+
     }
 }

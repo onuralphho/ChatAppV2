@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
-using ChatAppBackend.Context;
+using ChatAppBackend.Core.Models.User.Request;
+using ChatAppBackend.Core.Models.User.Response;
+using ChatAppBackend.DataAccess.Context;
 using ChatAppBackend.Entities;
 using ChatAppBackend.Exceptions;
-using ChatAppBackend.Models.User.Request;
-using ChatAppBackend.Models.User.Response;
 
 
-namespace ChatAppBackend.Services
+namespace ChatAppBackend.Bussiness.Services
 {
 
     public interface IUserService
@@ -34,7 +34,7 @@ namespace ChatAppBackend.Services
             if (tmp != null)
             {
                 throw new BadRequestException("Email already exist");
-                
+
             }
             var reg_user = new User
             {
@@ -49,7 +49,7 @@ namespace ChatAppBackend.Services
             _context.Users.Add(reg_user);
             await _context.SaveChangesAsync();
 
-          
+
         }
 
 
@@ -102,7 +102,7 @@ namespace ChatAppBackend.Services
             {
                 for (int i = 1; i <= n; i++)
                 {
-                    int cost = (s1[i - 1] == s2[j - 1]) ? 0 : 1;
+                    int cost = s1[i - 1] == s2[j - 1] ? 0 : 1;
                     d[i, j] = Math.Min(d[i - 1, j] + 1, Math.Min(d[i, j - 1] + 1, d[i - 1, j - 1] + cost));
                 }
             }

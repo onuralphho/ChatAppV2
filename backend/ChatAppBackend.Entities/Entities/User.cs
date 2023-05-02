@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using ChatAppBackend.Models.FriendBox.Response;
 
-namespace ChatAppBackend.Entities
+namespace ChatAppBackend.Core.Entities
 {
     public class User
     {
@@ -16,10 +16,10 @@ namespace ChatAppBackend.Entities
 
         public string Email { get; set; }
 
-        
+
         public string Password { get; set; }
 
-        
+
         public string Name { get; set; }
         public string Picture { get; set; }
     }

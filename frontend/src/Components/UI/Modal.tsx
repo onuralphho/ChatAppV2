@@ -11,7 +11,7 @@ const Modal = (props: any) => {
         <div className="flex gap-2">
           <button
             onClick={props.confirm}
-            className="flex-1 bg-green-500 rounded text-xl text-white"
+            className="flex-1 text-xl text-white bg-green-500 rounded"
           >
             Confirm
           </button>

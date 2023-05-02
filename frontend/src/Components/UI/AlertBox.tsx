@@ -11,7 +11,7 @@ const AlertBox = (props: any) => {
           : "opacity-0 -translate-y-24"
       }  cursor-pointer transition-all bg-green-500 text-[#efefef] duration-700 ease-in-out absolute  z-40 top-0 left-0 right-0 m-auto  px-4 py-2 rounded-md `}
     >
-      <div className="flex gap-1 items-center text-2xl  ">
+      <div className="flex items-center gap-1 text-2xl ">
         {props.message}
       </div>
     </div>

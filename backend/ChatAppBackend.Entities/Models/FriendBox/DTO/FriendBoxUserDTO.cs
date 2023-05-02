@@ -1,4 +1,4 @@
-﻿namespace ChatAppBackend.Models.FriendBox.DTO
+﻿namespace ChatAppBackend.Core.Models.FriendBox.DTO
 {
     public class FriendBoxUserDTO
     {
