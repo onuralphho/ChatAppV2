@@ -2,8 +2,8 @@
 using ChatAppBackend.Core.Models.User.Request;
 using ChatAppBackend.Core.Models.User.Response;
 using ChatAppBackend.DataAccess.Context;
-using ChatAppBackend.Entities;
-using ChatAppBackend.Exceptions;
+using ChatAppBackend.Core.Entities;
+using ChatAppBackend.Core.Exceptions;
 
 
 namespace ChatAppBackend.Bussiness.Services

@@ -2,7 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.Extensions.Configuration;
-using ChatAppBackend.Entities;
+using ChatAppBackend.Core.Entities;
 using System.Security.Claims;
 using Microsoft.Extensions.Options;
 using ChatAppBackend.Core.Models;

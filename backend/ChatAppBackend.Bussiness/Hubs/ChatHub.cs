@@ -2,10 +2,10 @@
 using ChatAppBackend.Core.Models.FriendBox.Response;
 using ChatAppBackend.Core.Models.Hub;
 using ChatAppBackend.DataAccess.Context;
-using ChatAppBackend.Entities;
-using ChatAppBackend.Models.FriendBox.Request;
-using ChatAppBackend.Models.Message.Request;
-using ChatAppBackend.Models.Message.Response;
+using ChatAppBackend.Core.Entities;
+using ChatAppBackend.Core.Models.FriendBox.Request;
+using ChatAppBackend.Core.Models.Message.Request;
+using ChatAppBackend.Core.Models.Message.Response;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 

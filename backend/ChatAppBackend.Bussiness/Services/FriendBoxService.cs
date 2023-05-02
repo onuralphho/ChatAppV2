@@ -2,8 +2,8 @@
 using ChatAppBackend.Core.Models.FriendBox.Request;
 using ChatAppBackend.Core.Models.FriendBox.Response;
 using ChatAppBackend.DataAccess.Context;
-using ChatAppBackend.Entities;
-using ChatAppBackend.Exceptions;
+using ChatAppBackend.Core.Entities;
+using ChatAppBackend.Core.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 

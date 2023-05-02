@@ -2,7 +2,7 @@ using ChatAppBackend.Bussiness.Hubs;
 using ChatAppBackend.Bussiness.Services;
 using ChatAppBackend.Core.Models;
 using ChatAppBackend.DataAccess.Context;
-using ChatAppBackend.Exceptions;
+using ChatAppBackend.Core.Exceptions;
 using ChatAppBackend.Filters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;

@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ChatAppBackend.Entities;
+using ChatAppBackend.Core.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using ChatAppBackend.Hubs;
-using ChatAppBackend.Exceptions;
+using ChatAppBackend.Bussiness.Hubs;
+using ChatAppBackend.Core.Exceptions;
 using ChatAppBackend.Bussiness.Services;
 using ChatAppBackend.DataAccess.Context;
 

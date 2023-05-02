@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ChatAppBackend.Context;
+using ChatAppBackend.DataAccess.Context;
 using Microsoft.AspNetCore.Authorization;
-using ChatAppBackend.Exceptions;
+using ChatAppBackend.Core.Exceptions;
 using ChatAppBackend.Bussiness.Services;
 using ChatAppBackend.Core.Models.FriendBox.Response;
 using ChatAppBackend.Core.Models.FriendBox.Request;
