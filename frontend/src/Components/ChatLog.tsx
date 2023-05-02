@@ -8,7 +8,7 @@ import { useAuth } from "../Context/AuthProvider";
 import { ITalkingTo } from "../@types/talkingTo";
 import { Fetcher } from "../utils/Fetcher";
 import { useConnectionContext } from "../Context/ConnectionProvider";
-import ChatLoader from "./ChatLoader";
+import ChatLoader from "./UI/ChatLoader";
 import AWS from "aws-sdk";
 import { motion } from "framer-motion";
 
@@ -36,8 +36,8 @@ const ChatLog = (props: IProps) => {
 
   const s3 = new AWS.S3({
     region: "eu-central-1",
-    accessKeyId: "AKIA6H5KPEMDWXWIF3IM",
-    secretAccessKey: "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",
+    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESSKEY,
   });
   const messageChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessageInput(e.target.value);
@@ -166,20 +166,19 @@ const ChatLog = (props: IProps) => {
     scrollToBottom();
   }, [ctx?.messages, scrollToBottom]);
   const item = {
-    hidden: { opacity: 0, scale:0},
+    hidden: { opacity: 0, scale: 0 },
     visible: {
-      
       opacity: 1,
-      scale:1
+      scale: 1,
     },
   };
   return (
-    <div className=" bg-[#363636] w-full    flex-1  flex flex-col  h-full fade-in">
+    <div className=" bg-[#363636] w-full relative   flex-1  flex flex-col  h-full fade-in">
       {/* TALKINGTO */}
 
-      <div className="  w-full p-2 pl-12 flex items-center gap-3">
+      <div className="flex items-center w-full gap-3 p-2 pl-12 ">
         <img
-          className="w-10 h-10 object-cover rounded-full"
+          className="object-cover w-10 h-10 rounded-full"
           src={
             ctx?.user && ctx.user.id === props.talkingTo.id
               ? ctx?.user.picture
@@ -203,7 +202,7 @@ const ChatLog = (props: IProps) => {
             initial="hidden"
             animate="visible"
             src={showFullImage}
-            className="w-[700px] rounded-xl object-cover"
+            className=" h-full w-full max-h-[80%] max-w-[900px]  object-contain"
             alt=""
           />
         </div>
@@ -278,11 +277,11 @@ const ChatLog = (props: IProps) => {
                           }}
                           className="h-auto max-w-full rounded-md cursor-pointer"
                           src={message.contentImageUrl}
-                          alt="image"
+                          alt=""
                         />
                       )}
 
-                      <div className="flex px-1  justify-between gap-3">
+                      <div className="flex justify-between gap-3 px-1">
                         <span className="text-lg  break-words whitespace-pre-line max-sm:max-w-[60dvw]  max-w-[450px]  ">
                           {message.contentText}
                         </span>
@@ -345,10 +344,10 @@ const ChatLog = (props: IProps) => {
               .fill(null)
               .map((e, i) => (
                 <div key={i}>
-                  <div className="flex w-full justify-end">
+                  <div className="flex justify-end w-full">
                     <ChatLoader reverse={true} />
                   </div>
-                  <div className="flex w-full justify-start">
+                  <div className="flex justify-start w-full">
                     <ChatLoader />
                   </div>
                 </div>
@@ -359,14 +358,14 @@ const ChatLog = (props: IProps) => {
 
       <form
         onSubmit={sendMessageHandler}
-        className=" p-1 flex gap-2 items-center"
+        className="flex items-center gap-2 p-1 "
       >
         <button
           onClick={(e) => {
             setShowFileInput((prev) => !prev);
           }}
           type="button"
-          className="text-xl relative"
+          className="relative text-xl"
         >
           {showFileInput && (
             <motion.div className="file-upload absolute -top-[4.5rem] z-10 bg-[#ffffff] backdrop-blur-lg text-sm w-12 h-14 cursor-default  px-1 py-2 rounded-lg ">
@@ -375,14 +374,14 @@ const ChatLog = (props: IProps) => {
                   e.stopPropagation();
                 }}
                 htmlFor="file-upload"
-                className=" h-10 w-10 overflow-hidden cursor-pointer"
+                className="w-10 h-10 overflow-hidden cursor-pointer "
               >
-                <HiPhoto size={40} className="  text-green-500" />
+                <HiPhoto size={40} className="text-green-500 " />
                 <input
                   id="file-upload"
                   type="file"
                   size={2}
-                  className="opacity-0 hidden"
+                  className="hidden opacity-0"
                   accept="image/png, image/webp, image/*"
                   onChange={fileInputChangeHandler}
                 />
@@ -391,9 +390,9 @@ const ChatLog = (props: IProps) => {
           )}
           <FiPaperclip />
         </button>
-        <div className=" flex flex-1 px-2 py-1 h-full items-center  gap-2 bg-white rounded-lg  ">
-          <RiChatSmile3Fill size={20} className=" text-green-500" />
-          <div className="flex gap-2 w-full">
+        <div className="flex items-center flex-1 h-full gap-2 px-2 py-1 bg-white rounded-lg ">
+          <RiChatSmile3Fill size={20} className="text-green-500 " />
+          <div className="flex w-full gap-2">
             {previewImage && (
               <div className="relative ">
                 <button
@@ -402,13 +401,13 @@ const ChatLog = (props: IProps) => {
                     setFileInput(undefined);
                     setPreviewImage(null);
                   }}
-                  className="absolute w-7 right-1 top-1 bg-red-500  rounded-full   aspect-square "
+                  className="absolute bg-red-500 rounded-full w-7 right-1 top-1 aspect-square "
                 >
                   X
                 </button>
                 <img
                   src={previewImage}
-                  className="w-96 h-auto rounded-md"
+                  className="h-auto rounded-md w-96"
                   alt="Preview"
                 />
               </div>
@@ -418,13 +417,13 @@ const ChatLog = (props: IProps) => {
               onChange={messageChangeHandler}
               value={messageInput}
               placeholder="Say Hi!"
-              className="bg-transparent self-end  resize-none text-black w-full outline-none  "
+              className="self-end w-full text-black bg-transparent outline-none resize-none "
             />
           </div>
           <button
             type={"submit"}
             disabled={fileInput || messageInput.length > 0 ? false : true}
-            className="disabled:bg-neutral-400  bg-green-500 px-4 py-1 rounded-md text-white font-semibold text-2xl"
+            className="px-4 py-1 text-2xl font-semibold text-white bg-green-500 rounded-md disabled:bg-neutral-400"
           >
             <HiPaperAirplane />
           </button>
