@@ -51,13 +51,13 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
     const data = await res.json();
 
-    // if (data.status !== 401) {
-    //   const d = new Date();
-    //   d.setTime(d.getTime() + 24 * 60 * 60 * 1000);
+    if (data.status !== 401) {
+      const d = new Date();
+      d.setTime(d.getTime() + 24 * 60 * 60 * 1000);
 
-    //   const expires = "expires=" + d.toUTCString();
-    //   document.cookie = "jwt=" + data.tokenValue + ";" + expires + ";path=/";
-    // }
+      const expires = "expires=" + d.toUTCString();
+      document.cookie = "jwt=" + data.tokenValue + ";" + expires + ";path=/";
+    }
     return data;
   };
 

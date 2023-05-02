@@ -41,15 +41,16 @@ namespace ChatAppBackend.Controllers
             }
             else
             {
-                var options = new CookieOptions
-                {
-                    HttpOnly = true,
-                    Expires = DateTime.Now.AddDays(1),
-                    SameSite = SameSiteMode.Strict,
-                    Path = "/"
-                };
+                
+                //var options = new CookieOptions
+                //{
+                //    HttpOnly = true,
+                //    Expires = DateTime.Now.AddDays(1),
+                //    SameSite = SameSiteMode.Strict,
+                //    Path = "/"
+                //};
 
-                HttpContext.Response.Cookies.Append("jwt", token.TokenValue, options);
+                //HttpContext.Response.Cookies.Append("jwt", token.TokenValue, options);
 
                 return token;
             }
