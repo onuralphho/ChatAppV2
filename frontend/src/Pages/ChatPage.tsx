@@ -76,7 +76,7 @@ const ChatPage = () => {
         messageAudio.play();
         await Fetcher({
           method: "GET",
-          url: "/api/messages/read/" + ctx.talkingTo?.friendBoxId,
+          url: "/api/messages/read/" + ctx?.talkingTo?.friendBoxId,
           token: ctx?.getCookie("jwt"),
         });
 
