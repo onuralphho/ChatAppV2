@@ -144,7 +144,7 @@ const FriendList = (props: Iprops) => {
         variants={container}
         initial="hidden"
         animate="visible"
-        className="flex flex-col  flex-1 overflow-y-auto  overflow-x-hidden"
+        className="hide_scroll flex flex-col  flex-1 overflow-y-auto  overflow-x-hidden"
       >
         {ctx?.friendList
           ?.sort((a: IFriendList, b: IFriendList) =>

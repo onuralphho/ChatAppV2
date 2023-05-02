@@ -9,10 +9,8 @@
   --x-accel: 0px;
   --y-accel: 0px;
 }
-
 ::-webkit-scrollbar {
-  width: 7px;
-
+  width: 2px;
 }
 
 /* Track */
@@ -55,17 +53,17 @@
   display: flex;
 }
 
-.dots>span {
+.dots > span {
   aspect-ratio: 1;
   border-radius: 50%;
   animation: dotAnim 0.5s alternate infinite;
 }
 
-.dots>span:nth-child(2) {
+.dots > span:nth-child(2) {
   animation-delay: 0.2s;
 }
 
-.dots>span:nth-child(3) {
+.dots > span:nth-child(3) {
   animation-delay: 0.4s;
 }
 
@@ -100,9 +98,11 @@
   position: absolute;
   inset: -15px;
   transform: translateZ(var(--drop-distance));
-  background: linear-gradient(35deg,
-      rgba(134, 239, 172, 1) 17%,
-      rgba(168, 85, 247, 1) 85%);
+  background: linear-gradient(
+    35deg,
+    rgba(134, 239, 172, 1) 17%,
+    rgba(168, 85, 247, 1) 85%
+  );
   border-radius: 1rem;
 }
 
@@ -205,7 +205,6 @@
   z-index: 1;
 }
 
-
 .chat_loader::before {
   content: " ";
   z-index: 2;
@@ -219,23 +218,17 @@
   animation: chatlog_animation 1.5s infinite linear;
 }
 
-
-
-
 @keyframes chatlog_animation {
   from {
     transform: translateX(-100px);
   }
 
   to {
-
     transform: translateX(250px);
   }
-
 }
 
-
-.progress-bar{
+.progress-bar {
   position: relative;
   width: 250px;
   height: 5px;
@@ -249,10 +242,9 @@
   -webkit-backdrop-filter: blur(4px);
   z-index: 10;
   overflow: hidden;
-
 }
 
-.progress-bar::before{
+.progress-bar::before {
   content: " ";
   position: absolute;
   width: 10%;
@@ -263,16 +255,15 @@
 }
 
 @keyframes progress {
-  0%{
+  0% {
     width: 10%;
   }
 
-  100%{
+  100% {
     width: 90%;
   }
-
 }
-.file-upload::before{
+.file-upload::before {
   content: "";
   position: absolute;
   left: 2px;
@@ -283,4 +274,3 @@
   border-width: 10px 10px 0 10px;
   border-color: #ffff transparent transparent transparent;
 }
-

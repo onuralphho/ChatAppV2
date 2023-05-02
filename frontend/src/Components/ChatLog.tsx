@@ -254,7 +254,7 @@ const ChatLog = (props: IProps) => {
                   )}
 
                   <div
-                    className={`relative flex  rounded-lg mb-3 p-1 min-h-8 gap-2   w-max max-w-[300px] sm:max-w-sm  md:max-w-md  lg:max-w-lg     ${
+                    className={`relative flex pb-5 rounded-lg mb-3 p-1 min-h-8 gap-2 min-w-[100px]   lg:max-w-[50vw] sm:max-w-sm  md:max-w-md    ${
                       ctx?.user && ctx.user.id === message.fromUserId
                         ? "  bg-green-700 text-[#efefef] "
                         : "  bg-[#efefef] text-black"
@@ -275,17 +275,17 @@ const ChatLog = (props: IProps) => {
                           onClick={() => {
                             setShowFullImage(message.contentImageUrl);
                           }}
-                          className="h-auto max-w-full rounded-md cursor-pointer"
+                          className="h-auto max-w-[250px]  rounded-md cursor-pointer"
                           src={message.contentImageUrl}
                           alt=""
                         />
                       )}
 
-                      <div className="flex justify-between gap-3 px-1">
-                        <span className="text-lg  break-words whitespace-pre-line max-sm:max-w-[60dvw]  max-w-[450px]  ">
+                      <div className="flex  justify-between gap-2  px-1">
+                        <span className="text-lg  break-words whitespace-pre-line max-sm:max-w-[60vw] max-w-[40vw]  ">
                           {message.contentText}
                         </span>
-                        <div className="flex items-end gap-1.5 ">
+                        <div className="flex items-end gap-1.5 absolute right-1 bottom-0.5  h-max self-end">
                           <span
                             className={`text-xs italic self-end ${
                               ctx?.user && ctx.user.id === message.fromUserId
@@ -312,7 +312,7 @@ const ChatLog = (props: IProps) => {
                           <div
                             className={`${
                               message.fromUserId !== ctx?.user?.id && "hidden"
-                            } flex w-2 h-3   relative mx-1`}
+                            } flex w-2 h-3    relative mx-1`}
                           >
                             <div
                               className={`${
@@ -321,7 +321,7 @@ const ChatLog = (props: IProps) => {
                                   : "border-r-neutral-300 border-b-neutral-300"
                               } ${
                                 message.fromUserId !== ctx?.user?.id && "hidden"
-                              } absolute  w-1.5 h-3.5 border-[2.3px] border-t-transparent border-l-transparent  inline-block  rotate-[52deg] -right-[1.5px] -top-[2px] skew-x-12 `}
+                              } absolute  w-1.5 h-3.5 border-[2.3px] border-t-transparent border-l-transparent  inline-block  rotate-[52deg] -right-[1.5px] bottom-[3.5px] skew-x-12 `}
                             ></div>
                             <div
                               className={` ${
@@ -331,7 +331,7 @@ const ChatLog = (props: IProps) => {
                               }
                         ${
                           message.fromUserId !== ctx?.user?.id && "hidden"
-                        } border-r-neutral-300 border-b-neutral-300 absolute  w-2 h-3 border-[2.3px] border-t-transparent border-l-transparent -top-[0px] right-1  inline-block skew-x-12  rotate-[52deg]  `}
+                        } border-r-neutral-300 border-b-neutral-300 absolute  w-2 h-3 border-[2.3px] border-t-transparent border-l-transparent  right-1 bottom-1  inline-block skew-x-12  rotate-[52deg]  `}
                             ></div>
                           </div>
                         </div>
@@ -368,7 +368,7 @@ const ChatLog = (props: IProps) => {
           className="relative text-xl"
         >
           {showFileInput && (
-            <motion.div className="file-upload absolute -top-[4.5rem] z-10 bg-[#ffffff] backdrop-blur-lg text-sm w-12 h-14 cursor-default  px-1 py-2 rounded-lg ">
+            <motion.div variants={item} initial="hidden" animate="visible"  className="file-upload absolute -top-[4.5rem] z-10 bg-[#ffffff] backdrop-blur-lg text-sm w-12 h-14 cursor-default  px-1 py-2 rounded-lg ">
               <label
                 onClick={(e) => {
                   e.stopPropagation();
@@ -390,11 +390,11 @@ const ChatLog = (props: IProps) => {
           )}
           <FiPaperclip />
         </button>
-        <div className="flex items-center flex-1 h-full gap-2 px-2 py-1 bg-white rounded-lg ">
+        <div className="flex relative items-center flex-1 h-full gap-2 px-2 py-1 bg-white rounded-lg ">
           <RiChatSmile3Fill size={20} className="text-green-500 " />
           <div className="flex w-full gap-2">
             {previewImage && (
-              <div className="relative ">
+              <div className="absolute bottom-10 bg-white p-2 rounded-t-lg left-2">
                 <button
                   type="button"
                   onClick={() => {
@@ -407,7 +407,7 @@ const ChatLog = (props: IProps) => {
                 </button>
                 <img
                   src={previewImage}
-                  className="h-auto rounded-md w-96"
+                  className="h-auto rounded-md w-56 "
                   alt="Preview"
                 />
               </div>
