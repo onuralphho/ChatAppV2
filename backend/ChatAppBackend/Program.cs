@@ -1,16 +1,12 @@
 using ChatAppBackend.Bussiness.Hubs;
-using ChatAppBackend.Bussiness.Services;
 using ChatAppBackend.Core.Models;
-using ChatAppBackend.DataAccess.Context;
-using ChatAppBackend.Core.Exceptions;
 using ChatAppBackend.Filters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
 using System.Text;
+using ChatAppBackend;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -95,7 +91,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.Jwt));
 
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
 
 builder.Services.AddSignalR();
 

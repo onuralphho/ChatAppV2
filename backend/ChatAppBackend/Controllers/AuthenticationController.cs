@@ -1,13 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ChatAppBackend.Core.Entities;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.SignalR;
-using ChatAppBackend.Bussiness.Hubs;
-using ChatAppBackend.Core.Exceptions;
-using ChatAppBackend.Bussiness.Services;
-using ChatAppBackend.DataAccess.Context;
-
+﻿
 namespace ChatAppBackend.Controllers
 {
     [Route("api/[controller]")]
@@ -17,13 +8,10 @@ namespace ChatAppBackend.Controllers
     public class AuthenticationController : ControllerBase
     {
 
-        private readonly PostgreSqlDbContext _context;
-        private readonly JwtService _jwtService;
         private readonly IAuthenticationService _authenticationService;
-        public AuthenticationController(PostgreSqlDbContext context, JwtService jwtService, IAuthenticationService authenticationService)
+        public AuthenticationController( IAuthenticationService authenticationService)
         {
-            _context = context;
-            _jwtService = jwtService;
+       
             _authenticationService = authenticationService;
         }
 
