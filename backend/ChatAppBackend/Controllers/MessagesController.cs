@@ -34,6 +34,7 @@ namespace ChatAppBackend.Controllers
             return _messageservice.AddMessage(message);
 
         }
+
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpGet("read/{friendBoxId}")]
         public async Task<ActionResult> ReadMessages(int friendBoxId)

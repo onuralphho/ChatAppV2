@@ -17,5 +17,7 @@ namespace ChatAppBackend.Core.Models.Hub
         public DateTime SentDate { get; set; } = DateTime.UtcNow;
 
         public UpdateUserDto FromUser { get; set; }
+
+        public string AnimationType { get; set; }
     }
 }

@@ -113,7 +113,7 @@ const ChatPage = () => {
           return prev || [];
         });
       }
-
+      console.log(hubMessageResponse.hubMessageSent)
       ctx?.setMessages((prev) => [
         ...(prev || []),
         hubMessageResponse.hubMessageSent,

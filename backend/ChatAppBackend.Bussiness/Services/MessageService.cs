@@ -52,6 +52,7 @@ namespace ChatAppBackend.Bussiness.Services
             var resMessage = _mapper.Map<MessageSentResponse>(newMessage);
             resMessage.FriendBoxId = message.FriendBoxId;
             resMessage.FromUser = message.FromUser;
+            resMessage.AnimationType = message.AnimationType;
 
             return resMessage;
         }

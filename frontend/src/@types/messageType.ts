@@ -1,3 +1,4 @@
+
 export interface IMessage {
   id: number;
   sentDate: string;
@@ -13,4 +14,5 @@ export interface IMessage {
     name: string | undefined;
     picture: string | undefined;
   };
+  animationType?: "shake" |  "scale" | "colorful" | undefined;
 }

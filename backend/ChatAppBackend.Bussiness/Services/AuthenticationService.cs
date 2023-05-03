@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-
-
 namespace ChatAppBackend.Bussiness.Services
 {
     public interface IAuthenticationService

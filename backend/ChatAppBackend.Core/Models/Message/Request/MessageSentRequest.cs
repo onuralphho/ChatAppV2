@@ -14,5 +14,6 @@ namespace ChatAppBackend.Core.Models.Message.Request
         public DateTime SentDate { get; set; } = DateTime.UtcNow;
 
         public UpdateUserDto FromUser { get; set; }
+        public string AnimationType { get; set; }
     }
 }

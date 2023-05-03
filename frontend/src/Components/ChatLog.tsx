@@ -1,7 +1,11 @@
 import { RiChatSmile3Fill } from "react-icons/ri";
-import { HiPaperAirplane } from "react-icons/hi2";
+import { HiPaperAirplane, HiPhoto } from "react-icons/hi2";
 import { FiPaperclip } from "react-icons/fi";
-import { HiPhoto } from "react-icons/hi2";
+import { CgSmartphoneShake } from "react-icons/cg";
+import { IoIosColorPalette } from "react-icons/io";
+import { BiBlock } from "react-icons/bi";
+import { SiScaleway } from "react-icons/si";
+
 import { IMessage } from "../@types/messageType";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useAuth } from "../Context/AuthProvider";
@@ -26,7 +30,11 @@ const ChatLog = (props: IProps) => {
     undefined
   );
   const [showFullImage, setShowFullImage] = useState<string | undefined>("");
-  
+  const [animationType, setAnimationType] = useState<
+    "shake" | "scale" | "colorful" | undefined
+  >(undefined);
+  const [animationSelectorShow, setAnimationSelectorShow] =
+    useState<boolean>(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -70,7 +78,7 @@ const ChatLog = (props: IProps) => {
     setMessageInput("");
     setFileInput(undefined);
     setPreviewImage(undefined);
-    
+
     const messagePayload: IMessage = {
       isDeleted: false,
       isRead: false,
@@ -86,7 +94,9 @@ const ChatLog = (props: IProps) => {
         picture: ctx?.user?.picture,
       },
       contentImageUrl: previewImage ?? undefined,
+      animationType: animationType ?? undefined,
     };
+
     ctx?.setMessages((prev) => [...(prev || []), messagePayload]);
     messageAudio.play();
     ctx?.setFriendList((prev) => {
@@ -128,7 +138,7 @@ const ChatLog = (props: IProps) => {
   const scrollToBottom = useCallback(() => {
     if (checkerVal === false) {
       if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        messagesEndRef.current.scrollIntoView({ behavior: "auto" });
       }
     } else {
       if (messagesEndRef.current) {
@@ -238,10 +248,10 @@ const ChatLog = (props: IProps) => {
                       message.fromUserId !==
                         props.messages[index + 1]?.fromUserId
                         ? ctx?.user && ctx.user.id === message.fromUserId
-                          ? "rounded-br-none right-tri"
-                          : "rounded-bl-none left-tri"
+                          ? "rounded-br-none right-tri "
+                          : "rounded-bl-none left-tri  "
                         : ""
-                    }`}
+                    } ${message.animationType ? message.animationType : ""} `}
                   >
                     <div className="flex flex-col">
                       {message.contentImageUrl && (
@@ -333,21 +343,23 @@ const ChatLog = (props: IProps) => {
 
       <form
         onSubmit={sendMessageHandler}
-        className="flex items-center gap-2 p-1 "
+        className="flex items-center gap-1 p-1 "
       >
         <button
           onClick={(e) => {
             setShowFileInput((prev) => !prev);
           }}
           type="button"
-          className="relative text-xl"
+          className="relative text-xl  p-2 hover:bg-[#616161] rounded-lg"
         >
+          <FiPaperclip size={25} />
+
           {showFileInput && (
             <motion.div
               variants={item}
               initial="hidden"
               animate="visible"
-              className="file-upload absolute -top-[4.5rem] z-10 bg-[#ffffff] backdrop-blur-lg text-sm w-12 h-14 cursor-default  px-1 py-2 rounded-lg "
+              className="file-upload absolute  -top-[4.5rem] z-10 bg-[#ffffff] backdrop-blur-lg text-sm w-12 h-14 cursor-default  px-1 py-2 rounded-lg "
             >
               <label
                 onClick={(e) => {
@@ -368,10 +380,97 @@ const ChatLog = (props: IProps) => {
               </label>
             </motion.div>
           )}
-          <FiPaperclip />
         </button>
         <div className="flex relative items-center flex-1 h-full gap-2 px-2 py-1 bg-white rounded-lg ">
-          <RiChatSmile3Fill size={20} className="text-green-500 " />
+          <div
+            className="relative w-auto"
+            onMouseEnter={() => {
+              setAnimationSelectorShow(true);
+            }}
+          >
+            <div
+              onMouseLeave={() => {
+                setAnimationSelectorShow(false);
+              }}
+              className={`${
+                animationSelectorShow ? "opacity-100" : "opacity-0 hidden"
+              } absolute gap-2 -top-16 left-1 p-1  flex justify-center bg-white rounded-md`}
+            >
+              <div>
+                <input
+                  type="radio"
+                  name="animationselector"
+                  id="none"
+                  className="hidden peer"
+                  onChange={() => {
+                    setAnimationType(undefined);
+                  }}
+                />
+                <label
+                  htmlFor="none"
+                  className="flex p-1 items-center  text-red-500 cursor-pointer rounded-md border-2 peer-checked:border-sky-500 "
+                >
+                  <BiBlock size={30} className="" />
+                </label>
+              </div>
+
+              <div>
+                <input
+                  type="radio"
+                  name="animationselector"
+                  id="scale"
+                  className="hidden peer"
+                  onChange={() => {
+                    setAnimationType("scale");
+                  }}
+                />
+                <label
+                  htmlFor="scale"
+                  className="flex p-1 text-purple-600 cursor-pointer rounded-md border-2 peer-checked:border-sky-500  "
+                >
+                  <SiScaleway size={30} />
+                </label>
+              </div>
+
+              <div>
+                <input
+                  type="radio"
+                  name="animationselector"
+                  id="shake"
+                  className="hidden peer"
+                  onChange={() => {
+                    setAnimationType("shake");
+                  }}
+                />
+                <label
+                  htmlFor="shake"
+                  className="flex p-1 text-green-500 cursor-pointer rounded-md border-2 peer-checked:border-sky-500   "
+                >
+                  <CgSmartphoneShake size={30} />
+                </label>
+              </div>
+
+              <div>
+                <input
+                  type="radio"
+                  name="animationselector"
+                  id="colorful"
+                  className="hidden peer"
+                  onChange={() => {
+                    setAnimationType("colorful");
+                  }}
+                />
+                <label
+                  htmlFor="colorful"
+                  className="flex p-1 text-orange-500 cursor-pointer rounded-md border-2 peer-checked:border-sky-500  "
+                >
+                  <IoIosColorPalette size={30} />
+                </label>
+              </div>
+            </div>
+
+            <RiChatSmile3Fill size={20} className="text-green-500 " />
+          </div>
           <div className="flex w-full gap-2">
             {previewImage && (
               <div className="absolute bottom-10 bg-white p-2 rounded-t-lg left-2">
