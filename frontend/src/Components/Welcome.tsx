@@ -4,29 +4,14 @@ import { Fetcher } from "../utils/Fetcher";
 import { useTranslation } from "react-i18next";
 
 const Welcome = (props: any) => {
-  const { t, i18n } = useTranslation();
-
+  const { t } = useTranslation();
   const ctx = useAuth();
 
   return (
     <div className="bg-[#363636] flex-1 h-full fade-in">
       <div className="relative h-full flex flex-col justify-around items-center gap-4 px-2 ">
         <div className="absolute top-2 right-2 ">
-          <select
-            name="language_select"
-            id=""
-            onChange={async(e) => {
-              await i18n.changeLanguage(e.target.value)
-            }}
-            defaultValue={'lang'}
-            className=" border-none rounded-md min-w-[100px] bg-green-500 text-white"
-          >
-            <option value="lang"  disabled>
-              {t('select_language')}
-            </option>
-            <option value="en">English</option>
-            <option value="tr">Türkçe</option>
-          </select>
+          
         </div>
         <span>
           <span className="text-6xl">{t('welcome')}</span>{" "}

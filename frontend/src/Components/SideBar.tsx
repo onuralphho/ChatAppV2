@@ -157,7 +157,7 @@ const SideBar = (props: ISideBarProps) => {
       )}
 
       <div
-        className={` p-2  bg-[#252525] max-lg:z-20 transition-all relative overflow-hidden  w-64  ${
+        className={` p-2   bg-[#252525] max-lg:z-20 transition-all relative overflow-hidden  w-64  ${
           !!showMenu ? "lg:w-80" : "lg:w-[4.5rem]"
         }  gap-4 flex flex-col  ${
           showMenu ? "max-lg:translate-0" : "max-lg:-translate-x-64"

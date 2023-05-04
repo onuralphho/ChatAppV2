@@ -230,7 +230,7 @@ const ChatPage = () => {
   if (ctx?.user) {
     return (
       <div className="flex h-full text-white lg:p-5 lg:px-10 xl:px-20 2xl:px-40 ">
-        <div className="flex w-full relative max-w-[1920px] mx-auto lg:rounded-xl  overflow-hidden shadow-lg shadow-[rgba(0,0,0,0.5)]">
+        <div className="flex w-full relative max-w-[1920px] mx-auto lg:rounded-xl overflow-hidden  shadow-lg shadow-[rgba(0,0,0,0.5)]">
           {/* Notification */}
 
           <Notification

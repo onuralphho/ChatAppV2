@@ -7,6 +7,7 @@ import { useAlertContext } from "../Context/AlertProvider";
 import AlertBox from "./UI/AlertBox";
 import { AVATAR_DATA } from "../Constants/avatarData";
 import { useTranslation } from "react-i18next";
+import LanguageSelector from "./LanguageSelector";
 
 interface IProfileProps {
   closeProfile: Function;
@@ -19,10 +20,16 @@ const ProfileSettings = (props: IProfileProps) => {
   const ctx = useAuth();
   const alertCtx = useAlertContext();
 
-  const [nameInput, setNameInput] = useState(ctx?.user?.name);
-  const [emailInput, setEmailInput] = useState(ctx?.user?.email);
-  const [pictureInput, setPictureInput] = useState(ctx?.user?.picture);
-  const [dropdownShown, setDropdownShown] = useState(false);
+  const [nameInput, setNameInput] = useState<string | undefined>(
+    ctx?.user?.name
+  );
+  const [emailInput, setEmailInput] = useState<string | undefined>(
+    ctx?.user?.email
+  );
+  const [pictureInput, setPictureInput] = useState<string | undefined>(
+    ctx?.user?.picture
+  );
+  const [dropdownShown, setDropdownShown] = useState<boolean>(false);
 
   const nameChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNameInput(e.target.value);
@@ -76,8 +83,11 @@ const ProfileSettings = (props: IProfileProps) => {
         isShown={alertCtx?.alert.shown}
         closeBox={alertCtx?.setAlert}
       />
-      <div className="bg-[#363636] flex-1   h-full fade-in">
-        <div className="mt-12 flex flex-col h-full">
+      <div className="bg-[#363636] flex-1  h-full fade-in">
+        <div className="mt-12 flex flex-col h-full relative">
+          <div className="absolute bottom-14 right-2">
+            <LanguageSelector />
+          </div>
           <div className="flex py-2 px-2  items-center">
             <button
               className="bg-green-500 px-2 rounded-md absolute bottom-2 lg:hidden "
@@ -89,7 +99,8 @@ const ProfileSettings = (props: IProfileProps) => {
               <HiArrowUturnLeft size={35} className="" />
             </button>
           </div>
-          <div className="mx-4">
+
+          <div className="mx-4 ">
             <h2 className="text-2xl font-semibold">{t("profile")}:</h2>{" "}
             <form
               onSubmit={submitFormHandler}
