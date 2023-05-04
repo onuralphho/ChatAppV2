@@ -81,6 +81,8 @@ const ChatLog = (props: IProps) => {
     setMessageInput("");
     setFileInput(undefined);
     setPreviewImage(undefined);
+    setAnimationType(undefined);
+    setAnimationSelectorShow(false);
 
     const messagePayload: IMessage = {
       isDeleted: false,
@@ -386,11 +388,12 @@ const ChatLog = (props: IProps) => {
         </button>
         <div className="flex relative items-center flex-1 h-full gap-2 px-2 py-1 bg-white rounded-lg ">
           <div
-            className="relative w-auto"
+            className="relative w-auto border-2 border-green-500 p-1 rounded-md hover:bg-neutral-200 "
             onMouseEnter={() => {
               setAnimationSelectorShow(true);
             }}
           >
+            <RiChatSmile3Fill size={20} className="text-green-500 " />
             <div
               onMouseLeave={() => {
                 setAnimationSelectorShow(false);
@@ -411,7 +414,7 @@ const ChatLog = (props: IProps) => {
                 />
                 <label
                   htmlFor="none"
-                  className="flex p-1 items-center  text-red-500 cursor-pointer rounded-md border-2 peer-checked:border-sky-500 "
+                  className="flex p-1 items-center  text-red-500 cursor-pointer rounded-md border-2 peer-checked:border-green-500 "
                 >
                   <BiBlock size={30} className="" />
                 </label>
@@ -429,7 +432,7 @@ const ChatLog = (props: IProps) => {
                 />
                 <label
                   htmlFor="scale"
-                  className="flex p-1 text-purple-600 cursor-pointer rounded-md border-2 peer-checked:border-sky-500  "
+                  className="flex p-1 text-purple-600 cursor-pointer rounded-md border-2 peer-checked:border-green-500  "
                 >
                   <SiScaleway size={30} />
                 </label>
@@ -447,7 +450,7 @@ const ChatLog = (props: IProps) => {
                 />
                 <label
                   htmlFor="shake"
-                  className="flex p-1 text-green-500 cursor-pointer rounded-md border-2 peer-checked:border-sky-500   "
+                  className="flex p-1 text-green-500 cursor-pointer rounded-md border-2 peer-checked:border-green-500   "
                 >
                   <CgSmartphoneShake size={30} />
                 </label>
@@ -465,14 +468,12 @@ const ChatLog = (props: IProps) => {
                 />
                 <label
                   htmlFor="colorful"
-                  className="flex p-1 text-orange-500 cursor-pointer rounded-md border-2 peer-checked:border-sky-500  "
+                  className="flex p-1 text-orange-500 cursor-pointer rounded-md border-2 peer-checked:border-green-500  "
                 >
                   <IoIosColorPalette size={30} />
                 </label>
               </div>
             </div>
-
-            <RiChatSmile3Fill size={20} className="text-green-500 " />
           </div>
           <div className="flex w-full gap-2">
             {previewImage && (
