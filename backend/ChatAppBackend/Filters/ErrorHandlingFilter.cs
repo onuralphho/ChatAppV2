@@ -10,10 +10,11 @@ namespace ChatAppBackend.Filters
         {
             var exception = context.Exception;
             var problemDetails = new ProblemDetails();
-            if (exception is BadRequestException)
+            if (exception is BadRequestException badRequestException)
             {
-                problemDetails.Title = exception.Message;
+                problemDetails.Detail = badRequestException.Message;
                 problemDetails.Status = (int)HttpStatusCode.BadRequest;
+                problemDetails.Title = badRequestException.ErrorCode;
 
             }
             else if (exception is NotFoundException)

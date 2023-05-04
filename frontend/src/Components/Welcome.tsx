@@ -1,19 +1,39 @@
 import { IFriendList } from "../@types/friendBoxType";
 import { useAuth } from "../Context/AuthProvider";
 import { Fetcher } from "../utils/Fetcher";
+import { useTranslation } from "react-i18next";
 
 const Welcome = (props: any) => {
+  const { t, i18n } = useTranslation();
+
   const ctx = useAuth();
 
   return (
     <div className="bg-[#363636] flex-1 h-full fade-in">
-      <div className="h-full flex flex-col justify-around items-center gap-4 px-2 ">
+      <div className="relative h-full flex flex-col justify-around items-center gap-4 px-2 ">
+        <div className="absolute top-2 right-2 ">
+          <select
+            name="language_select"
+            id=""
+            onChange={async(e) => {
+              await i18n.changeLanguage(e.target.value)
+            }}
+            defaultValue={'lang'}
+            className=" border-none rounded-md min-w-[100px] bg-green-500 text-white"
+          >
+            <option value="lang"  disabled>
+              {t('select_language')}
+            </option>
+            <option value="en">English</option>
+            <option value="tr">Türkçe</option>
+          </select>
+        </div>
         <span>
-          <span className="text-6xl"> Welcome</span>{" "}
+          <span className="text-6xl">{t('welcome')}</span>{" "}
           <span className="text-5xl salute">👋</span>
         </span>
         <div className="flex flex-col ">
-          <h2>Last Chats</h2>
+          <h2>{t("last_chats")}</h2>
           <div className="flex gap-2 ">
             {ctx?.friendList &&
               ctx.friendList.slice(0, 2).map((friendlist: IFriendList) => (
@@ -43,7 +63,7 @@ const Welcome = (props: any) => {
                       url: "/api/messages/" + friendlist.id,
                       token: ctx?.getCookie("jwt"),
                     });
-                    const data = await res.json()
+                    const data = await res.json();
                     ctx?.setMessages(data);
 
                     await Fetcher({

@@ -2,14 +2,15 @@ import { useState } from "react";
 import FormInput from "./UI/FormInput";
 import { Fetcher } from "../utils/Fetcher";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../Context/AuthProvider";
+import { useTranslation } from "react-i18next";
 const AuthForm = (props: any) => {
-  const [passwordInput, setPasswordInput] = useState("");
-  const [emailInput, setEmailInput] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [passwordInput, setPasswordInput] = useState<string>("");
+  const [emailInput, setEmailInput] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [Loading, setLoading] = useState<boolean>(false);
+  const [Loading2, setLoading2] = useState<boolean>(false);
 
-  const [Loading, setLoading] = useState(false);
-  const [Loading2, setLoading2] = useState(false);
+  const { t } = useTranslation();
 
   const navigate = useNavigate();
 
@@ -41,24 +42,22 @@ const AuthForm = (props: any) => {
         method: "POST",
         url: "/api/users/register",
       });
-      
-      if(res.status === 204){
+
+      if (res.status === 204) {
         setPasswordInput("");
         setEmailInput("");
         await props.ctx.login(emailInput, passwordInput);
         navigate("/chats");
-        
       }
       const data = await res.json();
-      
+
       if (data.status === 400) {
         setErrorMessage(data.title);
         setLoading(false);
         return;
       }
-      
     } else {
-      setErrorMessage("Provide credentials");
+      setErrorMessage(t("provide_credentials").toString());
     }
   };
 
@@ -68,7 +67,7 @@ const AuthForm = (props: any) => {
       setLoading2(true);
       const res = await props.ctx.login(emailInput, passwordInput);
       setLoading2(false);
-      
+
       if (res.status === 400) {
         setErrorMessage(res.title);
         return;
@@ -78,7 +77,7 @@ const AuthForm = (props: any) => {
 
       navigate("/chats");
     } else {
-      setErrorMessage("Provide credentials");
+      setErrorMessage(t("provide_credentials").toString());
     }
   };
 
@@ -87,21 +86,21 @@ const AuthForm = (props: any) => {
       id="pre"
       className="demo_wrapper rounded-xl w-max h-max px-10 py-5 pb-7 flex flex-col gap-5 bg-stone-800"
     >
-      <h2 className="text-xl md:text-3xl font-bold text-green-300">
-        Welcome to SoChat
+      <h2 className="text-xl md:text-3xl text-center min-w-[300px] font-bold text-green-300">
+        SoChat
         <span className="text-4xl md:text-5xl animate-pulse text-purple-500 ">
           v.2
         </span>
       </h2>
       <FormInput
-        label={"E-mail"}
+        label={t("email")}
         type={"email"}
         name={"email"}
         state={emailInput}
         changeState={emailChangeHandler}
       />
       <FormInput
-        label={"Password"}
+        label={t("password")}
         type={"password"}
         name={"password"}
         state={passwordInput}
@@ -109,7 +108,7 @@ const AuthForm = (props: any) => {
       />
       {errorMessage && (
         <span className="text-red-600 font-semibold text-lg">
-          {errorMessage}
+          {t(errorMessage)}
         </span>
       )}
       <div className="flex gap-2">
@@ -124,7 +123,7 @@ const AuthForm = (props: any) => {
               <span className="w-3 bg-white"></span>
             </span>
           ) : (
-            "Login"
+            t("login")
           )}
         </button>
         <button
@@ -139,7 +138,7 @@ const AuthForm = (props: any) => {
               <span className="w-3 bg-white"></span>
             </span>
           ) : (
-            "Register"
+            t("register")
           )}
         </button>
       </div>

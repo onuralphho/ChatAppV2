@@ -25,7 +25,7 @@ namespace ChatAppBackend.Controllers
 
             if (token == null)
             {
-                throw new BadRequestException("Invalid Credentials");
+                throw new BadRequestException("Given credentials are invalid","invalid_credentials");
             }
             else
             {

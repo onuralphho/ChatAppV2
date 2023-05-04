@@ -12,6 +12,7 @@ import { Fetcher } from "../utils/Fetcher";
 import { useAlertContext } from "../Context/AlertProvider";
 import { sleep } from "../utils/sleep";
 import { useConnectionContext } from "../Context/ConnectionProvider";
+import { useTranslation } from "react-i18next";
 
 interface ISideBarProps {
   openProfile: Function;
@@ -37,6 +38,7 @@ const SideBar = (props: ISideBarProps) => {
   const conCtx = useConnectionContext();
 
   const navigate = useNavigate();
+  const {t} = useTranslation();
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -94,17 +96,17 @@ const SideBar = (props: ISideBarProps) => {
       setSearchResult([]);
       setSearchInput("");
 
-      alertCtx?.setAlert({ shown: true, type: data.message });
+      alertCtx?.setAlert({ shown: true, type: t(data.message) });
 
       ctx?.setFriendList((prev) => [...(prev ?? []), data.friend]);
 
       await sleep(2000);
-      alertCtx?.setAlert({ shown: false, type: data.message });
+      alertCtx?.setAlert({ shown: false, type: t(data.message) });
     }
     if(data.status === 400){
-      alertCtx?.setAlert({ shown: true, type: data.title });
+      alertCtx?.setAlert({ shown: true, type: t(data.title) });
       await sleep(2000);
-      alertCtx?.setAlert({ shown: false, type: data.title });
+      alertCtx?.setAlert({ shown: false, type: t(data.title) });
     }
   };
 
@@ -126,7 +128,7 @@ const SideBar = (props: ISideBarProps) => {
       />
       {/* Modal */}
       {isModalOpen && (
-        <Modal confirm={logOut} cancel={closeModal} title={"Logout?"} />
+        <Modal confirm={logOut} cancel={closeModal} title={t("logout")} />
       )}
 
       {/*//!  Flag */}

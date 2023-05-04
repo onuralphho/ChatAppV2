@@ -12,12 +12,15 @@ import { INotification } from "../@types/notificationInterface";
 import { IHubMessageResponse } from "../@types/hubMessageResponse";
 import { IFriendList } from "../@types/friendBoxType";
 import { TabTitle } from "../utils/TabTitle";
+import { useTranslation } from "react-i18next";
 const ChatPage = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
   const [notification, setNotification] = useState<INotification | undefined>(
     undefined
   );
+
+  const { t } = useTranslation();
 
   const notificationAudio = new Audio(
     "https://assets.mixkit.co/active_storage/sfx/2870/2870-preview.mp3"
@@ -31,7 +34,6 @@ const ChatPage = () => {
 
   const conCtx = useConnectionContext();
   const ctx = useAuth();
-
 
   useEffect(() => {
     const friendRequestListener = async (friendBox: IFriendList) => {
@@ -113,7 +115,7 @@ const ChatPage = () => {
           return prev || [];
         });
       }
-      console.log(hubMessageResponse.hubMessageSent)
+      console.log(hubMessageResponse.hubMessageSent);
       ctx?.setMessages((prev) => [
         ...(prev || []),
         hubMessageResponse.hubMessageSent,
@@ -188,7 +190,7 @@ const ChatPage = () => {
         url: "/api/authentication/session",
         token: jwt,
       });
-      
+
       const data = await res.json();
 
       if (data) {
@@ -267,7 +269,7 @@ const ChatPage = () => {
         >
           <div className="bg-[#252525] h-full w-full flex flex-col gap-2 justify-center items-center">
             <span className="text-xl font-semibold">
-              Your chats are loading...
+              {t("loading_chats")}...
             </span>
             <div className="progress-bar"></div>
           </div>

@@ -26,7 +26,7 @@ namespace ChatAppBackend.Bussiness.Services
             var tmp = _context.Users.Where(x => x.Email == regUser.Email).FirstOrDefault();
             if (tmp != null)
             {
-                throw new BadRequestException("Email already exist");
+                throw new BadRequestException($"{regUser.Email} is already exist","email_exist");
 
             }
             var reg_user = new User

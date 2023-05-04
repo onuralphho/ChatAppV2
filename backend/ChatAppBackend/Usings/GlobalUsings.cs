@@ -4,11 +4,7 @@ global using Microsoft.AspNetCore.Authorization;
 global using ChatAppBackend.Bussiness.Services;
 
 
-
-
 global using ChatAppBackend.DataAccess.Context;
-
-
 
 
 global using ChatAppBackend.Core.Exceptions;

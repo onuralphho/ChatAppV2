@@ -4,6 +4,7 @@ import { useAuth } from "../Context/AuthProvider";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Fetcher } from "../utils/Fetcher";
+
 const AuthPage = () => {
   const ctx = useAuth();
   const navigate = useNavigate();

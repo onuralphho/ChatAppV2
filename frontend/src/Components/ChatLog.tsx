@@ -15,6 +15,7 @@ import { useConnectionContext } from "../Context/ConnectionProvider";
 import ChatLoader from "./UI/ChatLoader";
 import AWS from "aws-sdk";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   talkingTo: ITalkingTo;
@@ -40,6 +41,8 @@ const ChatLog = (props: IProps) => {
 
   const conCtx = useConnectionContext();
   const ctx = useAuth();
+
+  const { t } = useTranslation();
 
   const messageAudio = new Audio(
     "https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3"
@@ -495,7 +498,7 @@ const ChatLog = (props: IProps) => {
               type="text"
               onChange={messageChangeHandler}
               value={messageInput}
-              placeholder="Say Hi!"
+              placeholder={t("say_hi").toString()}
               className="self-end w-full text-black bg-transparent outline-none resize-none "
             />
           </div>

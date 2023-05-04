@@ -50,7 +50,7 @@ const FriendList = (props: Iprops) => {
       url: "/api/friendboxes/approve/" + id,
       token: ctx?.getCookie("jwt"),
     });
-    const data = await res.json()
+    const data = await res.json();
 
     conCtx?.connection?.send("ApproveFriend", data);
 
@@ -80,9 +80,7 @@ const FriendList = (props: Iprops) => {
       url: "/api/friendboxes/delete/" + id,
       token: ctx?.getCookie("jwt"),
     });
-    const data = await res.json()
-
-
+    const data = await res.json();
 
     ctx?.setFriendList((prev) => {
       if (!prev) return prev;
@@ -110,7 +108,7 @@ const FriendList = (props: Iprops) => {
         token: ctx?.getCookie("jwt"),
       });
       const data = await res.json();
-      
+
       ctx?.setMessages(data);
 
       // * Unread Mesaj sıfırlama
@@ -120,7 +118,6 @@ const FriendList = (props: Iprops) => {
         url: "/api/messages/read/" + talkingTo.friendBoxId,
         token: ctx?.getCookie("jwt"),
       });
-
 
       ctx?.setFriendList((prev) => {
         const updatedFriendList = prev?.map((friendship) => {
@@ -134,7 +131,6 @@ const FriendList = (props: Iprops) => {
         });
         return updatedFriendList;
       });
-      
     }
   };
 

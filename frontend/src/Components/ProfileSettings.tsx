@@ -5,38 +5,20 @@ import { Fetcher } from "../utils/Fetcher";
 import { sleep } from "../utils/sleep";
 import { useAlertContext } from "../Context/AlertProvider";
 import AlertBox from "./UI/AlertBox";
+import { AVATAR_DATA } from "../Constants/avatarData";
+import { useTranslation } from "react-i18next";
 
 interface IProfileProps {
   closeProfile: Function;
   openWelcome: Function;
 }
 
-const DROPDOWN_DATA = [
-  {
-    url: "https://cdn3.iconfinder.com/data/icons/avatars-9/145/Avatar_Dog-512.png",
-    title: "Dog",
-  },
-  {
-    url: "https://cdn3.iconfinder.com/data/icons/avatars-9/145/Avatar_Cat-512.png",
-    title: "Cat",
-  },
-  {
-    url: "https://cdn3.iconfinder.com/data/icons/avatars-9/145/Avatar_Panda-512.png",
-    title: "Panda",
-  },
-  {
-    url: "https://cdn3.iconfinder.com/data/icons/avatars-9/145/Avatar_Penguin-512.png",
-    title: "Penguin",
-  },
-  {
-    url: "https://static.vecteezy.com/system/resources/thumbnails/020/647/520/small_2x/pig-face-icon-cute-animal-icon-in-circle-png.png",
-    title: "Pig",
-  },
-];
-
 const ProfileSettings = (props: IProfileProps) => {
+  const { t } = useTranslation();
+
   const ctx = useAuth();
   const alertCtx = useAlertContext();
+
   const [nameInput, setNameInput] = useState(ctx?.user?.name);
   const [emailInput, setEmailInput] = useState(ctx?.user?.email);
   const [pictureInput, setPictureInput] = useState(ctx?.user?.picture);
@@ -69,7 +51,7 @@ const ProfileSettings = (props: IProfileProps) => {
       token: jwt,
     });
     const data = await res.json();
-    alertCtx?.setAlert({ shown: true, type: data.message});
+    alertCtx?.setAlert({ shown: true, type: t(data.message) });
 
     ctx?.setUser((prev) => {
       if (prev) {
@@ -84,7 +66,7 @@ const ProfileSettings = (props: IProfileProps) => {
     });
 
     await sleep(2000);
-    alertCtx?.setAlert({ shown: false, type: data.message });
+    alertCtx?.setAlert({ shown: false, type: t(data.message) });
   };
 
   return (
@@ -108,7 +90,7 @@ const ProfileSettings = (props: IProfileProps) => {
             </button>
           </div>
           <div className="mx-4">
-            <h2 className="text-2xl font-semibold">Profile:</h2>{" "}
+            <h2 className="text-2xl font-semibold">{t("profile")}:</h2>{" "}
             <form
               onSubmit={submitFormHandler}
               className="    sm:w-max   shadow shadow-neutral-800 rounded-md  p-2 "
@@ -128,13 +110,13 @@ const ProfileSettings = (props: IProfileProps) => {
                     }}
                     className="relative z-10 cursor-pointer select-none  bg-[#252525] text-white text-sm font-medium rounded-lg p-2.5"
                   >
-                    <span>Choose an avatar</span>
+                    <span>{t("select_avatar")}</span>
                     <div
                       className={`${
                         !dropdownShown ? "h-0 border-0 p-0 " : "h-56 p-1"
                       } bg-[#252525]  transition-all flex flex-col gap-1 overflow-hidden absolute left-0 top-11 w-full rounded-md `}
                     >
-                      {DROPDOWN_DATA.map((item, index) => (
+                      {AVATAR_DATA.map((item, index) => (
                         <div
                           key={index}
                           onClick={() => {
@@ -167,10 +149,10 @@ const ProfileSettings = (props: IProfileProps) => {
                       type="submit"
                       className="bg-green-500 w-max px-2 text-lg rounded-md"
                     >
-                      Save
+                      {t("save")}
                     </button>
                     <span className="italic opacity-60 text-xs ">
-                      {"Last Update: ( "}
+                      {t("last_update") + ": ( "}
                       {
                         ctx?.user?.updateTime
                           .toString()

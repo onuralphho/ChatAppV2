@@ -22,11 +22,11 @@ namespace ChatAppBackend.Controllers
             var FriendBoxData = await _friendBoxService.AddFriend(friendBox);
             if (FriendBoxData == null)
             {
-                throw new BadRequestException("Already your friend");
+                throw new BadRequestException($"The user is already in your friendlist","notification_already_friend");
             }
             else
             {
-                var Response = new FriendBoxAddResponse { Friend = FriendBoxData, Message = "Friend request sent" };
+                var Response = new FriendBoxAddResponse { Friend = FriendBoxData, Message = "notification_friendrequest_sent" };
                 return Response;
             }
         }
