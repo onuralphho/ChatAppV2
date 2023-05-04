@@ -86,9 +86,13 @@ const ChatPage = () => {
           const updatedFriendList = prev?.map((friendship) => {
             if (friendship.id === ctx.talkingTo?.friendBoxId) {
               return {
-                ...friendship, //TODO:UpdateTime güncellenecek
+                ...friendship,
+                updateTime: hubMessageResponse.friendship.updateTime,
                 unreadMessageCount: 0,
-                lastMessage: hubMessageResponse.hubMessageSent.contentText,
+                lastMessage:
+                  hubMessageResponse.hubMessageSent.contentText.length > 0
+                    ? hubMessageResponse.hubMessageSent.contentText
+                    : t("image"),
                 lastMessageFrom:
                   hubMessageResponse.hubMessageSent.fromUser.name,
               };
@@ -107,7 +111,10 @@ const ChatPage = () => {
           if (friend) {
             friend.updateTime = hubMessageResponse.friendship.updateTime;
             friend.unreadMessageCount = hubMessageResponse.unreadMessageCount;
-            friend.lastMessage = hubMessageResponse.hubMessageSent.contentText;
+            friend.lastMessage =
+              hubMessageResponse.hubMessageSent.contentText.length > 0
+                ? hubMessageResponse.hubMessageSent.contentText
+                : t("image").toString();
             friend.lastMessageFrom =
               hubMessageResponse.hubMessageSent.fromUser.name;
             return [...(prev || [])];
@@ -115,7 +122,7 @@ const ChatPage = () => {
           return prev || [];
         });
       }
-      
+
       ctx?.setMessages((prev) => [
         ...(prev || []),
         hubMessageResponse.hubMessageSent,

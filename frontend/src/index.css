@@ -319,8 +319,7 @@
 
 @keyframes shake_message {
   0% {
-    
-    transform: translate(5px, 0) ;
+    transform: translate(5px, 0);
   }
   50% {
     transform: translate(-5px, 0);
@@ -329,3 +328,4 @@
     transform: translate(0, 0);
   }
 }
+

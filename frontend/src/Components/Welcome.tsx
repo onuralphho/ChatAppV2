@@ -8,16 +8,15 @@ const Welcome = (props: any) => {
   const ctx = useAuth();
 
   return (
-    <div className="bg-[#363636] flex-1 h-full fade-in">
+    <div className="bg-[#363636] flex-1 h-full fade-in overflow-hidden">
       <div className="relative h-full flex flex-col justify-around items-center gap-4 px-2 ">
-        <div className="absolute top-2 right-2 ">
-          
-        </div>
+        <div className="w-[500px] rounded-full aspect-square absolute bg-green-600 lg:-right-40 lg:-bottom-40 -bottom-32 blu -right-60"></div>
+        <div className="w-[500px] rounded-full aspect-square absolute bg-purple-600 blur-2xl animate-pulse  -left-60 -top-60  "></div>
         <span>
-          <span className="text-6xl">{t('welcome')}</span>{" "}
+          <span className="text-6xl">{t("welcome")}</span>{" "}
           <span className="text-5xl salute">👋</span>
         </span>
-        <div className="flex flex-col ">
+        <div className="flex flex-col z-20">
           <h2>{t("last_chats")}</h2>
           <div className="flex gap-2 ">
             {ctx?.friendList &&
@@ -70,7 +69,7 @@ const Welcome = (props: any) => {
                       return updatedFriendList;
                     });
                   }}
-                  className="flex gap-2  bg-neutral-600 px-2 py-2 rounded-md hover:bg-neutral-400 transition-all cursor-pointer"
+                  className="flex gap-2  bg-[#25252567] backdrop-blur-md px-2 py-2 rounded-md hover:bg-neutral-900 transition-all cursor-pointer"
                 >
                   <img
                     src={

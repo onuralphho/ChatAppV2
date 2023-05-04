@@ -20,5 +20,6 @@
   "provide_credentials":"Provide credentials",
   "update_user":"Update successful",
   "notification_friendrequest_sent":"Friend request sent",
-  "notification_already_friend":"The user already your friend"
+  "notification_already_friend":"The user already your friend",
+  "image":"Image"
 }

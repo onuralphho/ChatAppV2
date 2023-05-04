@@ -5,7 +5,6 @@ import { CgSmartphoneShake } from "react-icons/cg";
 import { IoIosColorPalette } from "react-icons/io";
 import { BiBlock } from "react-icons/bi";
 import { SiScaleway } from "react-icons/si";
-
 import { IMessage } from "../@types/messageType";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useAuth } from "../Context/AuthProvider";
@@ -108,7 +107,7 @@ const ChatLog = (props: IProps) => {
       let friend = prev?.find((f) => f.id === props.talkingTo.friendBoxId);
       if (friend) {
         friend.updateTime = dateNow.toISOString();
-        friend.lastMessage = messagePayload.contentText;
+        friend.lastMessage = messagePayload.contentText.length > 0 ? messagePayload.contentText : t("image").toString();
         friend.lastMessageFrom = messagePayload.fromUser.name;
 
         return [...(prev || [])];
@@ -138,6 +137,7 @@ const ChatLog = (props: IProps) => {
     });
     const data = await res.json();
     await conCtx?.connection?.invoke("SendMessage", data);
+
   };
 
   const scrollToBottom = useCallback(() => {
@@ -364,16 +364,16 @@ const ChatLog = (props: IProps) => {
               variants={item}
               initial="hidden"
               animate="visible"
-              className="file-upload absolute  -top-[4.5rem] z-10 bg-[#ffffff] backdrop-blur-lg text-sm w-12 h-14 cursor-default  px-1 py-2 rounded-lg "
+              className="file-upload flex justify-center absolute -top-14 left-0  z-10 bg-[#ffffff] backdrop-blur-lg text-sm  cursor-default  px-1 py-2 rounded-lg "
             >
               <label
                 onClick={(e) => {
                   e.stopPropagation();
                 }}
                 htmlFor="file-upload"
-                className="w-10 h-10 overflow-hidden cursor-pointer "
+                className=" overflow-hidden cursor-pointer "
               >
-                <HiPhoto size={40} className="text-green-500 " />
+                <HiPhoto size={30} className="text-green-500 " />
                 <input
                   id="file-upload"
                   type="file"
@@ -400,7 +400,7 @@ const ChatLog = (props: IProps) => {
               }}
               className={`${
                 animationSelectorShow ? "opacity-100" : "opacity-0 hidden"
-              } absolute gap-2 -top-16 left-1 p-1  flex justify-center bg-white rounded-md`}
+              } absolute gap-2 -top-14 left-0 p-1  flex justify-center bg-white rounded-md`}
             >
               <div>
                 <input

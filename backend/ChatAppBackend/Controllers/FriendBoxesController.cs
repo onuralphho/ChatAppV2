@@ -22,7 +22,7 @@ namespace ChatAppBackend.Controllers
             var FriendBoxData = await _friendBoxService.AddFriend(friendBox);
             if (FriendBoxData == null)
             {
-                throw new BadRequestException($"The user is already in your friendlist","notification_already_friend");
+                throw new BadRequestException("The user is already in your friendlist","notification_already_friend");
             }
             else
             {

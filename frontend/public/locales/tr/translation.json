@@ -20,5 +20,6 @@
   "provide_credentials":"Eksik bilgileri giriniz",
   "update_user":"Güncelleme başarılı",
   "notification_friendrequest_sent":"Arkadaşlık isteği gönderildi",
-  "notification_already_friend":"Kullanıcı zaten arkadaşın"
+  "notification_already_friend":"Kullanıcı zaten arkadaşın",
+  "image":"Görsel"
 }

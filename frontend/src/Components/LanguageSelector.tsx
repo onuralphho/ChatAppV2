@@ -14,10 +14,10 @@ const LanguageSelector = () => {
       onMouseLeave={() => {
         setLanguageSelector(false);
       }}
-      className="flex relative w-max z-20  justify-center hover:bg-[#616161]  rounded-md rounded-t-none px-3 p-1 cursor-pointer"
+      className="flex relative w-max z-20  justify-center hover:bg-[#252525]  rounded-md rounded-t-none px-3 p-1 cursor-pointer"
     >
       {languageSelectorShow && (
-        <div className="absolute  flex flex-col  left-0 -top-[4.5rem] p-1 w-full bg-[#616161] text-center rounded-t-md ">
+        <div className="absolute  flex flex-col  left-0 -top-[4.5rem] p-1 w-full bg-[#252525] text-center rounded-t-md ">
           <span
             onClick={() => {
               i18n.changeLanguage("tr");
@@ -33,7 +33,11 @@ const LanguageSelector = () => {
             }}
             className="flex gap-2 justify-center  hover:bg-[#012169] p-1"
           >
-            <img src={EngFlag} className="w-5 rounded" alt="Great britain flag" />
+            <img
+              src={EngFlag}
+              className="w-5 rounded"
+              alt="Great britain flag"
+            />
             <span>English</span>
           </span>
         </div>

@@ -83,8 +83,10 @@ const ProfileSettings = (props: IProfileProps) => {
         isShown={alertCtx?.alert.shown}
         closeBox={alertCtx?.setAlert}
       />
-      <div className="bg-[#363636] flex-1  h-full fade-in">
-        <div className="mt-12 flex flex-col h-full relative">
+      <div className="bg-[#363636] flex-1 overflow-hidden h-full fade-in">
+        <div className="mt-12 flex  flex-col h-full relative">
+          <div className="w-[500px] rounded-full aspect-square absolute bg-green-600 lg:-right-40 lg:-bottom-40 -bottom-32 -right-60"></div>
+          <div className="w-[500px] rounded-full aspect-square absolute bg-purple-600 -left-60 -top-60  "></div>
           <div className="absolute bottom-14 right-2">
             <LanguageSelector />
           </div>
@@ -101,16 +103,15 @@ const ProfileSettings = (props: IProfileProps) => {
           </div>
 
           <div className="mx-4 ">
-            <h2 className="text-2xl font-semibold">{t("profile")}:</h2>{" "}
             <form
               onSubmit={submitFormHandler}
-              className="    sm:w-max   shadow shadow-neutral-800 rounded-md  p-2 "
+              className="sm:w-max bg-[#2525252a] backdrop-blur-lg border border-neutral-600 rounded-md p-2 "
             >
               <div className="flex max-[440px]:flex-col  gap-4  h-full ">
                 <div className="flex flex-col  gap-2 w-40 ">
                   <img
                     src={pictureInput}
-                    className="rounded-lg   flex-1 object-cover "
+                    className="rounded-full   flex-1 object-cover "
                     alt=""
                   />
 
@@ -119,7 +120,7 @@ const ProfileSettings = (props: IProfileProps) => {
                     onClick={() => {
                       setDropdownShown((prev) => !prev);
                     }}
-                    className="relative z-10 cursor-pointer select-none  bg-[#252525] text-white text-sm font-medium rounded-lg p-2.5"
+                    className="relative z-10 cursor-pointer select-none shadow   bg-[#363636] text-white text-sm font-medium rounded-md p-2.5"
                   >
                     <span>{t("select_avatar")}</span>
                     <div
