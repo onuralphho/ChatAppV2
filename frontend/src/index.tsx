@@ -5,6 +5,7 @@ import App from "./App";
 import Layout from "./Layout/Layout";
 import { HashRouter } from "react-router-dom";
 import AlertProvider from "./Context/AlertProvider";
+import './utils/i18n'
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

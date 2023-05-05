@@ -1,7 +1,4 @@
-﻿using ChatAppBackend.DataAccess.Context;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-
+﻿using Microsoft.AspNetCore.Http;
 
 namespace ChatAppBackend.Bussiness.Services
 {
@@ -15,13 +12,13 @@ namespace ChatAppBackend.Bussiness.Services
     {
         private readonly PostgreSqlDbContext _context;
         private readonly JwtService _jwtService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+      
 
         public AuthenticationService(PostgreSqlDbContext context, JwtService jwtService, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _jwtService = jwtService;
-            _httpContextAccessor = httpContextAccessor;
+          
         }
 
         public TokenDto Login(AuthDto auth)

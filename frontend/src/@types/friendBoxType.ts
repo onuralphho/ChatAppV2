@@ -12,7 +12,7 @@ export interface IFriendList {
   toUserId: number;
   updateTime: string;
   approved: boolean;
-  lastMessage: string;
-  lastMessageFrom: string;
-  unreadMessageCount: number;
+  lastMessage: string | undefined;
+  lastMessageFrom: string |undefined;
+  unreadMessageCount: number ;
 }

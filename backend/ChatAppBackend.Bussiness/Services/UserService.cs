@@ -1,11 +1,4 @@
-﻿using AutoMapper;
-using ChatAppBackend.Core.Models.User.Request;
-using ChatAppBackend.Core.Models.User.Response;
-using ChatAppBackend.DataAccess.Context;
-using ChatAppBackend.Core.Entities;
-using ChatAppBackend.Core.Exceptions;
-
-
+﻿
 namespace ChatAppBackend.Bussiness.Services
 {
 
@@ -33,7 +26,7 @@ namespace ChatAppBackend.Bussiness.Services
             var tmp = _context.Users.Where(x => x.Email == regUser.Email).FirstOrDefault();
             if (tmp != null)
             {
-                throw new BadRequestException("Email already exist");
+                throw new BadRequestException($"{regUser.Email} is already exist","email_exist");
 
             }
             var reg_user = new User

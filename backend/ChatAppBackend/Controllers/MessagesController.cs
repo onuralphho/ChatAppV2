@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using ChatAppBackend.Bussiness.Services;
-using ChatAppBackend.Core.Models.Message.Request;
-using ChatAppBackend.Core.Models.Message.Response;
+﻿
+
 
 namespace ChatAppBackend.Controllers
 {
@@ -37,6 +34,7 @@ namespace ChatAppBackend.Controllers
             return _messageservice.AddMessage(message);
 
         }
+
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpGet("read/{friendBoxId}")]
         public async Task<ActionResult> ReadMessages(int friendBoxId)

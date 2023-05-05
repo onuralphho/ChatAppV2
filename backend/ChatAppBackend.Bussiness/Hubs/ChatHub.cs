@@ -1,11 +1,7 @@
 ﻿using AutoMapper;
-using ChatAppBackend.Core.Models.FriendBox.Response;
-using ChatAppBackend.Core.Models.Hub;
-using ChatAppBackend.DataAccess.Context;
-using ChatAppBackend.Core.Entities;
-using ChatAppBackend.Core.Models.FriendBox.Request;
-using ChatAppBackend.Core.Models.Message.Request;
-using ChatAppBackend.Core.Models.Message.Response;
+
+
+
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
@@ -51,7 +47,15 @@ namespace ChatAppBackend.Bussiness.Hubs
             var friendshipdb = _context.FriendBoxes.Include(f => f.FromUser)
          .Include(f => f.ToUser).FirstOrDefault((f) => f.Id == hubMessageSent.FriendBoxId);
 
+            if(hubMessageSent.ContentText.Length == 0)
+            {
+                friendshipdb.LastMessage = "image";
+            }
+            else
+            {
             friendshipdb.LastMessage = hubMessageSent.ContentText;
+
+            }
             friendshipdb.LastMessageFrom = hubMessageSent.FromUser.Name;
 
             await _context.SaveChangesAsync();

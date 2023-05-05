@@ -1,7 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-using ChatAppBackend.Core.Models.FriendBox.Response;
+﻿
 
 namespace ChatAppBackend.Core.Entities
 {

@@ -1,7 +1,7 @@
 export  interface ITalkingTo {
-    id: number;
-    name: string;
-    picture: string;
-    isApproved:boolean;
-    friendBoxId:number;
+    id: number | undefined;
+    name: string |undefined;
+    picture: string |undefined;
+    isApproved:boolean|undefined;
+    friendBoxId:number|undefined;
   }

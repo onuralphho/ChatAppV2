@@ -12,12 +12,15 @@ import { INotification } from "../@types/notificationInterface";
 import { IHubMessageResponse } from "../@types/hubMessageResponse";
 import { IFriendList } from "../@types/friendBoxType";
 import { TabTitle } from "../utils/TabTitle";
+import { useTranslation } from "react-i18next";
 const ChatPage = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
   const [notification, setNotification] = useState<INotification | undefined>(
     undefined
   );
+
+  const { t } = useTranslation();
 
   const notificationAudio = new Audio(
     "https://assets.mixkit.co/active_storage/sfx/2870/2870-preview.mp3"
@@ -31,7 +34,6 @@ const ChatPage = () => {
 
   const conCtx = useConnectionContext();
   const ctx = useAuth();
-
 
   useEffect(() => {
     const friendRequestListener = async (friendBox: IFriendList) => {
@@ -76,7 +78,7 @@ const ChatPage = () => {
         messageAudio.play();
         await Fetcher({
           method: "GET",
-          url: "/api/messages/read/" + ctx.talkingTo?.friendBoxId,
+          url: "/api/messages/read/" + ctx?.talkingTo?.friendBoxId,
           token: ctx?.getCookie("jwt"),
         });
 
@@ -84,9 +86,13 @@ const ChatPage = () => {
           const updatedFriendList = prev?.map((friendship) => {
             if (friendship.id === ctx.talkingTo?.friendBoxId) {
               return {
-                ...friendship, //TODO:UpdateTime güncellenecek
+                ...friendship,
+                updateTime: hubMessageResponse.friendship.updateTime,
                 unreadMessageCount: 0,
-                lastMessage: hubMessageResponse.hubMessageSent.contentText,
+                lastMessage:
+                  hubMessageResponse.hubMessageSent.contentText.length > 0
+                    ? hubMessageResponse.hubMessageSent.contentText
+                    : t("image"),
                 lastMessageFrom:
                   hubMessageResponse.hubMessageSent.fromUser.name,
               };
@@ -105,7 +111,10 @@ const ChatPage = () => {
           if (friend) {
             friend.updateTime = hubMessageResponse.friendship.updateTime;
             friend.unreadMessageCount = hubMessageResponse.unreadMessageCount;
-            friend.lastMessage = hubMessageResponse.hubMessageSent.contentText;
+            friend.lastMessage =
+              hubMessageResponse.hubMessageSent.contentText.length > 0
+                ? hubMessageResponse.hubMessageSent.contentText
+                : t("image").toString();
             friend.lastMessageFrom =
               hubMessageResponse.hubMessageSent.fromUser.name;
             return [...(prev || [])];
@@ -188,7 +197,7 @@ const ChatPage = () => {
         url: "/api/authentication/session",
         token: jwt,
       });
-      
+
       const data = await res.json();
 
       if (data) {
@@ -228,7 +237,7 @@ const ChatPage = () => {
   if (ctx?.user) {
     return (
       <div className="flex h-full text-white lg:p-5 lg:px-10 xl:px-20 2xl:px-40 ">
-        <div className="flex w-full relative max-w-[1920px] mx-auto lg:rounded-xl  overflow-hidden shadow-lg shadow-[rgba(0,0,0,0.5)]">
+        <div className="flex w-full relative max-w-[1920px] mx-auto lg:rounded-xl overflow-hidden  shadow-lg shadow-[rgba(0,0,0,0.5)]">
           {/* Notification */}
 
           <Notification
@@ -267,7 +276,7 @@ const ChatPage = () => {
         >
           <div className="bg-[#252525] h-full w-full flex flex-col gap-2 justify-center items-center">
             <span className="text-xl font-semibold">
-              Your chats are loading...
+              {t("loading_chats")}...
             </span>
             <div className="progress-bar"></div>
           </div>

@@ -1,5 +1,7 @@
+import { IMessage } from "../@types/messageType";
+
 interface fetchReq {
-  body?: Record<string, unknown> | string | number | null;
+  body?: Record<string, unknown> | string | number | null | IMessage;
   method: string;
   url: string;
   token?: string | null;

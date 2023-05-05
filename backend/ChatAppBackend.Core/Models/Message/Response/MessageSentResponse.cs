@@ -22,5 +22,7 @@ namespace ChatAppBackend.Core.Models.Message.Response
         public bool IsDeleted { get; set; } = false;
         public UpdateUserDto FromUser { get; set; }
 
+        public string AnimationType { get; set; }
+
     }
 }
