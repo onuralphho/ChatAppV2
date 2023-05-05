@@ -1,8 +1,5 @@
-﻿using AutoMapper;
-using ChatAppBackend.Core.Models.Message.Request;
-using ChatAppBackend.Core.Models.Message.Response;
-using ChatAppBackend.DataAccess.Context;
-using ChatAppBackend.Core.Entities;
+﻿
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatAppBackend.Bussiness.Services
@@ -55,6 +52,7 @@ namespace ChatAppBackend.Bussiness.Services
             var resMessage = _mapper.Map<MessageSentResponse>(newMessage);
             resMessage.FriendBoxId = message.FriendBoxId;
             resMessage.FromUser = message.FromUser;
+            resMessage.AnimationType = message.AnimationType;
 
             return resMessage;
         }

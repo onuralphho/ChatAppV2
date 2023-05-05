@@ -1,5 +1,3 @@
-using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace ChatAppBackend.Core.Entities
 {

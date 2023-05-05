@@ -12,6 +12,7 @@ import { Fetcher } from "../utils/Fetcher";
 import { useAlertContext } from "../Context/AlertProvider";
 import { sleep } from "../utils/sleep";
 import { useConnectionContext } from "../Context/ConnectionProvider";
+import { useTranslation } from "react-i18next";
 
 interface ISideBarProps {
   openProfile: Function;
@@ -37,6 +38,7 @@ const SideBar = (props: ISideBarProps) => {
   const conCtx = useConnectionContext();
 
   const navigate = useNavigate();
+  const {t} = useTranslation();
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -94,17 +96,17 @@ const SideBar = (props: ISideBarProps) => {
       setSearchResult([]);
       setSearchInput("");
 
-      alertCtx?.setAlert({ shown: true, type: data.message });
+      alertCtx?.setAlert({ shown: true, type: t(data.message) });
 
       ctx?.setFriendList((prev) => [...(prev ?? []), data.friend]);
 
       await sleep(2000);
-      alertCtx?.setAlert({ shown: false, type: data.message });
+      alertCtx?.setAlert({ shown: false, type: t(data.message) });
     }
     if(data.status === 400){
-      alertCtx?.setAlert({ shown: true, type: data.title });
+      alertCtx?.setAlert({ shown: true, type: t(data.title) });
       await sleep(2000);
-      alertCtx?.setAlert({ shown: false, type: data.title });
+      alertCtx?.setAlert({ shown: false, type: t(data.title) });
     }
   };
 
@@ -126,7 +128,7 @@ const SideBar = (props: ISideBarProps) => {
       />
       {/* Modal */}
       {isModalOpen && (
-        <Modal confirm={logOut} cancel={closeModal} title={"Logout?"} />
+        <Modal confirm={logOut} cancel={closeModal} title={t("logout")} />
       )}
 
       {/*//!  Flag */}
@@ -155,7 +157,7 @@ const SideBar = (props: ISideBarProps) => {
       )}
 
       <div
-        className={` p-2  bg-[#252525] max-lg:z-20 transition-all relative overflow-hidden  w-64  ${
+        className={` p-2   bg-[#252525] max-lg:z-20 transition-all relative overflow-hidden  w-64  ${
           !!showMenu ? "lg:w-80" : "lg:w-[4.5rem]"
         }  gap-4 flex flex-col  ${
           showMenu ? "max-lg:translate-0" : "max-lg:-translate-x-64"

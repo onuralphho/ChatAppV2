@@ -1,19 +1,23 @@
 import { IFriendList } from "../@types/friendBoxType";
 import { useAuth } from "../Context/AuthProvider";
 import { Fetcher } from "../utils/Fetcher";
+import { useTranslation } from "react-i18next";
 
 const Welcome = (props: any) => {
+  const { t } = useTranslation();
   const ctx = useAuth();
 
   return (
-    <div className="bg-[#363636] flex-1 h-full fade-in">
-      <div className="h-full flex flex-col justify-around items-center gap-4 px-2 ">
+    <div className="bg-[#363636] flex-1 h-full fade-in overflow-hidden">
+      <div className="relative h-full flex flex-col justify-around items-center gap-4 px-2 ">
+        <div className="w-[500px] rounded-full aspect-square absolute bg-green-600 lg:-right-40 lg:-bottom-40 -bottom-32 blu -right-60"></div>
+        <div className="w-[500px] rounded-full aspect-square absolute bg-purple-600 blur-2xl animate-pulse  -left-60 -top-60  "></div>
         <span>
-          <span className="text-6xl"> Welcome</span>{" "}
+          <span className="text-6xl">{t("welcome")}</span>{" "}
           <span className="text-5xl salute">👋</span>
         </span>
-        <div className="flex flex-col ">
-          <h2>Last Chats</h2>
+        <div className="flex flex-col z-20">
+          <h2>{t("last_chats")}</h2>
           <div className="flex gap-2 ">
             {ctx?.friendList &&
               ctx.friendList.slice(0, 2).map((friendlist: IFriendList) => (
@@ -43,7 +47,7 @@ const Welcome = (props: any) => {
                       url: "/api/messages/" + friendlist.id,
                       token: ctx?.getCookie("jwt"),
                     });
-                    const data = await res.json()
+                    const data = await res.json();
                     ctx?.setMessages(data);
 
                     await Fetcher({
@@ -65,7 +69,7 @@ const Welcome = (props: any) => {
                       return updatedFriendList;
                     });
                   }}
-                  className="flex gap-2  bg-neutral-600 px-2 py-2 rounded-md hover:bg-neutral-400 transition-all cursor-pointer"
+                  className="flex gap-2  bg-[#25252567] backdrop-blur-md px-2 py-2 rounded-md hover:bg-neutral-900 transition-all cursor-pointer"
                 >
                   <img
                     src={

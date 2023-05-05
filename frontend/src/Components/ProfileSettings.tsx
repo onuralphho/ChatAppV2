@@ -5,42 +5,31 @@ import { Fetcher } from "../utils/Fetcher";
 import { sleep } from "../utils/sleep";
 import { useAlertContext } from "../Context/AlertProvider";
 import AlertBox from "./UI/AlertBox";
+import { AVATAR_DATA } from "../Constants/avatarData";
+import { useTranslation } from "react-i18next";
+import LanguageSelector from "./LanguageSelector";
 
 interface IProfileProps {
   closeProfile: Function;
   openWelcome: Function;
 }
 
-const DROPDOWN_DATA = [
-  {
-    url: "https://cdn3.iconfinder.com/data/icons/avatars-9/145/Avatar_Dog-512.png",
-    title: "Dog",
-  },
-  {
-    url: "https://cdn3.iconfinder.com/data/icons/avatars-9/145/Avatar_Cat-512.png",
-    title: "Cat",
-  },
-  {
-    url: "https://cdn3.iconfinder.com/data/icons/avatars-9/145/Avatar_Panda-512.png",
-    title: "Panda",
-  },
-  {
-    url: "https://cdn3.iconfinder.com/data/icons/avatars-9/145/Avatar_Penguin-512.png",
-    title: "Penguin",
-  },
-  {
-    url: "https://static.vecteezy.com/system/resources/thumbnails/020/647/520/small_2x/pig-face-icon-cute-animal-icon-in-circle-png.png",
-    title: "Pig",
-  },
-];
-
 const ProfileSettings = (props: IProfileProps) => {
+  const { t } = useTranslation();
+
   const ctx = useAuth();
   const alertCtx = useAlertContext();
-  const [nameInput, setNameInput] = useState(ctx?.user?.name);
-  const [emailInput, setEmailInput] = useState(ctx?.user?.email);
-  const [pictureInput, setPictureInput] = useState(ctx?.user?.picture);
-  const [dropdownShown, setDropdownShown] = useState(false);
+
+  const [nameInput, setNameInput] = useState<string | undefined>(
+    ctx?.user?.name
+  );
+  const [emailInput, setEmailInput] = useState<string | undefined>(
+    ctx?.user?.email
+  );
+  const [pictureInput, setPictureInput] = useState<string | undefined>(
+    ctx?.user?.picture
+  );
+  const [dropdownShown, setDropdownShown] = useState<boolean>(false);
 
   const nameChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNameInput(e.target.value);
@@ -69,7 +58,7 @@ const ProfileSettings = (props: IProfileProps) => {
       token: jwt,
     });
     const data = await res.json();
-    alertCtx?.setAlert({ shown: true, type: data.message});
+    alertCtx?.setAlert({ shown: true, type: t(data.message) });
 
     ctx?.setUser((prev) => {
       if (prev) {
@@ -84,7 +73,7 @@ const ProfileSettings = (props: IProfileProps) => {
     });
 
     await sleep(2000);
-    alertCtx?.setAlert({ shown: false, type: data.message });
+    alertCtx?.setAlert({ shown: false, type: t(data.message) });
   };
 
   return (
@@ -94,8 +83,13 @@ const ProfileSettings = (props: IProfileProps) => {
         isShown={alertCtx?.alert.shown}
         closeBox={alertCtx?.setAlert}
       />
-      <div className="bg-[#363636] flex-1   h-full fade-in">
-        <div className="mt-12 flex flex-col h-full">
+      <div className="bg-[#363636] flex-1 overflow-hidden h-full fade-in">
+        <div className="mt-12 flex  flex-col h-full relative">
+          <div className="w-[500px] rounded-full aspect-square absolute bg-green-600 lg:-right-40 lg:-bottom-40 -bottom-32 -right-60"></div>
+          <div className="w-[500px] rounded-full aspect-square absolute bg-purple-600 -left-60 -top-60  "></div>
+          <div className="absolute bottom-14 right-2">
+            <LanguageSelector />
+          </div>
           <div className="flex py-2 px-2  items-center">
             <button
               className="bg-green-500 px-2 rounded-md absolute bottom-2 lg:hidden "
@@ -107,17 +101,17 @@ const ProfileSettings = (props: IProfileProps) => {
               <HiArrowUturnLeft size={35} className="" />
             </button>
           </div>
-          <div className="mx-4">
-            <h2 className="text-2xl font-semibold">Profile:</h2>{" "}
+
+          <div className="mx-4 ">
             <form
               onSubmit={submitFormHandler}
-              className="    sm:w-max   shadow shadow-neutral-800 rounded-md  p-2 "
+              className="sm:w-max bg-[#2525252a] backdrop-blur-lg border border-neutral-600 rounded-md p-2 "
             >
               <div className="flex max-[440px]:flex-col  gap-4  h-full ">
                 <div className="flex flex-col  gap-2 w-40 ">
                   <img
                     src={pictureInput}
-                    className="rounded-lg   flex-1 object-cover "
+                    className="rounded-full   flex-1 object-cover "
                     alt=""
                   />
 
@@ -126,15 +120,15 @@ const ProfileSettings = (props: IProfileProps) => {
                     onClick={() => {
                       setDropdownShown((prev) => !prev);
                     }}
-                    className="relative z-10 cursor-pointer select-none  bg-[#252525] text-white text-sm font-medium rounded-lg p-2.5"
+                    className="relative z-10 cursor-pointer select-none shadow   bg-[#363636] text-white text-sm font-medium rounded-md p-2.5"
                   >
-                    <span>Choose an avatar</span>
+                    <span>{t("select_avatar")}</span>
                     <div
                       className={`${
                         !dropdownShown ? "h-0 border-0 p-0 " : "h-56 p-1"
                       } bg-[#252525]  transition-all flex flex-col gap-1 overflow-hidden absolute left-0 top-11 w-full rounded-md `}
                     >
-                      {DROPDOWN_DATA.map((item, index) => (
+                      {AVATAR_DATA.map((item, index) => (
                         <div
                           key={index}
                           onClick={() => {
@@ -167,10 +161,10 @@ const ProfileSettings = (props: IProfileProps) => {
                       type="submit"
                       className="bg-green-500 w-max px-2 text-lg rounded-md"
                     >
-                      Save
+                      {t("save")}
                     </button>
                     <span className="italic opacity-60 text-xs ">
-                      {"Last Update: ( "}
+                      {t("last_update") + ": ( "}
                       {
                         ctx?.user?.updateTime
                           .toString()
