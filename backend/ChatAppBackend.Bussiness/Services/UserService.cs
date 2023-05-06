@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.AspNetCore.Mvc;
+
 namespace ChatAppBackend.Bussiness.Services
 {
 
@@ -7,18 +9,20 @@ namespace ChatAppBackend.Bussiness.Services
         Task Register(RegisterDto regUser);
         Task<SessionUserDto> UpdateUser(UpdateUserDto updatedUser);
         List<UserSearchResponse> SearchUser(UserSearchRequest userSearch);
+        Task<UpdatePasswordResponse> UpdatePassword(UpdatePasswordDto passwordDto);
     }
     public class UserService : IUserService
     {
         private readonly PostgreSqlDbContext _context;
         private readonly IMapper _mapper;
+        private readonly JwtService _jwtService;
 
-        public UserService(PostgreSqlDbContext context, IMapper mapper)
+        public UserService(PostgreSqlDbContext context, IMapper mapper, JwtService jwtService)
         {
 
             _context = context;
             _mapper = mapper;
-
+            _jwtService = jwtService;
         }
 
         public async Task Register(RegisterDto regUser)
@@ -26,7 +30,7 @@ namespace ChatAppBackend.Bussiness.Services
             var tmp = _context.Users.Where(x => x.Email == regUser.Email).FirstOrDefault();
             if (tmp != null)
             {
-                throw new BadRequestException($"{regUser.Email} is already exist","email_exist");
+                throw new BadRequestException($"{regUser.Email} is already exist", "email_exist");
 
             }
             var reg_user = new User
@@ -58,6 +62,27 @@ namespace ChatAppBackend.Bussiness.Services
             return _mapper.Map<SessionUserDto>(user);
         }
 
+        public async Task<UpdatePasswordResponse> UpdatePassword(UpdatePasswordDto passwordDto)
+        {
+            var userId = _jwtService.UserId;
+            var user = _context.Users.Find(userId);
+
+            if (BCrypt.Net.BCrypt.Verify(passwordDto.OldPassword, user.Password) == false)
+            {
+                throw new BadRequestException("Given password did not match with original password", "unmatch_password");
+
+            }
+            else
+            {
+                user.Password = BCrypt.Net.BCrypt.HashPassword(passwordDto.NewPassword);
+                await _context.SaveChangesAsync();
+                var passwordUpdateResponse = new UpdatePasswordResponse { Title = "update_success_password" };
+
+                return passwordUpdateResponse;
+
+            }
+
+        }
 
         public List<UserSearchResponse> SearchUser(UserSearchRequest userSearch)
         {
@@ -102,5 +127,7 @@ namespace ChatAppBackend.Bussiness.Services
 
             return 1 - (double)d[n, m] / Math.Max(n, m);
         }
+
+
     }
 }

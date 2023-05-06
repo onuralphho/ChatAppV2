@@ -1,12 +1,18 @@
 import { useAuth } from "../Context/AuthProvider";
 import { IFriendList } from "../@types/friendBoxType";
-import { BsFillPersonCheckFill, BsFillPersonXFill } from "react-icons/bs";
+import {
+  BsFillPersonCheckFill,
+  BsFillPersonXFill,
+  BsThreeDots,
+} from "react-icons/bs";
 import { Fetcher } from "../utils/Fetcher";
 import { sleep } from "../utils/sleep";
 import { useAlertContext } from "../Context/AlertProvider";
 import { ITalkingTo } from "../@types/talkingTo";
 import { useConnectionContext } from "../Context/ConnectionProvider";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 interface Iprops {
   showMenu: boolean;
   openMenu: Function;
@@ -16,9 +22,13 @@ interface Iprops {
 }
 
 const FriendList = (props: Iprops) => {
+  const [showFriendSettings, setShowFriendSettings] = useState<boolean>(false);
+
   const ctx = useAuth();
   const alertCtx = useAlertContext();
   const conCtx = useConnectionContext();
+
+  const { t } = useTranslation();
 
   const container = {
     hidden: { opacity: 1 },
@@ -173,10 +183,35 @@ const FriendList = (props: Iprops) => {
                 });
               }}
               key={friendBox.id}
-              className={`flex  relative h-14 transition-colors  items-center justify-between  hover:bg-neutral-700 rounded-lg p-1 px-2 ${
+              className={`flex  relative h-14 transition-colors group items-center justify-between  hover:bg-neutral-700 rounded-lg p-1 px-2 ${
                 friendBox.approved ? "cursor-pointer" : ""
               }`}
             >
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowFriendSettings((prev)=>!prev);
+                }}
+                onMouseLeave={() => {
+                  setShowFriendSettings(false)
+                }}
+                className="absolute top-1 right-1 rounded-md lg:opacity-0   group-hover:opacity-100 p-1 hover:bg-[#252525] transition-opacity "
+              >
+                <BsThreeDots size={20} />
+                {showFriendSettings && (
+                  <div
+                    className={` hidden group-hover:flex  absolute p-1  flex-col gap-0.5  bg-green-500 rounded-md top-7 right-0 text-white z-20`}
+                  >
+                    <div className=" hover:bg-green-600 border-b rounded-t-sm px-2">
+                      {t("profile")}
+                    </div>
+                    <div className="  hover:bg-green-600 rounded-sm  px-2">
+                      {t("delete")}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div className="flex items-center gap-4">
                 <img
                   className="w-10 h-10 object-cover rounded-full"

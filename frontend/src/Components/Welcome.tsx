@@ -10,13 +10,13 @@ const Welcome = (props: any) => {
   return (
     <div className="bg-[#363636] flex-1 h-full fade-in overflow-hidden">
       <div className="relative h-full flex flex-col justify-around items-center gap-4 px-2 ">
-        <div className="w-[500px] rounded-full aspect-square absolute bg-green-600 lg:-right-40 lg:-bottom-40 -bottom-32 blu -right-60"></div>
-        <div className="w-[500px] rounded-full aspect-square absolute bg-purple-600 blur-2xl animate-pulse  -left-60 -top-60  "></div>
+        <div className="w-[500px] rounded-full aspect-square absolute bg-green-600 lg:-right-40 lg:-bottom-40 -bottom-32 blu -right-60 -z-10"></div>
+        <div className="w-[500px] rounded-full aspect-square absolute bg-purple-600 blur-2xl animate-pulse  -left-60 -top-60 -z-10 "></div>
         <span>
           <span className="text-6xl">{t("welcome")}</span>{" "}
           <span className="text-5xl salute">👋</span>
         </span>
-        <div className="flex flex-col z-20">
+        <div className="flex flex-col ">
           <h2>{t("last_chats")}</h2>
           <div className="flex gap-2 ">
             {ctx?.friendList &&

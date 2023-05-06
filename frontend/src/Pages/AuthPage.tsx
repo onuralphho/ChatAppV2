@@ -4,7 +4,7 @@ import { useAuth } from "../Context/AuthProvider";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Fetcher } from "../utils/Fetcher";
-import LanguageSelector from "../Components/LanguageSelector";
+import LanguageSelector from "../Components/UI/LanguageSelector";
 
 const AuthPage = () => {
   const ctx = useAuth();

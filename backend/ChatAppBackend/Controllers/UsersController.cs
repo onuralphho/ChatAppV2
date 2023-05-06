@@ -12,13 +12,13 @@ namespace ChatAppBackend.Controllers
     {
 
         private readonly IUserService _userService;
-        
+
 
         public UsersController(IUserService userService)
         {
 
             _userService = userService;
-           
+
         }
 
 
@@ -40,6 +40,14 @@ namespace ChatAppBackend.Controllers
             return response;
         }
 
+        [HttpPut("changepassword")]
+        public async Task<UpdatePasswordResponse> ChangePassword(UpdatePasswordDto passwordDto)
+        {
+
+            return await _userService.UpdatePassword(passwordDto); ;
+
+        }
+
 
         [HttpPost("search")]
         public List<UserSearchResponse> SearchUsers(UserSearchRequest userSearch)
@@ -48,6 +56,6 @@ namespace ChatAppBackend.Controllers
 
         }
 
-       
+
     }
 }

@@ -400,7 +400,7 @@ const ChatLog = (props: IProps) => {
               }}
               className={`${
                 animationSelectorShow ? "opacity-100" : "opacity-0 hidden"
-              } absolute gap-2 -top-14 left-0 p-1  flex justify-center bg-white rounded-md`}
+              } absolute gap-2 -top-14 left-0 p-1 z-20  flex justify-center bg-white rounded-md`}
             >
               <div>
                 <input
