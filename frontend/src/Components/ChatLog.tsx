@@ -15,7 +15,8 @@ import ChatLoader from "./UI/ChatLoader";
 import AWS from "aws-sdk";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-
+import CloseButton from "./UI/CloseButton";
+import { scaleEffect } from "../Constants/FramerMotionEffects/scaleEffect";
 interface IProps {
   talkingTo: ITalkingTo;
   messages: IMessage[] | undefined;
@@ -107,7 +108,10 @@ const ChatLog = (props: IProps) => {
       let friend = prev?.find((f) => f.id === props.talkingTo.friendBoxId);
       if (friend) {
         friend.updateTime = dateNow.toISOString();
-        friend.lastMessage = messagePayload.contentText.length > 0 ? messagePayload.contentText : t("image").toString();
+        friend.lastMessage =
+          messagePayload.contentText.length > 0
+            ? messagePayload.contentText
+            : t("image").toString();
         friend.lastMessageFrom = messagePayload.fromUser.name;
 
         return [...(prev || [])];
@@ -137,7 +141,6 @@ const ChatLog = (props: IProps) => {
     });
     const data = await res.json();
     await conCtx?.connection?.invoke("SendMessage", data);
-
   };
 
   const scrollToBottom = useCallback(() => {
@@ -155,13 +158,7 @@ const ChatLog = (props: IProps) => {
   useEffect(() => {
     scrollToBottom();
   }, [ctx?.messages, scrollToBottom, checkerVal]);
-  const item = {
-    hidden: { opacity: 0, scale: 0 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-    },
-  };
+  
   return (
     <div className=" bg-[#363636] w-full relative   flex-1  flex flex-col  h-full fade-in">
       {/* TALKINGTO */}
@@ -188,11 +185,11 @@ const ChatLog = (props: IProps) => {
           className="w-full h-full absolute z-30 flex bg-[rgba(0,0,0,0.4)] items-center justify-center  backdrop-blur-sm"
         >
           <motion.img
-            variants={item}
+            variants={scaleEffect}
             initial="hidden"
             animate="visible"
             src={showFullImage}
-            className=" h-full w-full max-h-[80%] max-w-[900px]  object-contain"
+            className=" h-full w-full max-h-[80%] max-w-[900px]  object-contain select-none"
             alt=""
           />
         </div>
@@ -361,7 +358,7 @@ const ChatLog = (props: IProps) => {
 
           {showFileInput && (
             <motion.div
-              variants={item}
+              variants={scaleEffect}
               initial="hidden"
               animate="visible"
               className="file-upload flex justify-center absolute -top-14 left-0  z-10 bg-[#ffffff] backdrop-blur-lg text-sm  cursor-default  px-1 py-2 rounded-lg "
@@ -478,16 +475,13 @@ const ChatLog = (props: IProps) => {
           <div className="flex w-full gap-2">
             {previewImage && (
               <div className="absolute bottom-10 bg-white p-2 rounded-t-lg left-2">
-                <button
-                  type="button"
-                  onClick={() => {
+                <CloseButton
+                  onTouch={() => {
                     setFileInput(undefined);
                     setPreviewImage(undefined);
                   }}
-                  className="absolute bg-red-500 rounded-full w-7 right-1 top-1 aspect-square "
-                >
-                  X
-                </button>
+                  color="red-500"
+                />
                 <img
                   src={previewImage}
                   className="h-auto rounded-md w-56 "

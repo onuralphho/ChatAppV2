@@ -84,7 +84,7 @@ const AuthForm = (props: any) => {
   return (
     <form
       id="pre"
-      className="demo_wrapper rounded-xl w-max h-max px-10 py-5 pb-7 flex flex-col gap-5 bg-stone-800"
+      className="demo_wrapper  rounded-xl w-max h-auto px-10 py-5 pb-7 flex flex-col gap-5 bg-stone-800"
     >
       <h2 className="text-3xl md:text-3xl text-center min-w-[270px] font-bold text-green-300">
         SoChat

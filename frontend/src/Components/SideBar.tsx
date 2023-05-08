@@ -13,6 +13,7 @@ import { useAlertContext } from "../Context/AlertProvider";
 import { sleep } from "../utils/sleep";
 import { useConnectionContext } from "../Context/ConnectionProvider";
 import { useTranslation } from "react-i18next";
+import ModalBackground from "./UI/ModalBackground";
 
 interface ISideBarProps {
   openProfile: Function;
@@ -38,7 +39,7 @@ const SideBar = (props: ISideBarProps) => {
   const conCtx = useConnectionContext();
 
   const navigate = useNavigate();
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -89,8 +90,6 @@ const SideBar = (props: ISideBarProps) => {
     });
     const data = await res.json();
 
-
-
     if (data.friend) {
       conCtx?.connection?.send("FriendRequest", data.friend);
       setSearchResult([]);
@@ -103,7 +102,7 @@ const SideBar = (props: ISideBarProps) => {
       await sleep(2000);
       alertCtx?.setAlert({ shown: false, type: t(data.message) });
     }
-    if(data.status === 400){
+    if (data.status === 400) {
       alertCtx?.setAlert({ shown: true, type: t(data.title) });
       await sleep(2000);
       alertCtx?.setAlert({ shown: false, type: t(data.title) });
@@ -113,13 +112,13 @@ const SideBar = (props: ISideBarProps) => {
   return (
     <>
       {searchResult.length > 0 && (
-        <div
-          onClick={() => {
+        <ModalBackground
+          darkness={0.3}
+          onClose={() => {
             setSearchResult([]);
             setSearchInput("");
           }}
-          className="absolute w-[100vw] h-[100vh] max-lg:hidden bg-black z-30 opacity-30 cursor-pointer"
-        ></div>
+        />
       )}
       <AlertBox
         message={alertCtx?.alert.type}
@@ -190,7 +189,7 @@ const SideBar = (props: ISideBarProps) => {
           htmlFor="search"
           className={`relative border py-1 mx-1 h-10 ${
             showMenu ? "lg:pl-8 " : "lg:pl-6  aspect-square"
-          }px-10 border-green-400 text-green-500 text-xl focus-within:border-purple-500 cursor-pointer  rounded-full`}
+          }px-10 border-green-400 text-green-500 text-xl focus-within:border-purple-500 cursor-pointer z-40  rounded-full`}
         >
           <div className="absolute left-2.5 top-2.5 w-5">
             <BiSearchAlt size={20} className="w-full h-full" />
@@ -232,7 +231,7 @@ const SideBar = (props: ISideBarProps) => {
                         alt=""
                         className="h-10 rounded-full"
                       />
-                      <span className="text-white">{item.name}</span>
+                      <span className="text-white truncate">{item.name}</span>
                     </div>
                     <AiFillPlusCircle
                       onClick={() => {

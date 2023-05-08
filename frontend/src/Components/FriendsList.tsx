@@ -13,6 +13,12 @@ import { useConnectionContext } from "../Context/ConnectionProvider";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Iprofile } from "../@types/Iprofile";
+import ProfileModal from "./ProfileModal";
+import ModalBackground from "./UI/ModalBackground";
+import { BsFillPersonFill } from "react-icons/bs";
+import { MdOutlineDeleteForever } from "react-icons/md";
+import FriendSettingsDropdown from "./FriendSettingsDropdown";
 interface Iprops {
   showMenu: boolean;
   openMenu: Function;
@@ -23,6 +29,9 @@ interface Iprops {
 
 const FriendList = (props: Iprops) => {
   const [showFriendSettings, setShowFriendSettings] = useState<boolean>(false);
+  const [friendProfileData, setFriendProfileData] = useState<
+    Iprofile | undefined
+  >(undefined);
 
   const ctx = useAuth();
   const alertCtx = useAlertContext();
@@ -152,6 +161,22 @@ const FriendList = (props: Iprops) => {
         animate="visible"
         className="hide_scroll flex flex-col  flex-1 overflow-y-auto  overflow-x-hidden"
       >
+        {friendProfileData && props.showMenu && (
+          <div>
+            <ModalBackground
+              darkness={0.3}
+              onClose={() => {
+                setFriendProfileData(undefined);
+              }}
+            />
+            <ProfileModal
+              close={() => {
+                setFriendProfileData(undefined);
+              }}
+              data={friendProfileData}
+            />
+          </div>
+        )}
         {ctx?.friendList
           ?.sort((a: IFriendList, b: IFriendList) =>
             a.updateTime > b.updateTime ? -1 : 1
@@ -187,30 +212,30 @@ const FriendList = (props: Iprops) => {
                 friendBox.approved ? "cursor-pointer" : ""
               }`}
             >
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowFriendSettings((prev)=>!prev);
-                }}
-                onMouseLeave={() => {
-                  setShowFriendSettings(false)
-                }}
-                className="absolute top-1 right-1 rounded-md lg:opacity-0   group-hover:opacity-100 p-1 hover:bg-[#252525] transition-opacity "
-              >
-                <BsThreeDots size={20} />
-                {showFriendSettings && (
-                  <div
-                    className={` hidden group-hover:flex  absolute p-1  flex-col gap-0.5  bg-green-500 rounded-md top-7 right-0 text-white z-20`}
-                  >
-                    <div className=" hover:bg-green-600 border-b rounded-t-sm px-2">
-                      {t("profile")}
-                    </div>
-                    <div className="  hover:bg-green-600 rounded-sm  px-2">
-                      {t("delete")}
-                    </div>
-                  </div>
-                )}
-              </div>
+              {props.showMenu && (
+                <FriendSettingsDropdown
+                  closeTriger={() => {
+                    setShowFriendSettings(false);
+                  }}
+                  openCloseTriger={() => {
+                    setShowFriendSettings((prev) => !prev);
+                  }}
+                  showFriendSettings={showFriendSettings}
+                  setData={() => {
+                    setFriendProfileData({
+                      feelings: "Test",
+                      name:
+                        ctx?.user?.id !== friendBox.fromUserId
+                          ? friendBox.fromUser.name
+                          : friendBox.toUser.name,
+                      picture:
+                        ctx?.user?.id !== friendBox.fromUserId
+                          ? friendBox.fromUser.picture
+                          : friendBox.toUser.picture,
+                    });
+                  }}
+                />
+              )}
 
               <div className="flex items-center gap-4">
                 <img
@@ -225,7 +250,7 @@ const FriendList = (props: Iprops) => {
 
                 {props.showMenu && (
                   <div className="flex flex-col">
-                    <span className="truncate select-none ">
+                    <span className="truncate max-lg:w-32 select-none ">
                       {ctx?.user?.id !== friendBox.fromUserId
                         ? friendBox.fromUser.name
                         : friendBox.toUser.name}
@@ -240,7 +265,7 @@ const FriendList = (props: Iprops) => {
               </div>
 
               <div
-                className={`bg-green-500 aspect-square scale-0 transition-all  text-xs font-semibold w-5 p-0.5 flex justify-center items-center rounded-full  
+                className={`bg-green-500 absolute top-2 right-10 aspect-square scale-0 transition-all  text-xs font-semibold w-5 p-0.5 flex justify-center items-center rounded-full  
                 ${props.showMenu ? "" : "absolute  top-0 right-0"}
                 ${friendBox.unreadMessageCount > 0 ? "scale-100" : ""}`}
               >
