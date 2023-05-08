@@ -1,5 +1,7 @@
 import { useTranslation } from "react-i18next";
 import ModalBackground from "./ModalBackground";
+import { motion } from "framer-motion";
+import { scaleEffect } from "../../Constants/FramerMotionEffects/scaleEffect";
 
 type Props = {
   title: string;
@@ -12,7 +14,7 @@ const Modal = (props: Props) => {
   return (
     <>
       <ModalBackground darkness={0.3} onClose={props.cancel} />
-      <div className="bg-white text-black  font-semibold rounded-md p-2 absolute z-50 w-[clamp(20rem,20vw,30rem)] flex flex-col gap-5 m-auto inset-0 h-max">
+      <motion.div variants={scaleEffect} initial="hidden" animate="visible" className="bg-white text-black  font-semibold rounded-md p-2 absolute z-50 w-[clamp(20rem,20vw,30rem)] flex flex-col gap-5 m-auto inset-0 h-max">
         <h2 className="text-3xl">{props.title}?</h2>
 
         <div className="flex gap-2">
@@ -29,7 +31,7 @@ const Modal = (props: Props) => {
             {t("cancel")}
           </button>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 };

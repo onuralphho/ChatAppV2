@@ -265,8 +265,8 @@ const FriendList = (props: Iprops) => {
               </div>
 
               <div
-                className={`bg-green-500 absolute top-2 right-10 aspect-square scale-0 transition-all  text-xs font-semibold w-5 p-0.5 flex justify-center items-center rounded-full  
-                ${props.showMenu ? "" : "absolute  top-0 right-0"}
+                className={`bg-green-500 absolute  aspect-square scale-0 transition-all  text-xs font-semibold w-5 p-0.5 flex justify-center items-center rounded-full  
+                ${props.showMenu ? "top-2 right-10" : "  top-0 right-0"}
                 ${friendBox.unreadMessageCount > 0 ? "scale-100" : ""}`}
               >
                 <span className="truncate">{friendBox.unreadMessageCount}</span>

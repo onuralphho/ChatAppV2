@@ -14,6 +14,8 @@ import { sleep } from "../utils/sleep";
 import { useConnectionContext } from "../Context/ConnectionProvider";
 import { useTranslation } from "react-i18next";
 import ModalBackground from "./UI/ModalBackground";
+import { motion } from "framer-motion";
+import { scaleEffect } from "../Constants/FramerMotionEffects/scaleEffect";
 
 interface ISideBarProps {
   openProfile: Function;
@@ -33,6 +35,7 @@ const SideBar = (props: ISideBarProps) => {
   const [showMenu, setShowMenu] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchResult, setSearchResult] = useState([]);
+  const [feelingInput, setFeelingInput] = useState<string>("");
 
   const ctx = useAuth();
   const alertCtx = useAlertContext();
@@ -111,15 +114,6 @@ const SideBar = (props: ISideBarProps) => {
 
   return (
     <>
-      {searchResult.length > 0 && (
-        <ModalBackground
-          darkness={0.3}
-          onClose={() => {
-            setSearchResult([]);
-            setSearchInput("");
-          }}
-        />
-      )}
       <AlertBox
         message={alertCtx?.alert.type}
         isShown={alertCtx?.alert.shown}
@@ -156,32 +150,68 @@ const SideBar = (props: ISideBarProps) => {
       )}
 
       <div
-        className={` p-2   bg-[#252525] max-lg:z-20 transition-all relative overflow-hidden  w-64  ${
-          !!showMenu ? "lg:w-80" : "lg:w-[4.5rem]"
-        }  gap-4 flex flex-col  ${
-          showMenu ? "max-lg:translate-0" : "max-lg:-translate-x-64"
-        } max-lg:absolute max-lg:bottom-0 max-lg:top-0 `}
+        className={` p-2 bg-[#252525] max-lg:z-20 transition-all relative overflow-hidden  w-64  gap-4 flex flex-col max-lg:absolute max-lg:bottom-0 max-lg:top-0 ${
+          showMenu ? "lg:w-80" : "lg:w-[4.5rem]"
+        }   ${showMenu ? "max-lg:translate-0" : "max-lg:-translate-x-64"} `}
       >
-        <div className="flex px-2  items-center gap-2 justify">
-          <img
-            onClick={() => {
-              setShowMenu(true);
-            }}
-            src={ctx?.user?.picture}
-            className="w-10 aspect-square shadow-md shadow-black rounded-full object-cover"
-            alt=""
-          />
-          <div className={`flex gap-2 flex-wrap ${showMenu ? "" : "hidden"}`}>
-            <span>
-              {ctx?.user &&
-                ctx?.user.name.charAt(0).toUpperCase() +
-                  ctx?.user.name.slice(1).toLowerCase()}
-            </span>
+        <div className="flex px-2  max-lg:flex-col  gap-2 ">
+          <div className="flex gap-2 items-center">
+            <img
+              onClick={() => {
+                setShowMenu(true);
+              }}
+              src={ctx?.user?.picture}
+              className="w-10 aspect-square shadow-md shadow-black rounded-full object-cover"
+              alt=""
+            />
+            <div className={`flex gap-2 flex-wrap ${showMenu ? "" : "hidden"}`}>
+              <span>
+                {ctx?.user &&
+                  ctx?.user.name.charAt(0).toUpperCase() +
+                    ctx?.user.name.slice(1).toLowerCase()}
+              </span>
+            </div>
           </div>
+
+          {showMenu && (
+            <form className="whitespace-nowrap flex-1 flex justify-center lg:items-center gap-1 mx-2">
+              <div className="flex gap-1">
+                <span>"</span>
+                <input
+                  placeholder={t("feelings").toString()}
+                  type="text"
+                  value={feelingInput}
+                  onChange={(e) => {
+                    setFeelingInput(e.target.value);
+                  }}
+                  className="bg-transparent placeholder:italic placeholder:text-xs px-0.5 w-full border border-[#efefef00]"
+                />
+                <span>"</span>
+              </div>
+              {feelingInput.length > 0 && (
+                <motion.button
+                  variants={scaleEffect}
+                  initial="hidden"
+                  animate="visible"
+                  className="text-xs bg-green-500 px-1 py-1 rounded-md "
+                >
+                  {t("submit")}
+                </motion.button>
+              )}
+            </form>
+          )}
         </div>
 
         {/* //! Search Bar */}
-
+        {searchResult.length > 0 && (
+          <ModalBackground
+            darkness={0.3}
+            onClose={() => {
+              setSearchResult([]);
+              setSearchInput("");
+            }}
+          />
+        )}
         <label
           onClick={() => {
             setShowMenu(true);

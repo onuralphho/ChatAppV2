@@ -28,6 +28,7 @@
   "old_password":"Old password",
   "new_password":"New password",
   "new_password_again":"New password again",
-  "delete":"Delete"
+  "delete":"Delete",
+  "feelings":"How do you feel today?"
   
 }

@@ -22,7 +22,7 @@ const FriendSettingsDropdown = (props: Props) => {
       onMouseLeave={() => {
         props.closeTriger();
       }}
-      className="absolute top-1 right-1 rounded-md    p-1 hover:bg-[#252525] transition-opacity "
+      className="absolute top-1 right-1 rounded-md opacity-50 group-hover:opacity-100   p-1 hover:bg-[#252525] transition-opacity "
     >
       <BsThreeDots size={20} />
       {props.showFriendSettings && (
@@ -30,7 +30,7 @@ const FriendSettingsDropdown = (props: Props) => {
           variants={scaleEffect}
           initial="hidden"
           animate="visible"
-          className={` hidden group-hover:flex  absolute p-1  flex-col gap-0.5 backdrop-blur-sm border border-[#252525] bg-[rgba(255,255,255,0.1)] rounded-md top-7 right-0 text-white z-20`}
+          className={` hidden group-hover:flex   absolute p-1  flex-col gap-0.5 backdrop-blur-sm border border-[#252525] bg-[rgba(255,255,255,0.1)]  rounded-md top-7 right-0 text-white z-20`}
         >
           <div
             onClick={props.setData}

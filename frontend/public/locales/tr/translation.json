@@ -28,5 +28,6 @@
   "old_password":"Eski parola",
   "new_password":"Yeni parola",
   "new_password_again":"Yeni parola tekrar",
-  "delete":"Sil"
+  "delete":"Sil",
+  "feelings":"Bugün nasıl hissediyorsun?"
 }
