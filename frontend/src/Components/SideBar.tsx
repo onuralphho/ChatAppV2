@@ -1,12 +1,13 @@
 import { AiFillCaretRight, AiFillPlusCircle, AiFillHome } from "react-icons/ai";
 import { BiSearchAlt } from "react-icons/bi";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import { IoSettingsSharp, IoLogOutOutline } from "react-icons/io5";
+import {MdTouchApp} from "react-icons/md"
 import { useState } from "react";
 import FriendsList from "../Components/FriendsList";
 import { useAuth } from "../Context/AuthProvider";
 import Modal from "./UI/Modal";
 import { useNavigate } from "react-router-dom";
-import { IoSettingsSharp, IoLogOutOutline } from "react-icons/io5";
 import AlertBox from "./UI/AlertBox";
 import { Fetcher } from "../utils/Fetcher";
 import { useAlertContext } from "../Context/AlertProvider";
@@ -119,7 +120,7 @@ const SideBar = (props: ISideBarProps) => {
         isShown={alertCtx?.alert.shown}
         closeBox={alertCtx?.setAlert}
       />
-      {/* Modal */}
+      {/* //! Modal */}
       {isModalOpen && (
         <Modal confirm={logOut} cancel={closeModal} title={t("logout")} />
       )}
@@ -140,6 +141,7 @@ const SideBar = (props: ISideBarProps) => {
       </div>
       {/* //! Flag */}
 
+      {/* //! Mobile menu blur */}
       {showMenu && (
         <div
           onClick={() => {
@@ -150,21 +152,25 @@ const SideBar = (props: ISideBarProps) => {
       )}
 
       <div
-        className={` p-2 bg-[#252525] max-lg:z-20 transition-all relative overflow-hidden  w-64  gap-4 flex flex-col max-lg:absolute max-lg:bottom-0 max-lg:top-0 ${
+        className={` p-2 bg-[#252525] max-lg:z-20 transition-all relative overflow-hidden  w-64  gap-2 flex flex-col max-lg:absolute max-lg:bottom-0 max-lg:top-0 ${
           showMenu ? "lg:w-80" : "lg:w-[4.5rem]"
         }   ${showMenu ? "max-lg:translate-0" : "max-lg:-translate-x-64"} `}
       >
-        <div className="flex px-2  max-lg:flex-col  gap-2 ">
-          <div className="flex gap-2 items-center">
+        <div className="flex px-2 lg:h-12  max-lg:flex-col  gap-2 ">
+          <div className="flex h-full gap-2 items-center ">
             <img
               onClick={() => {
                 setShowMenu(true);
               }}
               src={ctx?.user?.picture}
-              className="w-10 aspect-square shadow-md shadow-black rounded-full object-cover"
+              className=" w-10 aspect-square shadow-md shadow-black rounded-full object-cover"
               alt=""
             />
-            <div className={`flex gap-2 flex-wrap ${showMenu ? "" : "hidden"}`}>
+            <div
+              className={`flex flex-wrap ${
+                showMenu ? "opacity-100" : "opacity-0"
+              }`}
+            >
               <span>
                 {ctx?.user &&
                   ctx?.user.name.charAt(0).toUpperCase() +
@@ -173,37 +179,39 @@ const SideBar = (props: ISideBarProps) => {
             </div>
           </div>
 
-          {showMenu && (
-            <form className="whitespace-nowrap flex-1 flex justify-center lg:items-center gap-1 mx-2">
-              <div className="flex gap-1">
-                <span>"</span>
-                <input
-                  placeholder={t("feelings").toString()}
-                  type="text"
-                  value={feelingInput}
-                  onChange={(e) => {
-                    setFeelingInput(e.target.value);
-                  }}
-                  className="bg-transparent placeholder:italic placeholder:text-xs px-0.5 w-full border border-[#efefef00]"
-                />
-                <span>"</span>
-              </div>
-              {feelingInput.length > 0 && (
-                <motion.button
-                  variants={scaleEffect}
-                  initial="hidden"
-                  animate="visible"
-                  className="text-xs bg-green-500 px-1 py-1 rounded-md "
-                >
-                  {t("submit")}
-                </motion.button>
-              )}
-            </form>
-          )}
+          {showMenu&& <form
+            className={`whitespace-nowrap flex-1 flex justify-center lg:items-center gap-1 mx-2 ${
+              showMenu ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <div className="flex gap-1">
+              <span>"</span>
+              <input
+                placeholder={t("feelings").toString()}
+                type="text"
+                value={feelingInput}
+                onChange={(e) => {
+                  setFeelingInput(e.target.value);
+                }}
+                className="bg-transparent placeholder:italic placeholder:text-xs px-0.5 w-full border border-[#efefef00]"
+              />
+              <span>"</span>
+            </div>
+            {feelingInput.length > 0 && (
+              <motion.button
+                variants={scaleEffect}
+                initial="hidden"
+                animate="visible"
+                className="text-xs bg-green-500 px-1 py-1 rounded-md "
+              >
+                {t("submit")}
+              </motion.button>
+            )}
+          </form>}
         </div>
 
         {/* //! Search Bar */}
-        {searchResult.length > 0 && (
+        {showMenu && searchResult.length > 0 && (
           <ModalBackground
             darkness={0.3}
             onClose={() => {
@@ -239,41 +247,43 @@ const SideBar = (props: ISideBarProps) => {
           <input
             id="search"
             onChange={searchHandler}
-            value={searchInput}
+            value={showMenu ? searchInput : ""}
             className="bg-transparent outline-none w-full"
             type="text"
           />
-          <div
-            className={`${
-              searchResult.length > 0 ? "p-1" : ""
-            } bg-purple-600 z-30  transition-all flex flex-col  overflow-hidden absolute left-0 top-11 w-full rounded-md  `}
-          >
-            <div className="rounded-md overflow-hidden">
-              {searchResult.map((item: ISearchResult) =>
-                item.id !== ctx?.user?.id ? (
-                  <div
-                    key={item.id}
-                    className=" hover:bg-[#363636] cursor-default   select-none p-2 flex  justify-between items-center gap-2 bg-[#252525]"
-                  >
-                    <div className="flex items-center gap-2">
-                      <img
-                        src={item.picture}
-                        alt=""
-                        className="h-10 rounded-full"
+          {showMenu && (
+            <div
+              className={`${
+                searchResult.length > 0 ? "p-1" : ""
+              } bg-purple-600 z-30  transition-all flex flex-col  overflow-hidden absolute left-0 top-11 w-full rounded-md  `}
+            >
+              <div className="rounded-md overflow-hidden">
+                {searchResult.map((item: ISearchResult) =>
+                  item.id !== ctx?.user?.id ? (
+                    <div
+                      key={item.id}
+                      className=" hover:bg-[#363636] cursor-default   select-none p-2 flex  justify-between items-center gap-2 bg-[#252525]"
+                    >
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={item.picture}
+                          alt=""
+                          className="h-10 rounded-full"
+                        />
+                        <span className="text-white truncate">{item.name}</span>
+                      </div>
+                      <AiFillPlusCircle
+                        onClick={() => {
+                          addFriendHandler(item.id);
+                        }}
+                        className="cursor-pointer"
                       />
-                      <span className="text-white truncate">{item.name}</span>
                     </div>
-                    <AiFillPlusCircle
-                      onClick={() => {
-                        addFriendHandler(item.id);
-                      }}
-                      className="cursor-pointer"
-                    />
-                  </div>
-                ) : null
-              )}
+                  ) : null
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </label>
         {/*//! FRIEND LIST */}
         <FriendsList

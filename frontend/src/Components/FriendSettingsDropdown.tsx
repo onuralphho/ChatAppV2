@@ -22,7 +22,7 @@ const FriendSettingsDropdown = (props: Props) => {
       onMouseLeave={() => {
         props.closeTriger();
       }}
-      className="absolute top-1 right-1 rounded-md opacity-50 group-hover:opacity-100   p-1 hover:bg-[#252525] transition-opacity "
+      className="absolute top-1 right-1 rounded-md opacity-50 lg:opacity-0 group-hover:opacity-100   p-1 hover:bg-[#252525] transition-opacity "
     >
       <BsThreeDots size={20} />
       {props.showFriendSettings && (
