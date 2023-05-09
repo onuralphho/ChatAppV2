@@ -3,18 +3,13 @@ import { Fetcher } from "../utils/Fetcher";
 import { IFriendList } from "../@types/friendBoxType";
 import { IMessage } from "../@types/messageType";
 import { ITalkingTo } from "../@types/talkingTo";
+import { ISession } from "../@types/ISession";
 
-interface IUser {
-  id: number;
-  name: string;
-  picture: string;
-  email: string;
-  updateTime: Date;
-}
+
 
 interface AuthContextValue {
-  setUser: React.Dispatch<React.SetStateAction<IUser | undefined>>;
-  user?: IUser | undefined;
+  setUser: React.Dispatch<React.SetStateAction<ISession | undefined>>;
+  user?: ISession | undefined;
   login: (email: string, password: string) => Promise<Response>;
   logout: () => void;
 
@@ -34,7 +29,7 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 const useAuth = () => useContext(AuthContext);
 
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<IUser | undefined>(undefined);
+  const [user, setUser] = useState<ISession | undefined>(undefined);
   const [messages, setMessages] = useState<IMessage[] | undefined>(undefined);
   const [talkingTo, setTalkingTo] = useState<ITalkingTo | undefined>(undefined);
   const [friendList, setFriendList] = useState<IFriendList[] | undefined>(
@@ -42,7 +37,6 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   );
 
   const login = async (email: string, password: string) => {
-
     const res = await Fetcher({
       body: { email, password },
       method: "POST",

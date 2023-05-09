@@ -14,7 +14,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Iprofile } from "../@types/Iprofile";
-import ProfileModal from "./ProfileModal";
+import FriendProfile from "./FriendProfile";
 import ModalBackground from "./UI/ModalBackground";
 import { BsFillPersonFill } from "react-icons/bs";
 import { MdOutlineDeleteForever } from "react-icons/md";
@@ -169,7 +169,7 @@ const FriendList = (props: Iprops) => {
                 setFriendProfileData(undefined);
               }}
             />
-            <ProfileModal
+            <FriendProfile
               close={() => {
                 setFriendProfileData(undefined);
               }}
@@ -223,7 +223,10 @@ const FriendList = (props: Iprops) => {
                   showFriendSettings={showFriendSettings}
                   setData={() => {
                     setFriendProfileData({
-                      feelings: "Test",
+                      feelings:
+                        ctx?.user?.id !== friendBox.fromUserId
+                          ? friendBox.fromUser.feeling
+                          : friendBox.toUser.feeling,
                       name:
                         ctx?.user?.id !== friendBox.fromUserId
                           ? friendBox.fromUser.name
@@ -239,6 +242,26 @@ const FriendList = (props: Iprops) => {
 
               <div className="flex items-center gap-4">
                 <img
+                  onClick={(e) => {
+                    if (props.showMenu) {
+                      e.stopPropagation();
+                      setFriendProfileData({
+                        feelings:
+                          ctx?.user?.id !== friendBox.fromUserId
+                            ? friendBox.fromUser.feeling
+                            : friendBox.toUser.feeling,
+                        name:
+                          ctx?.user?.id !== friendBox.fromUserId
+                            ? friendBox.fromUser.name
+                            : friendBox.toUser.name,
+                        picture:
+                          ctx?.user?.id !== friendBox.fromUserId
+                            ? friendBox.fromUser.picture
+                            : friendBox.toUser.picture,
+                      });
+                    } else {
+                    }
+                  }}
                   className="w-10 h-10 object-cover rounded-full"
                   src={
                     ctx?.user?.id !== friendBox.fromUserId

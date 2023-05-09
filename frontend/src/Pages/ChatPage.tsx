@@ -199,6 +199,7 @@ const ChatPage = () => {
       });
 
       const data = await res.json();
+    
 
       if (data) {
         ctx?.setUser(data);
@@ -210,7 +211,7 @@ const ChatPage = () => {
         token: jwt,
       });
       const friendsData = await friendsRes.json();
-
+   
       ctx?.setFriendList(friendsData);
     };
 

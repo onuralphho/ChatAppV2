@@ -13,7 +13,7 @@ const CloseButton = (props: Props) => {
       onClick={props.onTouch}
       className={`bg-${props.color}  flex justify-center items-center absolute rounded-full w-6 h-6 font-semibold right-1 top-1 aspect-square hover:rotate-180 duration-300 `}
     >
-      <MdClose  />
+      <MdClose />
     </button>
   );
 };

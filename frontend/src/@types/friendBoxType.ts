@@ -2,6 +2,7 @@ interface FriendUser {
   id: number;
   name: string;
   picture: string;
+  feeling: string | null;
 }
 
 export interface IFriendList {
@@ -13,6 +14,6 @@ export interface IFriendList {
   updateTime: string;
   approved: boolean;
   lastMessage: string | undefined;
-  lastMessageFrom: string |undefined;
-  unreadMessageCount: number ;
+  lastMessageFrom: string | undefined;
+  unreadMessageCount: number;
 }

@@ -10,6 +10,7 @@ namespace ChatAppBackend.Bussiness.Services
         Task<SessionUserDto> UpdateUser(UpdateUserDto updatedUser);
         List<UserSearchResponse> SearchUser(UserSearchRequest userSearch);
         Task<UpdatePasswordResponse> UpdatePassword(UpdatePasswordDto passwordDto);
+        Task<UpdateUserFeelingDto> UpdateFeeling(UpdateUserFeelingDto userFeelingDto);
     }
     public class UserService : IUserService
     {
@@ -64,8 +65,8 @@ namespace ChatAppBackend.Bussiness.Services
 
         public async Task<UpdatePasswordResponse> UpdatePassword(UpdatePasswordDto passwordDto)
         {
-            var userId = _jwtService.UserId;
-            var user = _context.Users.Find(userId);
+        
+            var user = _context.Users.Find(_jwtService.UserId);
 
             if (BCrypt.Net.BCrypt.Verify(passwordDto.OldPassword, user.Password) == false)
             {
@@ -83,6 +84,17 @@ namespace ChatAppBackend.Bussiness.Services
             }
 
         }
+        public async Task<UpdateUserFeelingDto> UpdateFeeling(UpdateUserFeelingDto userFeelingDto)
+        {
+            var user = _context.Users.Find(_jwtService.UserId);
+
+            user.Feeling = userFeelingDto.Feeling;
+            await _context.SaveChangesAsync();
+            return userFeelingDto;
+
+        }
+
+
 
         public List<UserSearchResponse> SearchUser(UserSearchRequest userSearch)
         {
@@ -128,6 +140,6 @@ namespace ChatAppBackend.Bussiness.Services
             return 1 - (double)d[n, m] / Math.Max(n, m);
         }
 
-
+        
     }
 }

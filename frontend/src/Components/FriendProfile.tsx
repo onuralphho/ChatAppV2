@@ -7,7 +7,7 @@ type Props = {
   close: () => void;
 };
 
-const ProfileModal = (props: Props) => {
+const FriendProfile = (props: Props) => {
   return (
     <motion.div
       variants={scaleEffect}
@@ -27,4 +27,4 @@ const ProfileModal = (props: Props) => {
   );
 };
 
-export default ProfileModal;
+export default FriendProfile;

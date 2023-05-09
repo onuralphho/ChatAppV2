@@ -329,3 +329,37 @@
   }
 }
 
+
+
+.finger{
+  
+  animation: finger_touch 0.8s alternate  24  ;
+}
+
+.circle_wave{
+
+  animation: wave_touch 0.8s  alternate  24 ;
+ 
+}
+
+
+@keyframes finger_touch {
+  0%{
+    transform:scale(1.2) rotateX(0);
+  }
+
+  100%{
+    transform:scale(1) rotateX(30deg);
+
+  }
+}
+
+@keyframes wave_touch {
+  0%{
+    transform: scale(0);
+  }
+
+  100%{
+    transform: scale(1.2);
+  }
+}

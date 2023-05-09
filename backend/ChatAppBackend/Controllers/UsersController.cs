@@ -56,6 +56,14 @@ namespace ChatAppBackend.Controllers
 
         }
 
+        [HttpPut("updatefeeling")]
+        public async Task<UpdateUserFeelingDto> UpdateFeeling(UpdateUserFeelingDto userFeeling)
+        {
+            return await _userService.UpdateFeeling(userFeeling);
+
+        }
+        
+
 
     }
 }

@@ -2,7 +2,7 @@ import { AiFillCaretRight, AiFillPlusCircle, AiFillHome } from "react-icons/ai";
 import { BiSearchAlt } from "react-icons/bi";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { IoSettingsSharp, IoLogOutOutline } from "react-icons/io5";
-import {MdTouchApp} from "react-icons/md"
+import { MdTouchApp } from "react-icons/md";
 import { useState } from "react";
 import FriendsList from "../Components/FriendsList";
 import { useAuth } from "../Context/AuthProvider";
@@ -63,6 +63,25 @@ const SideBar = (props: ISideBarProps) => {
   };
   const closeSideBar = () => {
     setShowMenu(false);
+  };
+
+  const submitFeelingFormHandler = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
+    const res = await Fetcher({
+      method: "PUT",
+      url: "/api/users/updatefeeling",
+      body: { feeling: feelingInput },
+      token: ctx?.getCookie("jwt"),
+    });
+    const data = await res.json();
+
+    if (ctx && ctx.user) {
+      const updatedUser = { ...ctx.user, feeling: data.feeling };
+      ctx.setUser(updatedUser);
+    }
+    setFeelingInput("");
   };
 
   const searchHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -156,8 +175,8 @@ const SideBar = (props: ISideBarProps) => {
           showMenu ? "lg:w-80" : "lg:w-[4.5rem]"
         }   ${showMenu ? "max-lg:translate-0" : "max-lg:-translate-x-64"} `}
       >
-        <div className="flex px-2 lg:h-12  max-lg:flex-col  gap-2 ">
-          <div className="flex h-full gap-2 items-center ">
+        <div className="flex px-2   flex-col  gap-2 ">
+          <div className="flex  h-full gap-2 items-center ">
             <img
               onClick={() => {
                 setShowMenu(true);
@@ -166,48 +185,67 @@ const SideBar = (props: ISideBarProps) => {
               className=" w-10 aspect-square shadow-md shadow-black rounded-full object-cover"
               alt=""
             />
-            <div
-              className={`flex flex-wrap ${
-                showMenu ? "opacity-100" : "opacity-0"
-              }`}
-            >
-              <span>
-                {ctx?.user &&
-                  ctx?.user.name.charAt(0).toUpperCase() +
-                    ctx?.user.name.slice(1).toLowerCase()}
-              </span>
-            </div>
-          </div>
+            {showMenu && (
+              <form
+                onSubmit={submitFeelingFormHandler}
+                className={`whitespace-nowrap relative flex-1 flex justify-center lg:items-center gap-1 mx-2 ${
+                  showMenu ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                <MdTouchApp
+                  size={30}
+                  className={`finger absolute -bottom-5 ${
+                    feelingInput.length > 0 ? "hidden" : ""
+                  } ${ctx?.user?.feeling ? "hidden" : ""}`}
+                />
+                <div
+                  className={`circle_wave absolute w-5 bg-[#efefef24] rounded-full aspect-square -bottom-2 ${
+                    feelingInput.length > 0 ? "hidden" : ""
+                  } ${ctx?.user?.feeling ? "hidden" : ""}`}
+                ></div>
 
-          {showMenu&& <form
-            className={`whitespace-nowrap flex-1 flex justify-center lg:items-center gap-1 mx-2 ${
+                <div className="flex gap-1">
+                  <span>"</span>
+                  <input
+                    placeholder={
+                      ctx?.user?.feeling
+                        ? ctx.user.feeling
+                        : t("feelings").toString()
+                    }
+                    type="text"
+                    value={feelingInput}
+                    onChange={(e) => {
+                      setFeelingInput(e.target.value);
+                    }}
+                    className="bg-transparent placeholder:italic placeholder:text-xs px-0.5 w-full border border-[#efefef00]"
+                  />
+                  <span>"</span>
+                </div>
+                {feelingInput.length > 0 && (
+                  <motion.button
+                    type="submit"
+                    variants={scaleEffect}
+                    initial="hidden"
+                    animate="visible"
+                    className="text-xs bg-green-500 px-1 py-1 rounded-md "
+                  >
+                    {t("submit")}
+                  </motion.button>
+                )}
+              </form>
+            )}
+          </div>
+          <div
+            className={`flex flex-wrap ${
               showMenu ? "opacity-100" : "opacity-0"
             }`}
           >
-            <div className="flex gap-1">
-              <span>"</span>
-              <input
-                placeholder={t("feelings").toString()}
-                type="text"
-                value={feelingInput}
-                onChange={(e) => {
-                  setFeelingInput(e.target.value);
-                }}
-                className="bg-transparent placeholder:italic placeholder:text-xs px-0.5 w-full border border-[#efefef00]"
-              />
-              <span>"</span>
-            </div>
-            {feelingInput.length > 0 && (
-              <motion.button
-                variants={scaleEffect}
-                initial="hidden"
-                animate="visible"
-                className="text-xs bg-green-500 px-1 py-1 rounded-md "
-              >
-                {t("submit")}
-              </motion.button>
-            )}
-          </form>}
+            <span className="text-sm ">
+              {ctx?.user &&
+                ctx?.user.name.charAt(0).toUpperCase() +
+                  ctx?.user.name.slice(1).toLowerCase()}
+            </span>
+          </div>
         </div>
 
         {/* //! Search Bar */}
