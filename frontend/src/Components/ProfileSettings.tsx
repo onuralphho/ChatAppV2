@@ -9,6 +9,8 @@ import { AVATAR_DATA } from "../Constants/avatarData";
 import { useTranslation } from "react-i18next";
 import LanguageSelector from "./UI/LanguageSelector";
 import PasswordChangeForm from "./PasswordChangeForm";
+import FileInput from "./FileInput";
+import { S3MediaSender } from "../utils/S3MediaSender";
 
 interface IProfileProps {
   closeProfile: Function;
@@ -33,9 +35,14 @@ const ProfileSettings = (props: IProfileProps) => {
   const [dropdownShown, setDropdownShown] = useState<boolean>(false);
   const [showPasswordChange, setShowPasswordChange] = useState<boolean>(false);
 
+  const [fileInput, setFileInput] = useState<File | undefined>(undefined);
+  const [previewImage, setPreviewImage] = useState<string | undefined>(
+    undefined
+  );
+
   const closePasswordChange = () => {
-    setShowPasswordChange(false)
-  }
+    setShowPasswordChange(false);
+  };
 
   const nameChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNameInput(e.target.value);
@@ -48,16 +55,37 @@ const ProfileSettings = (props: IProfileProps) => {
     setPictureInput(e.target.value);
   };
 
+  const fileInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        setFileInput(file);
+        setPreviewImage(reader.result as string);
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
+
   const submitFormHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const jwt = ctx?.getCookie("jwt");
+
+    var awsS3ImgUrl;
+
+    if (fileInput) {
+      awsS3ImgUrl = await S3MediaSender(fileInput);
+    }
 
     const res = await Fetcher({
       body: {
         Id: ctx?.user && ctx.user.id,
         Name: nameInput?.toLowerCase(),
         Email: emailInput,
-        Picture: pictureInput,
+        Picture: awsS3ImgUrl ? awsS3ImgUrl : pictureInput,
       },
       method: "PUT",
       url: "/api/users/update",
@@ -113,40 +141,47 @@ const ProfileSettings = (props: IProfileProps) => {
             className="sm:w-max bg-[#2525252a] backdrop-blur-lg border border-neutral-600 rounded-md p-2 "
           >
             <div className="flex max-lg:flex-col  gap-4  h-full ">
-              <div className="flex flex-col items-center  gap-2  ">
+              <div className="flex flex-col items-center  gap-2 ">
                 <img
-                  src={pictureInput}
-                  className="rounded-full w-40  flex-1 object-cover "
+                  src={previewImage ? previewImage : pictureInput}
+                  className="rounded-full w-40 aspect-square  flex-1 object-cover "
                   alt=""
                 />
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDropdownShown((prev) => !prev);
-                  }}
-                  className="relative z-10 cursor-pointer  select-none shadow px-6  bg-[#252525] text-white text-sm font-medium rounded-md p-2.5"
-                >
-                  <span>{t("select_avatar")}</span>
-                  <div
-                    className={`${
-                      !dropdownShown ? "h-0 border-0 p-0 " : "h-56 p-1"
-                    } bg-[#252525]  transition-all flex flex-col gap-1 overflow-hidden absolute left-0 top-11 w-full rounded-md `}
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDropdownShown((prev) => !prev);
+                    }}
+                    className="relative z-10 cursor-pointer  select-none shadow px-6  bg-[#252525] hover:bg-[#292929] text-white text-sm font-medium rounded-md p-2.5"
                   >
-                    {AVATAR_DATA.map((item, index) => (
-                      <div
-                        key={index}
-                        onClick={() => {
-                          setPictureInput(item.url);
-                        }}
-                        className=" hover:bg-[#363636] rounded-md p-1 flex items-center gap-2 bg-[#252525]"
-                      >
-                        <img src={item.url} alt="" className="h-8" />
-                        <span>{item.title}</span>
-                      </div>
-                    ))}
-                  </div>
-                </button>
+                    <span>{t("select_avatar")}</span>
+                    <div
+                      className={`${
+                        !dropdownShown ? "h-0 border-0 p-0 " : "h-56 p-1"
+                      } bg-[#252525]  transition-all flex flex-col gap-1 overflow-hidden absolute left-0 top-11 w-full rounded-md `}
+                    >
+                      {AVATAR_DATA.map((item, index) => (
+                        <div
+                          key={index}
+                          onClick={() => {
+                            setPictureInput(item.url);
+                          }}
+                          className=" hover:bg-[#363636] rounded-md p-1 flex items-center gap-2 bg-[#252525]"
+                        >
+                          <img src={item.url} alt="" className="h-8" />
+                          <span>{item.title}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </button>
+
+                  <FileInput
+                    fileInputChangeHandler={fileInputChangeHandler}
+                    styleTw="bg-[#252525] h-full flex items-center px-2 rounded-md text-green-500 hover:bg-[#292929] "
+                  />
+                </div>
               </div>
               <div className="flex lg:flex-col gap-2 justify-between">
                 <div className="flex flex-col">
@@ -160,9 +195,12 @@ const ProfileSettings = (props: IProfileProps) => {
                     {ctx?.user && ctx.user.email}
                     {" )"}
                   </span>
-                  <span onClick={() => {
-                    setShowPasswordChange(true)
-                  }} className="underline opacity-80 text-green-400 hover:text-green-300 cursor-pointer">
+                  <span
+                    onClick={() => {
+                      setShowPasswordChange(true);
+                    }}
+                    className="underline opacity-80 text-green-400 hover:text-green-300 cursor-pointer"
+                  >
                     {t("change_password")}
                   </span>
                 </div>
@@ -196,7 +234,11 @@ const ProfileSettings = (props: IProfileProps) => {
                   </span>
                 </div>
               </div>
-              {showPasswordChange?<PasswordChangeForm closePasswordChange={closePasswordChange} />:""}
+              {showPasswordChange ? (
+                <PasswordChangeForm closePasswordChange={closePasswordChange} />
+              ) : (
+                ""
+              )}
             </div>
           </form>
         </div>

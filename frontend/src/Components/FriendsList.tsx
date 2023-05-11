@@ -212,7 +212,7 @@ const FriendList = (props: Iprops) => {
                 friendBox.approved ? "cursor-pointer" : ""
               }`}
             >
-              {props.showMenu && (
+              {props.showMenu && friendBox.approved && (
                 <FriendSettingsDropdown
                   closeTriger={() => {
                     setShowFriendSettings(false);
@@ -245,20 +245,24 @@ const FriendList = (props: Iprops) => {
                   onClick={(e) => {
                     if (props.showMenu) {
                       e.stopPropagation();
-                      setFriendProfileData({
-                        feelings:
-                          ctx?.user?.id !== friendBox.fromUserId
-                            ? friendBox.fromUser.feeling
-                            : friendBox.toUser.feeling,
-                        name:
-                          ctx?.user?.id !== friendBox.fromUserId
-                            ? friendBox.fromUser.name
-                            : friendBox.toUser.name,
-                        picture:
-                          ctx?.user?.id !== friendBox.fromUserId
-                            ? friendBox.fromUser.picture
-                            : friendBox.toUser.picture,
-                      });
+                      if(friendBox.approved){
+                        setFriendProfileData({
+                          feelings:
+                            ctx?.user?.id !== friendBox.fromUserId
+                              ? friendBox.fromUser.feeling
+                              : friendBox.toUser.feeling,
+                          name:
+                            ctx?.user?.id !== friendBox.fromUserId
+                              ? friendBox.fromUser.name
+                              : friendBox.toUser.name,
+                          picture:
+                            ctx?.user?.id !== friendBox.fromUserId
+                              ? friendBox.fromUser.picture
+                              : friendBox.toUser.picture,
+                        });
+
+                      }
+                      
                     } else {
                     }
                   }}

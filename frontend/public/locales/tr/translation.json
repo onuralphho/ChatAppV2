@@ -3,7 +3,7 @@
   "loading_chats": "Konuşmalarınız yükleniyor",
   "select_language": "Dil",
   "last_chats": "Son konuşmalar",
-  "say_hi": "Bir mesaj yazın",
+  "say_hi": "Bir mesaj yazın...",
   "select_avatar": "Bir avatar seçin",
   "submit": "Kaydet",
   "last_update": "Son güncelleme",
@@ -29,5 +29,9 @@
   "new_password":"Yeni parola",
   "new_password_again":"Yeni parola tekrar",
   "delete":"Sil",
-  "feelings":"Bugün nasıl hissediyorsun?"
+  "feelings":"Bugün nasıl hissediyorsun?",
+  "email_empty_error":"E-mail giriniz",
+  "email_length":"Email 2 karakterden uzun olmalı",
+  "password_min_length_error":"Parola en az 3 karakter içermeli",
+  "not_email_error":"Geçerli bir eposta giriniz"
 }

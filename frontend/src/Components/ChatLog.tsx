@@ -12,11 +12,13 @@ import { ITalkingTo } from "../@types/talkingTo";
 import { Fetcher } from "../utils/Fetcher";
 import { useConnectionContext } from "../Context/ConnectionProvider";
 import ChatLoader from "./UI/ChatLoader";
-import AWS from "aws-sdk";
+
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import CloseButton from "./UI/CloseButton";
 import { scaleEffect } from "../Constants/FramerMotionEffects/scaleEffect";
+import FileInput from "./FileInput";
+import { S3MediaSender } from "../utils/S3MediaSender";
 interface IProps {
   talkingTo: ITalkingTo;
   messages: IMessage[] | undefined;
@@ -49,11 +51,6 @@ const ChatLog = (props: IProps) => {
   );
   messageAudio.volume = 0.2;
 
-  const s3 = new AWS.S3({
-    region: "eu-central-1",
-    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESSKEY,
-  });
   const messageChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessageInput(e.target.value);
   };
@@ -118,20 +115,13 @@ const ChatLog = (props: IProps) => {
       }
       return prev || [];
     });
-
+    
+    var awsS3ImgUrl;
     if (fileInput) {
-      const params = {
-        Bucket: "chatappv2/",
-        Key: fileInput.name,
-        Body: fileInput,
-        ACL: "public-read",
-      };
-      var awss3imgurl;
-      const dataS3 = await s3.upload(params).promise();
-      awss3imgurl = dataS3.Location;
+      awsS3ImgUrl = await S3MediaSender(fileInput);
     }
 
-    messagePayload.contentImageUrl = awss3imgurl;
+    messagePayload.contentImageUrl = awsS3ImgUrl;
 
     const res = await Fetcher({
       method: "POST",
@@ -156,9 +146,16 @@ const ChatLog = (props: IProps) => {
   }, [checkerVal, messagesEndRef]);
 
   useEffect(() => {
-    scrollToBottom();
+    if (
+      ctx?.talkingTo?.friendBoxId ===
+      (ctx?.messages &&
+        ctx?.messages[ctx.messages?.length - 1] &&
+        ctx?.messages[ctx.messages?.length - 1].friendBoxId)
+    ) {
+      scrollToBottom();
+    }
   }, [ctx?.messages, scrollToBottom, checkerVal]);
-  
+
   return (
     <div className=" bg-[#363636] w-full relative   flex-1  flex flex-col  h-full fade-in">
       {/* TALKINGTO */}
@@ -223,7 +220,7 @@ const ChatLog = (props: IProps) => {
                           ? ctx?.user.picture
                           : props.talkingTo.picture
                       }
-                      className={`w-8 rounded-full   ${
+                      className={`w-8 rounded-full aspect-square object-cover   ${
                         ctx?.user && ctx.user.id === message.fromUserId
                           ? "max-md:hidden"
                           : ""
@@ -357,30 +354,10 @@ const ChatLog = (props: IProps) => {
           <FiPaperclip size={25} />
 
           {showFileInput && (
-            <motion.div
-              variants={scaleEffect}
-              initial="hidden"
-              animate="visible"
-              className="file-upload flex justify-center absolute -top-14 left-0  z-10 bg-[#ffffff] backdrop-blur-lg text-sm  cursor-default  px-1 py-2 rounded-lg "
-            >
-              <label
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-                htmlFor="file-upload"
-                className=" overflow-hidden cursor-pointer "
-              >
-                <HiPhoto size={30} className="text-green-500 " />
-                <input
-                  id="file-upload"
-                  type="file"
-                  size={2}
-                  className="hidden opacity-0"
-                  accept="image/png, image/webp, image/*"
-                  onChange={fileInputChangeHandler}
-                />
-              </label>
-            </motion.div>
+            <FileInput
+              fileInputChangeHandler={fileInputChangeHandler}
+              styleTw="file-upload flex justify-center absolute text-green-500 -top-14 left-0  z-10 bg-[#ffffff] backdrop-blur-lg text-sm  cursor-default  px-1 py-2 rounded-lg "
+            />
           )}
         </button>
         <div className="flex relative items-center flex-1 h-full gap-2 px-2 py-1 bg-white rounded-lg ">
@@ -405,6 +382,7 @@ const ChatLog = (props: IProps) => {
                   name="animationselector"
                   id="none"
                   className="hidden peer"
+                  checked={animationType === undefined}
                   onChange={() => {
                     setAnimationType(undefined);
                   }}
@@ -480,7 +458,7 @@ const ChatLog = (props: IProps) => {
                     setFileInput(undefined);
                     setPreviewImage(undefined);
                   }}
-                  color="red-500"
+                  color="[#252525]"
                 />
                 <img
                   src={previewImage}

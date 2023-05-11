@@ -43,11 +43,8 @@ namespace ChatAppBackend.Bussiness.Services
 
             };
 
-
             _context.Add(newMessage);
             await _context.SaveChangesAsync();
-
-
 
             var resMessage = _mapper.Map<MessageSentResponse>(newMessage);
             resMessage.FriendBoxId = message.FriendBoxId;

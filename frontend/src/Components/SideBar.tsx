@@ -37,6 +37,7 @@ const SideBar = (props: ISideBarProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchResult, setSearchResult] = useState([]);
   const [feelingInput, setFeelingInput] = useState<string>("");
+  const [feelingError, setFeelingError] = useState<string | undefined>();
 
   const ctx = useAuth();
   const alertCtx = useAlertContext();
@@ -66,9 +67,10 @@ const SideBar = (props: ISideBarProps) => {
   };
 
   const submitFeelingFormHandler = async (
-    e: React.FormEvent<HTMLFormElement>
+    e: React.FocusEvent<HTMLFormElement> | any
   ) => {
     e.preventDefault();
+
     const res = await Fetcher({
       method: "PUT",
       url: "/api/users/updatefeeling",
@@ -76,12 +78,15 @@ const SideBar = (props: ISideBarProps) => {
       token: ctx?.getCookie("jwt"),
     });
     const data = await res.json();
-
-    if (ctx && ctx.user) {
-      const updatedUser = { ...ctx.user, feeling: data.feeling };
-      ctx.setUser(updatedUser);
+    if (data.status !== 400) {
+      if (ctx && ctx.user) {
+        const updatedUser = { ...ctx.user, feeling: data.feeling };
+        ctx.setUser(updatedUser);
+      }
+      setFeelingInput("");
+    }else{
+      setFeelingError(data.errors.Feeling);
     }
-    setFeelingInput("");
   };
 
   const searchHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -176,7 +181,7 @@ const SideBar = (props: ISideBarProps) => {
         }   ${showMenu ? "max-lg:translate-0" : "max-lg:-translate-x-64"} `}
       >
         <div className="flex px-2   flex-col  gap-2 ">
-          <div className="flex  h-full gap-2 items-center ">
+          <div className="flex  h-full gap-4 items-center ">
             <img
               onClick={() => {
                 setShowMenu(true);
@@ -188,24 +193,23 @@ const SideBar = (props: ISideBarProps) => {
             {showMenu && (
               <form
                 onSubmit={submitFeelingFormHandler}
-                className={`whitespace-nowrap relative flex-1 flex justify-center lg:items-center gap-1 mx-2 ${
+                className={`whitespace-nowrap relative flex-1 flex  lg:items-center gap-1  ${
                   showMenu ? "opacity-100" : "opacity-0"
                 }`}
               >
                 <MdTouchApp
                   size={30}
-                  className={`finger absolute -bottom-5 ${
+                  className={`finger text-[#cccccc] absolute z-20 -bottom-5 left-10 ${
                     feelingInput.length > 0 ? "hidden" : ""
                   } ${ctx?.user?.feeling ? "hidden" : ""}`}
                 />
                 <div
-                  className={`circle_wave absolute w-5 bg-[#efefef24] rounded-full aspect-square -bottom-2 ${
+                  className={`circle_wave absolute z-10  w-5 left-11 bg-[#efefef54] rounded-full aspect-square -bottom-2 ${
                     feelingInput.length > 0 ? "hidden" : ""
                   } ${ctx?.user?.feeling ? "hidden" : ""}`}
                 ></div>
 
-                <div className="flex gap-1">
-                  <span>"</span>
+                <div className="flex justify-start relative gap-1">
                   <input
                     placeholder={
                       ctx?.user?.feeling
@@ -216,10 +220,16 @@ const SideBar = (props: ISideBarProps) => {
                     value={feelingInput}
                     onChange={(e) => {
                       setFeelingInput(e.target.value);
+                      setFeelingError(undefined)
                     }}
-                    className="bg-transparent placeholder:italic placeholder:text-xs px-0.5 w-full border border-[#efefef00]"
+                    onBlur={(e) => {
+                      if (feelingInput.length > 0) {
+                        submitFeelingFormHandler(e);
+                      }
+                    }}
+                    className={` text-[#252525] w-full placeholder:italic placeholder:text-sm p-1 z-[1]  rounded-md ${feelingError ? "border-2 border-red-500 ring-red-500 " : ""}`}
                   />
-                  <span>"</span>
+                  <div className={`absolute w-5 aspect-square bg-white ${feelingError ? "bg-red-500 " : ""}  rotate-45 top-1 -left-1`}></div>
                 </div>
                 {feelingInput.length > 0 && (
                   <motion.button
@@ -227,7 +237,7 @@ const SideBar = (props: ISideBarProps) => {
                     variants={scaleEffect}
                     initial="hidden"
                     animate="visible"
-                    className="text-xs bg-green-500 px-1 py-1 rounded-md "
+                    className="text-sm bg-green-500 px-1 py-1 rounded-md hidden"
                   >
                     {t("submit")}
                   </motion.button>

@@ -3,7 +3,7 @@
   "loading_chats": "Your chats are loading",
   "select_language": "Language",
   "last_chats": "Last chats",
-  "say_hi": "Say hi !",
+  "say_hi": "Type your message...",
   "select_avatar": "Choose an avatar",
   "submit": "Submit",
   "last_update": "Last update",
@@ -29,6 +29,9 @@
   "new_password":"New password",
   "new_password_again":"New password again",
   "delete":"Delete",
-  "feelings":"How do you feel today?"
-  
+  "feelings":"How do you feel today?",
+  "email_empty_error":"E-mail must be filled",
+  "email_length":"Email should longer then 2",
+  "password_min_length_error":"Password must be at least 3 characters long",
+  "not_email_error":"Please enter a valid email"
 }

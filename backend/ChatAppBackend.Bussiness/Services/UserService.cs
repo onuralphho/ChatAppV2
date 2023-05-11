@@ -1,6 +1,4 @@
 ﻿
-using Microsoft.AspNetCore.Mvc;
-
 namespace ChatAppBackend.Bussiness.Services
 {
 
@@ -17,6 +15,7 @@ namespace ChatAppBackend.Bussiness.Services
         private readonly PostgreSqlDbContext _context;
         private readonly IMapper _mapper;
         private readonly JwtService _jwtService;
+       
 
         public UserService(PostgreSqlDbContext context, IMapper mapper, JwtService jwtService)
         {
@@ -24,10 +23,12 @@ namespace ChatAppBackend.Bussiness.Services
             _context = context;
             _mapper = mapper;
             _jwtService = jwtService;
+            
         }
 
         public async Task Register(RegisterDto regUser)
         {
+         
             var tmp = _context.Users.Where(x => x.Email == regUser.Email).FirstOrDefault();
             if (tmp != null)
             {

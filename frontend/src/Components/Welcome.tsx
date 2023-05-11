@@ -82,7 +82,7 @@ const Welcome = (props: any) => {
                         ? friendlist.toUser.picture
                         : friendlist.fromUser.picture
                     }
-                    className="w-12 object-contain rounded-full"
+                    className="w-12 aspect-square object-cover rounded-full"
                     alt=""
                   />
                   <div className="flex flex-col justify-center">

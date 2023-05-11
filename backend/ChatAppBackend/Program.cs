@@ -1,12 +1,15 @@
+using ChatAppBackend;
 using ChatAppBackend.Bussiness.Hubs;
 using ChatAppBackend.Core.Models;
+using ChatAppBackend.Core.Validators;
 using ChatAppBackend.Filters;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using ChatAppBackend;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -83,7 +86,7 @@ var settings = builder.Configuration.GetSection("ConnectionStrings").Get<Connect
 
 var allowedOrigin = builder.Configuration.GetSection("AllowedOrigin").Value;
 
-builder.Services.AddDbContext<PostgreSqlDbContext>(options => options.UseNpgsql(settings.DefaultConnection)); 
+builder.Services.AddDbContext<PostgreSqlDbContext>(options => options.UseNpgsql(settings.DefaultConnection));
 
 builder.Services.AddScoped<JwtService>();
 
@@ -106,11 +109,17 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ErrorHandlingFilter>();
+    options.Filters.Add<ValidatorHandlingFilter>();
     options.Filters.Add(new ProducesResponseTypeAttribute(typeof(ProblemDetails), StatusCodes.Status400BadRequest));
     options.Filters.Add(new ProducesResponseTypeAttribute(typeof(ProblemDetails), StatusCodes.Status404NotFound));
     options.Filters.Add(new ProducesResponseTypeAttribute(typeof(ProblemDetails), StatusCodes.Status500InternalServerError));
-    options.Filters.Add(new ProducesResponseTypeAttribute( StatusCodes.Status200OK));
+    options.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status200OK));
 });
+
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(RegisterDto));
 
 var app = builder.Build();
 

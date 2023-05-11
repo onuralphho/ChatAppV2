@@ -333,19 +333,19 @@
 
 .finger{
   
-  animation: finger_touch 0.8s alternate  24  ;
+  animation: finger_touch 0.8s alternate  infinite  ;
 }
 
 .circle_wave{
 
-  animation: wave_touch 0.8s  alternate  24 ;
+  animation: wave_touch 0.8s  alternate  infinite ;
  
 }
 
 
 @keyframes finger_touch {
   0%{
-    transform:scale(1.2) rotateX(0);
+    transform:scale(1.1) rotateX(0);
   }
 
   100%{
