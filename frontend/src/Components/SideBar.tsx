@@ -78,6 +78,7 @@ const SideBar = (props: ISideBarProps) => {
       token: ctx?.getCookie("jwt"),
     });
     const data = await res.json();
+    console.log(data)
     if (data.status !== 400) {
       if (ctx && ctx.user) {
         const updatedUser = { ...ctx.user, feeling: data.feeling };
@@ -85,7 +86,7 @@ const SideBar = (props: ISideBarProps) => {
       }
       setFeelingInput("");
     }else{
-      setFeelingError(data.errors.Feeling);
+      setFeelingError(data.detail);
     }
   };
 

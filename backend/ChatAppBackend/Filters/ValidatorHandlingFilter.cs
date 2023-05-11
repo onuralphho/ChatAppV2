@@ -28,10 +28,8 @@ namespace ChatAppBackend.Filters
             {
                 context.Result = new BadRequestObjectResult(await CreateErrorResponse(context.ModelState));
             }
-            else
-            {
-                 await base.OnResultExecutionAsync(context, next);
-            }
+            await base.OnResultExecutionAsync(context, next);
+
         }
         public override void OnActionExecuting(ActionExecutingContext context)
         {

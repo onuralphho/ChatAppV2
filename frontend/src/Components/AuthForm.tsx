@@ -9,6 +9,7 @@ const AuthForm = (props: any) => {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [Loading, setLoading] = useState<boolean>(false);
   const [Loading2, setLoading2] = useState<boolean>(false);
+  const errorHtml = errorMessage.replace(/\r?\n/g, "<br>");
 
   const { t } = useTranslation();
 
@@ -52,7 +53,7 @@ const AuthForm = (props: any) => {
       const data = await res.json();
       console.log(data);
       if (data.status === 400) {
-        setErrorMessage(data.title);
+        setErrorMessage(data.detail);
         setLoading(false);
         return;
       }
@@ -108,7 +109,12 @@ const AuthForm = (props: any) => {
       />
       {errorMessage && (
         <span className="text-red-600 font-semibold text-lg">
-          {t(errorMessage)}
+          {errorMessage && (
+            <span
+              className="text-red-600 font-semibold text-lg"
+              dangerouslySetInnerHTML={{ __html: errorHtml }}
+            ></span>
+          )}
         </span>
       )}
       <div className="flex gap-2">
