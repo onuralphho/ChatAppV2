@@ -5,5 +5,5 @@ export interface IAlert{
 
 export type AlertContextType = {
     alert:any,
-    setAlert:any
+    alertStarter:(message:string)=>void
 }

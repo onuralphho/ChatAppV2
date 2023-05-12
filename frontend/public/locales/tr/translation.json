@@ -33,5 +33,6 @@
   "email_empty_error":"E-mail giriniz",
   "email_length":"Email 2 karakterden uzun olmalı",
   "password_min_length_error":"Parola en az 3 karakter içermeli",
-  "not_email_error":"Geçerli bir eposta giriniz"
+  "not_email_error":"Geçerli bir eposta giriniz",
+  "name_min_lenght_error":"İsim en az 2 karakter içermilidir"
 }

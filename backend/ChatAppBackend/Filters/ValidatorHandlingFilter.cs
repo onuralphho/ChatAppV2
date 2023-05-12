@@ -22,6 +22,8 @@ namespace ChatAppBackend.Filters
 
             return Task.FromResult(result);
         }
+
+
         public override async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
             if (!context.ModelState.IsValid)

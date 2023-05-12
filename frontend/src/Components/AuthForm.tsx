@@ -1,5 +1,5 @@
 import { useState } from "react";
-import FormInput from "./UI/FormInput";
+import FormInput from "./UI/ProfileUI/FormInput";
 import { Fetcher } from "../utils/Fetcher";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -70,7 +70,7 @@ const AuthForm = (props: any) => {
       setLoading2(false);
 
       if (res.status === 400) {
-        setErrorMessage(res.title);
+        setErrorMessage(res.detail);
         return;
       }
       setPasswordInput("");
@@ -112,7 +112,7 @@ const AuthForm = (props: any) => {
           {errorMessage && (
             <span
               className="text-red-600 font-semibold text-lg"
-              dangerouslySetInnerHTML={{ __html: errorHtml }}
+              dangerouslySetInnerHTML={{ __html: t(errorHtml) }}
             ></span>
           )}
         </span>
@@ -120,7 +120,7 @@ const AuthForm = (props: any) => {
       <div className="flex gap-2">
         <button
           onClick={submitFormLogin}
-          className="min-h-[50px]  flex-1 text-2xl font-bold text-purple-500 px-4 py-2 rounded-md border border-purple-500 hover:bg-purple-500 hover:text-white transition-all"
+          className="min-h-[50px] whitespace-nowrap  flex-1 text-2xl font-bold text-purple-500 px-4 py-2 rounded-md border border-purple-500 hover:bg-purple-500 hover:text-white transition-all"
         >
           {Loading2 ? (
             <span className="dots gap-1">
@@ -135,7 +135,7 @@ const AuthForm = (props: any) => {
         <button
           onClick={submitFormRegister}
           type="button"
-          className="min-h-[50px] min-w-[124px]  bg-purple-500 text-white hover:bg-purple-400 transition-all  text-2xl font-bold rounded-md py-2 px-4 "
+          className="min-h-[50px]   bg-purple-500 text-white hover:bg-purple-400 transition-all  text-2xl font-bold rounded-md py-2 px-4 "
         >
           {Loading ? (
             <span className="dots gap-1">

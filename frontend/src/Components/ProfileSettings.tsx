@@ -2,14 +2,12 @@ import { HiArrowUturnLeft } from "react-icons/hi2";
 import { useAuth } from "../Context/AuthProvider";
 import React, { useState } from "react";
 import { Fetcher } from "../utils/Fetcher";
-import { sleep } from "../utils/sleep";
 import { useAlertContext } from "../Context/AlertProvider";
-import AlertBox from "./UI/AlertBox";
 import { AVATAR_DATA } from "../Constants/avatarData";
 import { useTranslation } from "react-i18next";
-import LanguageSelector from "./UI/LanguageSelector";
-import PasswordChangeForm from "./PasswordChangeForm";
-import FileInput from "./FileInput";
+import LanguageSelector from "./UI/GeneralUI/LanguageSelector";
+import PasswordChangeForm from "./UI/ProfileUI/PasswordChangeForm";
+import FileInput from "./UI/GeneralUI/FileInput";
 import { S3MediaSender } from "../utils/S3MediaSender";
 
 interface IProfileProps {
@@ -92,31 +90,25 @@ const ProfileSettings = (props: IProfileProps) => {
       token: jwt,
     });
     const data = await res.json();
-    alertCtx?.setAlert({ shown: true, type: t(data.message) });
+    if (data.status !== 400) {
+      ctx?.setUser((prev) => {
+        if (prev) {
+          return {
+            ...prev,
+            name: data.sessionUser.name,
+            picture: data.sessionUser.picture,
+            updateTime: data.sessionUser.updateTime,
+          };
+        }
+        return prev;
+      });
+    }
 
-    ctx?.setUser((prev) => {
-      if (prev) {
-        return {
-          ...prev,
-          name: data.sessionUser.name,
-          picture: data.sessionUser.picture,
-          updateTime: data.sessionUser.updateTime,
-        };
-      }
-      return prev;
-    });
-
-    await sleep(2000);
-    alertCtx?.setAlert({ shown: false, type: t(data.message) });
+    alertCtx?.alertStarter(data.detail);
   };
 
   return (
     <>
-      <AlertBox
-        message={alertCtx?.alert.type}
-        isShown={alertCtx?.alert.shown}
-        closeBox={alertCtx?.setAlert}
-      />
       <div className="bg-[#363636] flex-1 overflow-hidden h-full fade-in">
         <div className="pt-12 flex p-4 flex-col h-full relative">
           <div className="w-[500px] rounded-full aspect-square absolute bg-green-600 lg:-right-40 lg:-bottom-60 -bottom-32 -right-60"></div>

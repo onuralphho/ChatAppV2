@@ -11,13 +11,13 @@ import { useAuth } from "../Context/AuthProvider";
 import { ITalkingTo } from "../@types/talkingTo";
 import { Fetcher } from "../utils/Fetcher";
 import { useConnectionContext } from "../Context/ConnectionProvider";
-import ChatLoader from "./UI/ChatLoader";
+import ChatLoader from "./UI/ChatUI/ChatLoader";
 
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import CloseButton from "./UI/CloseButton";
+import CloseButton from "./UI/GeneralUI/CloseButton";
 import { scaleEffect } from "../Constants/FramerMotionEffects/scaleEffect";
-import FileInput from "./FileInput";
+import FileInput from "./UI/GeneralUI/FileInput";
 import { S3MediaSender } from "../utils/S3MediaSender";
 interface IProps {
   talkingTo: ITalkingTo;

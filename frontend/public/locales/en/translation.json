@@ -33,5 +33,6 @@
   "email_empty_error":"E-mail must be filled",
   "email_length":"Email should longer then 2",
   "password_min_length_error":"Password must be at least 3 characters long",
-  "not_email_error":"Please enter a valid email"
+  "not_email_error":"Please enter a valid email",
+  "name_min_lenght_error":"Name field must be at least 2 characters long"
 }

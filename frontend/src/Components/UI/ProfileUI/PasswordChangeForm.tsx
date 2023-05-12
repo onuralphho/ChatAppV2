@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Fetcher } from "../utils/Fetcher";
-import { useAuth } from "../Context/AuthProvider";
-import { useAlertContext } from "../Context/AlertProvider";
-import { sleep } from "../utils/sleep";
+import { Fetcher } from "../../../utils/Fetcher";
+import { useAuth } from "../../../Context/AuthProvider";
+import { useAlertContext } from "../../../Context/AlertProvider";
 
 type Props = {
   closePasswordChange: () => void;
@@ -57,10 +56,9 @@ const PasswordChangeForm = (props: Props) => {
     setNewPasswordAginInput("");
 
     const data = await res.json();
-    alertCtx?.setAlert({ shown: true, type: t(data.title) });
-    await sleep(2000);
-    alertCtx?.setAlert({ false: true, type: t(data.title) });
+    alertCtx?.alertStarter(data.detail);
   };
+  
   checkValid();
   return (
     <div className="flex flex-col gap-2 justify-around">

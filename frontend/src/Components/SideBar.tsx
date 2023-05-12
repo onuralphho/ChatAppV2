@@ -6,15 +6,13 @@ import { MdTouchApp } from "react-icons/md";
 import { useState } from "react";
 import FriendsList from "../Components/FriendsList";
 import { useAuth } from "../Context/AuthProvider";
-import Modal from "./UI/Modal";
+import Modal from "./UI/GeneralUI/Modal";
 import { useNavigate } from "react-router-dom";
-import AlertBox from "./UI/AlertBox";
 import { Fetcher } from "../utils/Fetcher";
 import { useAlertContext } from "../Context/AlertProvider";
-import { sleep } from "../utils/sleep";
 import { useConnectionContext } from "../Context/ConnectionProvider";
 import { useTranslation } from "react-i18next";
-import ModalBackground from "./UI/ModalBackground";
+import ModalBackground from "./UI/GeneralUI/ModalBackground";
 import { motion } from "framer-motion";
 import { scaleEffect } from "../Constants/FramerMotionEffects/scaleEffect";
 
@@ -78,14 +76,14 @@ const SideBar = (props: ISideBarProps) => {
       token: ctx?.getCookie("jwt"),
     });
     const data = await res.json();
-    console.log(data)
+    console.log(data);
     if (data.status !== 400) {
       if (ctx && ctx.user) {
         const updatedUser = { ...ctx.user, feeling: data.feeling };
         ctx.setUser(updatedUser);
       }
       setFeelingInput("");
-    }else{
+    } else {
       setFeelingError(data.detail);
     }
   };
@@ -124,27 +122,17 @@ const SideBar = (props: ISideBarProps) => {
       setSearchResult([]);
       setSearchInput("");
 
-      alertCtx?.setAlert({ shown: true, type: t(data.message) });
+      alertCtx?.alertStarter(data.message);
 
       ctx?.setFriendList((prev) => [...(prev ?? []), data.friend]);
-
-      await sleep(2000);
-      alertCtx?.setAlert({ shown: false, type: t(data.message) });
     }
     if (data.status === 400) {
-      alertCtx?.setAlert({ shown: true, type: t(data.title) });
-      await sleep(2000);
-      alertCtx?.setAlert({ shown: false, type: t(data.title) });
+      alertCtx?.alertStarter(data.title);
     }
   };
 
   return (
     <>
-      <AlertBox
-        message={alertCtx?.alert.type}
-        isShown={alertCtx?.alert.shown}
-        closeBox={alertCtx?.setAlert}
-      />
       {/* //! Modal */}
       {isModalOpen && (
         <Modal confirm={logOut} cancel={closeModal} title={t("logout")} />
@@ -200,7 +188,7 @@ const SideBar = (props: ISideBarProps) => {
               >
                 <MdTouchApp
                   size={30}
-                  className={`finger text-[#cccccc] absolute z-20 -bottom-5 left-10 ${
+                  className={`finger text-[#cccccc] absolute z-[30] -bottom-5 left-10 ${
                     feelingInput.length > 0 ? "hidden" : ""
                   } ${ctx?.user?.feeling ? "hidden" : ""}`}
                 />
@@ -221,16 +209,24 @@ const SideBar = (props: ISideBarProps) => {
                     value={feelingInput}
                     onChange={(e) => {
                       setFeelingInput(e.target.value);
-                      setFeelingError(undefined)
+                      setFeelingError(undefined);
                     }}
                     onBlur={(e) => {
                       if (feelingInput.length > 0) {
                         submitFeelingFormHandler(e);
                       }
                     }}
-                    className={` text-[#252525] w-full placeholder:italic placeholder:text-sm p-1 z-[1]  rounded-md ${feelingError ? "border-2 border-red-500 ring-red-500 " : ""}`}
+                    className={` text-[#252525] w-full placeholder:italic placeholder:text-sm p-1 z-[1]  rounded-md ${
+                      feelingError
+                        ? "border-2 border-red-500 ring-red-500 "
+                        : ""
+                    }`}
                   />
-                  <div className={`absolute w-5 aspect-square bg-white ${feelingError ? "bg-red-500 " : ""}  rotate-45 top-1 -left-1`}></div>
+                  <div
+                    className={`absolute w-5 aspect-square ${
+                      feelingError ? "bg-red-500 " : "bg-white"
+                    }  rotate-45 top-1 -left-1`}
+                  ></div>
                 </div>
                 {feelingInput.length > 0 && (
                   <motion.button
@@ -245,17 +241,6 @@ const SideBar = (props: ISideBarProps) => {
                 )}
               </form>
             )}
-          </div>
-          <div
-            className={`flex flex-wrap ${
-              showMenu ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <span className="text-sm ">
-              {ctx?.user &&
-                ctx?.user.name.charAt(0).toUpperCase() +
-                  ctx?.user.name.slice(1).toLowerCase()}
-            </span>
           </div>
         </div>
 
@@ -317,7 +302,7 @@ const SideBar = (props: ISideBarProps) => {
                         <img
                           src={item.picture}
                           alt=""
-                          className="h-10 rounded-full"
+                          className="h-10 aspect aspect-square object-cover rounded-full"
                         />
                         <span className="text-white truncate">{item.name}</span>
                       </div>

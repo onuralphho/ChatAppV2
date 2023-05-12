@@ -1,12 +1,7 @@
 import { useAuth } from "../Context/AuthProvider";
 import { IFriendList } from "../@types/friendBoxType";
-import {
-  BsFillPersonCheckFill,
-  BsFillPersonXFill,
-  BsThreeDots,
-} from "react-icons/bs";
+import { BsFillPersonCheckFill, BsFillPersonXFill } from "react-icons/bs";
 import { Fetcher } from "../utils/Fetcher";
-import { sleep } from "../utils/sleep";
 import { useAlertContext } from "../Context/AlertProvider";
 import { ITalkingTo } from "../@types/talkingTo";
 import { useConnectionContext } from "../Context/ConnectionProvider";
@@ -15,10 +10,9 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Iprofile } from "../@types/Iprofile";
 import FriendProfile from "./FriendProfile";
-import ModalBackground from "./UI/ModalBackground";
-import { BsFillPersonFill } from "react-icons/bs";
-import { MdOutlineDeleteForever } from "react-icons/md";
+import ModalBackground from "./UI/GeneralUI/ModalBackground";
 import FriendSettingsDropdown from "./FriendSettingsDropdown";
+
 interface Iprops {
   showMenu: boolean;
   openMenu: Function;
@@ -83,10 +77,6 @@ const FriendList = (props: Iprops) => {
         return friendBox;
       });
     });
-
-    alertCtx?.setAlert({ shown: true, type: data.message });
-    sleep(2000);
-    alertCtx?.setAlert({ shown: false, type: data.message });
   };
 
   const RejectFriendRequestHandler = async (
@@ -245,7 +235,7 @@ const FriendList = (props: Iprops) => {
                   onClick={(e) => {
                     if (props.showMenu) {
                       e.stopPropagation();
-                      if(friendBox.approved){
+                      if (friendBox.approved) {
                         setFriendProfileData({
                           feelings:
                             ctx?.user?.id !== friendBox.fromUserId
@@ -260,9 +250,7 @@ const FriendList = (props: Iprops) => {
                               ? friendBox.fromUser.picture
                               : friendBox.toUser.picture,
                         });
-
                       }
-                      
                     } else {
                     }
                   }}

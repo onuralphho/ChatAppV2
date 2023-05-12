@@ -36,7 +36,7 @@ namespace ChatAppBackend.Controllers
         [HttpPut("update")]
         public async Task<UserUpdateResponse> Update(UpdateUserDto updatedUser)
         {
-            var response = new UserUpdateResponse { Message = "update_user", SessionUser = await _userService.UpdateUser(updatedUser) };
+            var response = new UserUpdateResponse { Detail = "update_user", SessionUser = await _userService.UpdateUser(updatedUser) };
             return response;
         }
 

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MdLanguage } from "react-icons/md";
-import TrFlag from "../../Assets/tr.svg";
-import EngFlag from "../../Assets/gb.svg";
+import TrFlag from "../../../Assets/tr.svg";
+import EngFlag from "../../../Assets/gb.svg";
 const LanguageSelector = () => {
   const { i18n } = useTranslation();
   const [languageSelectorShow, setLanguageSelector] = useState<boolean>(false);

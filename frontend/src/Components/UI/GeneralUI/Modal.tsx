@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import ModalBackground from "./ModalBackground";
 import { motion } from "framer-motion";
-import { scaleEffect } from "../../Constants/FramerMotionEffects/scaleEffect";
+import { scaleEffect } from "../../../Constants/FramerMotionEffects/scaleEffect";
 
 type Props = {
   title: string;
