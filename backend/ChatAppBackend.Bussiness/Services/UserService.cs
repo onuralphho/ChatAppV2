@@ -46,7 +46,7 @@ namespace ChatAppBackend.Bussiness.Services
             };
 
             _context.Users.Add(reg_user);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync().ConfigureAwait(false);
 
 
         }
@@ -54,12 +54,12 @@ namespace ChatAppBackend.Bussiness.Services
 
         public async Task<SessionUserDto> UpdateUser(UpdateUserDto updatedUser)
         {
-            var user = await _context.Users.FindAsync(updatedUser.Id);
+            var user = await _context.Users.FindAsync(updatedUser.Id).ConfigureAwait(false);
             user.UpdateTime = DateTime.UtcNow;
             user.Name = updatedUser.Name;
             user.Picture = updatedUser.Picture;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync().ConfigureAwait(false);
 
             return _mapper.Map<SessionUserDto>(user);
         }
@@ -77,7 +77,7 @@ namespace ChatAppBackend.Bussiness.Services
             else
             {
                 user.Password = BCrypt.Net.BCrypt.HashPassword(passwordDto.NewPassword);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync().ConfigureAwait(false);
                 var passwordUpdateResponse = new UpdatePasswordResponse { Title = "update_success_password" };
 
                 return passwordUpdateResponse;
@@ -90,7 +90,7 @@ namespace ChatAppBackend.Bussiness.Services
             var user = _context.Users.Find(_jwtService.UserId);
 
             user.Feeling = userFeelingDto.Feeling;
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync().ConfigureAwait(false);
             return userFeelingDto;
 
         }

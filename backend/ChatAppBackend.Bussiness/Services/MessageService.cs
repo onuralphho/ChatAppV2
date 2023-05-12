@@ -28,7 +28,7 @@ namespace ChatAppBackend.Bussiness.Services
 
         public async Task<MessageSentResponse> AddMessage(MessageSentRequest message)
         {
-            var friendship = await _context.FriendBoxes.FindAsync(message.FriendBoxId);
+            var friendship = await _context.FriendBoxes.FindAsync(message.FriendBoxId).ConfigureAwait(false);
 
             friendship.UpdateTime = DateTime.UtcNow;
 
@@ -44,7 +44,7 @@ namespace ChatAppBackend.Bussiness.Services
             };
 
             _context.Add(newMessage);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync().ConfigureAwait(false);
 
             var resMessage = _mapper.Map<MessageSentResponse>(newMessage);
             resMessage.FriendBoxId = message.FriendBoxId;
@@ -59,7 +59,7 @@ namespace ChatAppBackend.Bussiness.Services
             var messages = await _context.Messages
                 .Include(m => m.Friendship)
                 .Where(m => m.Friendship.Id == friendBoxId)
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
 
             return messages.Select((message) =>
             {
@@ -85,7 +85,7 @@ namespace ChatAppBackend.Bussiness.Services
                 }
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync().ConfigureAwait(false);
         }
     }
 }
