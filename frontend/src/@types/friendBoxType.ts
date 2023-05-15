@@ -16,4 +16,5 @@ export interface IFriendList {
   lastMessage: string | undefined;
   lastMessageFrom: string | undefined;
   unreadMessageCount: number;
+  typingStatus: boolean ;
 }

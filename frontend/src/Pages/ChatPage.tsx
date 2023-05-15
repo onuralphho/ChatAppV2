@@ -15,6 +15,7 @@ import { TabTitle } from "../utils/TabTitle";
 import { useTranslation } from "react-i18next";
 import AlertBox from "../Components/UI/GeneralUI/AlertBox";
 import { useAlertContext } from "../Context/AlertProvider";
+import { typingStatus } from "../@types/typingStatusType";
 const ChatPage = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
@@ -37,6 +38,19 @@ const ChatPage = () => {
   const conCtx = useConnectionContext();
   const ctx = useAuth();
   const alertCtx = useAlertContext();
+
+  useEffect(() => {
+    const typingStatusListener = async (typingStatus: typingStatus) => {
+      console.log("AAAA",typingStatus)
+    };
+    const connection = conCtx?.connection;
+    if (connection) {
+      connection.on("RecieveTypingStatus", typingStatusListener);
+      return () => {
+        connection.off("RecieveTypingStatus",typingStatusListener)
+      }
+    }
+  }, [conCtx?.connection]);
 
   useEffect(() => {
     const friendRequestListener = async (friendBox: IFriendList) => {
@@ -175,8 +189,8 @@ const ChatPage = () => {
 
       return () => {
         connection.off("RecieveMessage", receiveMessage);
+      }
       };
-    }
   }, [ctx?.talkingTo, conCtx?.connection]);
 
   useEffect(() => {

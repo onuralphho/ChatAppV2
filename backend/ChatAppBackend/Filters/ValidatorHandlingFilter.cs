@@ -28,9 +28,9 @@ namespace ChatAppBackend.Filters
         {
             if (!context.ModelState.IsValid)
             {
-                context.Result = new BadRequestObjectResult(await CreateErrorResponse(context.ModelState));
+                context.Result = new BadRequestObjectResult(await CreateErrorResponse(context.ModelState).ConfigureAwait(false));
             }
-            await base.OnResultExecutionAsync(context, next);
+            await base.OnResultExecutionAsync(context, next).ConfigureAwait(false);
 
         }
         public override void OnActionExecuting(ActionExecutingContext context)

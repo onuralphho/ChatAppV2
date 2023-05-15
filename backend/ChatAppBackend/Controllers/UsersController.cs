@@ -28,7 +28,7 @@ namespace ChatAppBackend.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> Register(RegisterDto regUser)
         {
-            await _userService.Register(regUser);
+            await _userService.Register(regUser).ConfigureAwait(false);
             return NoContent();
 
         }
@@ -36,7 +36,7 @@ namespace ChatAppBackend.Controllers
         [HttpPut("update")]
         public async Task<UserUpdateResponse> Update(UpdateUserDto updatedUser)
         {
-            var response = new UserUpdateResponse { Detail = "update_user", SessionUser = await _userService.UpdateUser(updatedUser) };
+            var response = new UserUpdateResponse { Detail = "update_user", SessionUser = await _userService.UpdateUser(updatedUser).ConfigureAwait(false) };
             return response;
         }
 
@@ -44,7 +44,7 @@ namespace ChatAppBackend.Controllers
         public async Task<UpdatePasswordResponse> ChangePassword(UpdatePasswordDto passwordDto)
         {
 
-            return await _userService.UpdatePassword(passwordDto); ;
+            return await _userService.UpdatePassword(passwordDto).ConfigureAwait(false); ;
 
         }
 
@@ -59,7 +59,7 @@ namespace ChatAppBackend.Controllers
         [HttpPut("updatefeeling")]
         public async Task<UpdateUserFeelingDto> UpdateFeeling(UpdateUserFeelingDto userFeeling)
         {
-            return await _userService.UpdateFeeling(userFeeling);
+            return await _userService.UpdateFeeling(userFeeling).ConfigureAwait(false);
 
         }
         

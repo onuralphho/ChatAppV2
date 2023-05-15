@@ -12,19 +12,22 @@ import { ITalkingTo } from "../@types/talkingTo";
 import { Fetcher } from "../utils/Fetcher";
 import { useConnectionContext } from "../Context/ConnectionProvider";
 import ChatLoader from "./UI/ChatUI/ChatLoader";
-
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import CloseButton from "./UI/GeneralUI/CloseButton";
 import { scaleEffect } from "../Constants/FramerMotionEffects/scaleEffect";
 import FileInput from "./UI/GeneralUI/FileInput";
 import { S3MediaSender } from "../utils/S3MediaSender";
+import { typingStatus } from "../@types/typingStatusType";
 interface IProps {
   talkingTo: ITalkingTo;
   messages: IMessage[] | undefined;
 }
 
 const ChatLog = (props: IProps) => {
+  const conCtx = useConnectionContext();
+  const ctx = useAuth();
+
   const [messageInput, setMessageInput] = useState<string>("");
   const [checkerVal, setCheckerVal] = useState<boolean>(false);
   const [showFileInput, setShowFileInput] = useState<boolean>(false);
@@ -39,10 +42,12 @@ const ChatLog = (props: IProps) => {
   const [animationSelectorShow, setAnimationSelectorShow] =
     useState<boolean>(false);
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [typingStatus, setTypingStatus] = useState<typingStatus>({
+     ToUserId:ctx?.talkingTo?.id?.toString(),
+    isTyping: false,
+  });
 
-  const conCtx = useConnectionContext();
-  const ctx = useAuth();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { t } = useTranslation();
 
@@ -51,7 +56,29 @@ const ChatLog = (props: IProps) => {
   );
   messageAudio.volume = 0.2;
 
+  useEffect(() => {
+    
+    const typingStatusSpeaker = async () => {
+      console.log(typingStatus,typingStatus.ToUserId);
+      //TODO: Typing status send operations send typing wont work
+      await conCtx?.connection?.send("TypingStatus", typingStatus);
+    };
+
+    typingStatusSpeaker();
+  }, [typingStatus.isTyping]);
+
   const messageChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.length > 0) {
+      setTypingStatus({
+        ToUserId: ctx?.talkingTo?.id?.toString(),
+        isTyping: true,
+      });
+    } else {
+      setTypingStatus({
+        ToUserId: ctx?.talkingTo?.id?.toString(),
+        isTyping: false,
+      });
+    }
     setMessageInput(e.target.value);
   };
 
@@ -100,6 +127,7 @@ const ChatLog = (props: IProps) => {
     };
 
     ctx?.setMessages((prev) => [...(prev || []), messagePayload]);
+
     messageAudio.play();
     ctx?.setFriendList((prev) => {
       let friend = prev?.find((f) => f.id === props.talkingTo.friendBoxId);
@@ -115,7 +143,7 @@ const ChatLog = (props: IProps) => {
       }
       return prev || [];
     });
-    
+
     var awsS3ImgUrl;
     if (fileInput) {
       awsS3ImgUrl = await S3MediaSender(fileInput);
@@ -130,7 +158,8 @@ const ChatLog = (props: IProps) => {
       token: ctx?.getCookie("jwt"),
     });
     const data = await res.json();
-    await conCtx?.connection?.invoke("SendMessage", data);
+    await conCtx?.connection?.send("SendMessage", data);
+   
   };
 
   const scrollToBottom = useCallback(() => {
@@ -342,14 +371,14 @@ const ChatLog = (props: IProps) => {
 
       <form
         onSubmit={sendMessageHandler}
-        className="flex items-center gap-1 p-1 "
+        className="flex items-center gap-1 p-1 max-sm:mb-4"
       >
         <button
           onClick={(e) => {
             setShowFileInput((prev) => !prev);
           }}
           type="button"
-          className="relative text-xl  p-2 hover:bg-[#616161] rounded-lg"
+          className="relative text-xl  p-2 hover:sm:bg-[#616161] rounded-lg"
         >
           <FiPaperclip size={25} />
 
@@ -360,9 +389,9 @@ const ChatLog = (props: IProps) => {
             />
           )}
         </button>
-        <div className="flex relative items-center flex-1 h-full gap-2 px-2 py-1 bg-white rounded-lg ">
+        <div className="flex relative items-center flex-1  gap-2 p-1 bg-white rounded-lg ">
           <div
-            className="relative w-auto border-2 border-green-500 p-1 rounded-md hover:bg-neutral-200 "
+            className="relative w-auto border-2 border-green-500 p-1 rounded-md hover:bg-neutral-200  "
             onMouseEnter={() => {
               setAnimationSelectorShow(true);
             }}

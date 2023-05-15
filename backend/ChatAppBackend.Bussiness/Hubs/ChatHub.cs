@@ -40,6 +40,14 @@ namespace ChatAppBackend.Bussiness.Hubs
 
         }
 
+        public async Task TypingStatus(TypingStatusDto typingStatus)
+        {
+            Console.WriteLine(typingStatus);
+            await Clients.Group(typingStatus.ToUserId).SendAsync("RecieveTypingStatus", typingStatus).ConfigureAwait(false);
+
+        }
+
+
 
         public async Task SendMessage(HubMessageSent hubMessageSent)
         {
@@ -47,13 +55,13 @@ namespace ChatAppBackend.Bussiness.Hubs
             var friendshipdb = _context.FriendBoxes.Include(f => f.FromUser)
          .Include(f => f.ToUser).FirstOrDefault((f) => f.Id == hubMessageSent.FriendBoxId);
 
-            if(hubMessageSent.ContentText.Length == 0)
+            if (hubMessageSent.ContentText.Length == 0)
             {
                 friendshipdb.LastMessage = "image";
             }
             else
             {
-            friendshipdb.LastMessage = hubMessageSent.ContentText;
+                friendshipdb.LastMessage = hubMessageSent.ContentText;
 
             }
             friendshipdb.LastMessageFrom = hubMessageSent.FromUser.Name;

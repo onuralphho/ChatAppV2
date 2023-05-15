@@ -102,8 +102,7 @@ namespace ChatAppBackend.Bussiness.Services
 
             var matchingUsers = _context.Users.Where(u => u.Name.Contains(userSearch.SearchValue)).Select(u => new UserSearchResponse { Id = u.Id, Name = u.Name, Picture = u.Picture }).ToList();
 
-
-
+            
             matchingUsers = matchingUsers.OrderByDescending(u => GetSimilarity(u.Name, userSearch.SearchValue)).ToList();
 
 
