@@ -25,12 +25,12 @@ namespace ChatAppBackend.Bussiness.Services
         public async Task<FriendBoxFriendsResponse> AddFriend(FriendBoxAddRequest friendBox)
         {
             var friendShip = await _context.FriendBoxes.FirstOrDefaultAsync(f => f.FromUserId == friendBox.FromId && f.ToUserId == friendBox.ToId
-                 || f.FromUserId == friendBox.ToId && f.ToUserId == friendBox.FromId);
+                 || f.FromUserId == friendBox.ToId && f.ToUserId == friendBox.FromId).ConfigureAwait(false);
 
             if (friendShip == null)
             {
-                var user = await _context.Users.FindAsync(friendBox.FromId);
-                var friend = await _context.Users.FindAsync(friendBox.ToId);
+                var user = await _context.Users.FindAsync(friendBox.FromId).ConfigureAwait(false);
+                var friend = await _context.Users.FindAsync(friendBox.ToId).ConfigureAwait(false);
 
                 friendShip = new FriendBox
                 {
@@ -40,7 +40,7 @@ namespace ChatAppBackend.Bussiness.Services
                 };
                 Console.WriteLine(friendShip);
                 _context.FriendBoxes.Add(friendShip);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync().ConfigureAwait(false);
                 Console.WriteLine(friendShip);
                 return _mapper.Map<FriendBoxFriendsResponse>(friendShip);
             }
@@ -81,7 +81,7 @@ namespace ChatAppBackend.Bussiness.Services
             var friendbox = await _context.FriendBoxes
                 .Include(f => f.FromUser)
                 .Include(f => f.ToUser)
-                .FirstOrDefaultAsync(f => f.Id == friendBoxId);
+                .FirstOrDefaultAsync(f => f.Id == friendBoxId).ConfigureAwait(false);
 
 
             if (friendbox == null)
@@ -92,13 +92,13 @@ namespace ChatAppBackend.Bussiness.Services
             friendbox.Approved = true;
             friendbox.UpdateTime = DateTime.UtcNow;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync().ConfigureAwait(false);
             return _mapper.Map<FriendBoxFriendsResponse>(friendbox);
         }
 
         public async Task<int> DeleteFriend(int friendBoxId)
         {
-            var friendbox = await _context.FriendBoxes.FirstOrDefaultAsync(f => f.Id == friendBoxId);
+            var friendbox = await _context.FriendBoxes.FirstOrDefaultAsync(f => f.Id == friendBoxId).ConfigureAwait(false);
 
             if (friendbox == null)
             {
@@ -108,7 +108,7 @@ namespace ChatAppBackend.Bussiness.Services
             _context.FriendBoxes.Remove(friendbox);
 
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync().ConfigureAwait(false);
 
 
             return friendBoxId;

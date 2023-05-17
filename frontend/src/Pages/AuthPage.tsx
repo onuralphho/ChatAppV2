@@ -4,7 +4,7 @@ import { useAuth } from "../Context/AuthProvider";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Fetcher } from "../utils/Fetcher";
-import LanguageSelector from "../Components/LanguageSelector";
+import LanguageSelector from "../Components/UI/GeneralUI/LanguageSelector";
 
 const AuthPage = () => {
   const ctx = useAuth();
@@ -64,13 +64,13 @@ const AuthPage = () => {
 
   return (
     <div className="flex   max-xl:flex-col h-[100svh]  max-md:gap-4 max-xl:gap-4 items-center md:justify-center max-md:pt-10">
-      <div className="absolute bottom-2 right-2 rounded-b-md text-[#252525] hover:text-white">
+      <div className="absolute bg-[#efefef] -z-0 bottom-2 right-2 rounded-b-md text-[#252525] hover:text-white">
         <LanguageSelector/>
       </div>
 
       <img
         src={humanImage}
-        className="   max-w-xs  lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl "
+        className=" max-sm:w-[35vh] max-w-sm lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl"
         alt=""
       />
 
