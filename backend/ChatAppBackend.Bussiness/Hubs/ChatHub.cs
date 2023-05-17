@@ -21,13 +21,13 @@ namespace ChatAppBackend.Bussiness.Hubs
 
         public async Task JoinRoom(UserConnection userConnection)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.UserId);
+            await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.UserId).ConfigureAwait(false);
         }
 
         public async Task FriendRequest(FriendBoxFriendsResponse friendBox)
         {
 
-            await Clients.Group(friendBox.ToUserId.ToString()).SendAsync("RecieveFriend", friendBox);
+            await Clients.Group(friendBox.ToUserId.ToString()).SendAsync("RecieveFriend", friendBox).ConfigureAwait(false);
 
 
         }
@@ -36,9 +36,17 @@ namespace ChatAppBackend.Bussiness.Hubs
         {
 
 
-            await Clients.Group(friendBox.FromUserId.ToString()).SendAsync("ApproveFriend", friendBox);
+            await Clients.Group(friendBox.FromUserId.ToString()).SendAsync("ApproveFriend", friendBox).ConfigureAwait(false);
 
         }
+
+        public async Task TypingStatus(TypingStatusDto typingStatus)
+        {
+            Console.WriteLine(typingStatus);
+            await Clients.Group(typingStatus.ToUserId).SendAsync("RecieveTypingStatus", typingStatus).ConfigureAwait(false);
+
+        }
+
 
 
         public async Task SendMessage(HubMessageSent hubMessageSent)
@@ -47,18 +55,18 @@ namespace ChatAppBackend.Bussiness.Hubs
             var friendshipdb = _context.FriendBoxes.Include(f => f.FromUser)
          .Include(f => f.ToUser).FirstOrDefault((f) => f.Id == hubMessageSent.FriendBoxId);
 
-            if(hubMessageSent.ContentText.Length == 0)
+            if (hubMessageSent.ContentText.Length == 0)
             {
                 friendshipdb.LastMessage = "image";
             }
             else
             {
-            friendshipdb.LastMessage = hubMessageSent.ContentText;
+                friendshipdb.LastMessage = hubMessageSent.ContentText;
 
             }
             friendshipdb.LastMessageFrom = hubMessageSent.FromUser.Name;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync().ConfigureAwait(false);
 
             var friendship = _mapper.Map<FriendBoxFriendsResponse>(friendshipdb);
 
@@ -73,7 +81,7 @@ namespace ChatAppBackend.Bussiness.Hubs
             };
 
 
-            await Clients.Group(hubMessageSent.ToUserId.ToString()).SendAsync("RecieveMessage", obj);
+            await Clients.Group(hubMessageSent.ToUserId.ToString()).SendAsync("RecieveMessage", obj).ConfigureAwait(false);
         }
 
     }

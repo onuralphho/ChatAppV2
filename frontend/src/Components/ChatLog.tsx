@@ -11,17 +11,23 @@ import { useAuth } from "../Context/AuthProvider";
 import { ITalkingTo } from "../@types/talkingTo";
 import { Fetcher } from "../utils/Fetcher";
 import { useConnectionContext } from "../Context/ConnectionProvider";
-import ChatLoader from "./UI/ChatLoader";
-import AWS from "aws-sdk";
+import ChatLoader from "./UI/ChatUI/ChatLoader";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-
+import CloseButton from "./UI/GeneralUI/CloseButton";
+import { scaleEffect } from "../Constants/FramerMotionEffects/scaleEffect";
+import FileInput from "./UI/GeneralUI/FileInput";
+import { S3MediaSender } from "../utils/S3MediaSender";
+import { typingStatus } from "../@types/typingStatusType";
 interface IProps {
   talkingTo: ITalkingTo;
   messages: IMessage[] | undefined;
 }
 
 const ChatLog = (props: IProps) => {
+  const conCtx = useConnectionContext();
+  const ctx = useAuth();
+
   const [messageInput, setMessageInput] = useState<string>("");
   const [checkerVal, setCheckerVal] = useState<boolean>(false);
   const [showFileInput, setShowFileInput] = useState<boolean>(false);
@@ -36,10 +42,12 @@ const ChatLog = (props: IProps) => {
   const [animationSelectorShow, setAnimationSelectorShow] =
     useState<boolean>(false);
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [typingStatus, setTypingStatus] = useState<typingStatus>({
+     ToUserId:ctx?.talkingTo?.id?.toString(),
+    isTyping: false,
+  });
 
-  const conCtx = useConnectionContext();
-  const ctx = useAuth();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { t } = useTranslation();
 
@@ -48,12 +56,28 @@ const ChatLog = (props: IProps) => {
   );
   messageAudio.volume = 0.2;
 
-  const s3 = new AWS.S3({
-    region: "eu-central-1",
-    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESSKEY,
-  });
+  useEffect(() => {
+    
+    const typingStatusSpeaker = async () => {
+      //TODO: Typing status send operations send typing wont work
+      await conCtx?.connection?.send("TypingStatus", typingStatus);
+    };
+
+    typingStatusSpeaker();
+  }, [typingStatus.isTyping]);
+
   const messageChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.length > 0) {
+      setTypingStatus({
+        ToUserId: ctx?.talkingTo?.id?.toString(),
+        isTyping: true,
+      });
+    } else {
+      setTypingStatus({
+        ToUserId: ctx?.talkingTo?.id?.toString(),
+        isTyping: false,
+      });
+    }
     setMessageInput(e.target.value);
   };
 
@@ -102,12 +126,16 @@ const ChatLog = (props: IProps) => {
     };
 
     ctx?.setMessages((prev) => [...(prev || []), messagePayload]);
+
     messageAudio.play();
     ctx?.setFriendList((prev) => {
       let friend = prev?.find((f) => f.id === props.talkingTo.friendBoxId);
       if (friend) {
         friend.updateTime = dateNow.toISOString();
-        friend.lastMessage = messagePayload.contentText.length > 0 ? messagePayload.contentText : t("image").toString();
+        friend.lastMessage =
+          messagePayload.contentText.length > 0
+            ? messagePayload.contentText
+            : t("image").toString();
         friend.lastMessageFrom = messagePayload.fromUser.name;
 
         return [...(prev || [])];
@@ -115,19 +143,12 @@ const ChatLog = (props: IProps) => {
       return prev || [];
     });
 
+    var awsS3ImgUrl;
     if (fileInput) {
-      const params = {
-        Bucket: "chatappv2/",
-        Key: fileInput.name,
-        Body: fileInput,
-        ACL: "public-read",
-      };
-      var awss3imgurl;
-      const dataS3 = await s3.upload(params).promise();
-      awss3imgurl = dataS3.Location;
+      awsS3ImgUrl = await S3MediaSender(fileInput);
     }
 
-    messagePayload.contentImageUrl = awss3imgurl;
+    messagePayload.contentImageUrl = awsS3ImgUrl;
 
     const res = await Fetcher({
       method: "POST",
@@ -136,8 +157,8 @@ const ChatLog = (props: IProps) => {
       token: ctx?.getCookie("jwt"),
     });
     const data = await res.json();
-    await conCtx?.connection?.invoke("SendMessage", data);
-
+    await conCtx?.connection?.send("SendMessage", data);
+   
   };
 
   const scrollToBottom = useCallback(() => {
@@ -153,15 +174,16 @@ const ChatLog = (props: IProps) => {
   }, [checkerVal, messagesEndRef]);
 
   useEffect(() => {
-    scrollToBottom();
+    if (
+      ctx?.talkingTo?.friendBoxId ===
+      (ctx?.messages &&
+        ctx?.messages[ctx.messages?.length - 1] &&
+        ctx?.messages[ctx.messages?.length - 1].friendBoxId)
+    ) {
+      scrollToBottom();
+    }
   }, [ctx?.messages, scrollToBottom, checkerVal]);
-  const item = {
-    hidden: { opacity: 0, scale: 0 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-    },
-  };
+
   return (
     <div className=" bg-[#363636] w-full relative   flex-1  flex flex-col  h-full fade-in">
       {/* TALKINGTO */}
@@ -188,11 +210,11 @@ const ChatLog = (props: IProps) => {
           className="w-full h-full absolute z-30 flex bg-[rgba(0,0,0,0.4)] items-center justify-center  backdrop-blur-sm"
         >
           <motion.img
-            variants={item}
+            variants={scaleEffect}
             initial="hidden"
             animate="visible"
             src={showFullImage}
-            className=" h-full w-full max-h-[80%] max-w-[900px]  object-contain"
+            className=" h-full w-full max-h-[80%] max-w-[900px]  object-contain select-none"
             alt=""
           />
         </div>
@@ -226,7 +248,7 @@ const ChatLog = (props: IProps) => {
                           ? ctx?.user.picture
                           : props.talkingTo.picture
                       }
-                      className={`w-8 rounded-full   ${
+                      className={`w-8 rounded-full aspect-square object-cover   ${
                         ctx?.user && ctx.user.id === message.fromUserId
                           ? "max-md:hidden"
                           : ""
@@ -348,47 +370,27 @@ const ChatLog = (props: IProps) => {
 
       <form
         onSubmit={sendMessageHandler}
-        className="flex items-center gap-1 p-1 "
+        className="flex items-center gap-1 p-1 max-sm:mb-4"
       >
         <button
           onClick={(e) => {
             setShowFileInput((prev) => !prev);
           }}
           type="button"
-          className="relative text-xl  p-2 hover:bg-[#616161] rounded-lg"
+          className="relative text-xl  p-2 hover:sm:bg-[#616161] rounded-lg"
         >
           <FiPaperclip size={25} />
 
           {showFileInput && (
-            <motion.div
-              variants={item}
-              initial="hidden"
-              animate="visible"
-              className="file-upload flex justify-center absolute -top-14 left-0  z-10 bg-[#ffffff] backdrop-blur-lg text-sm  cursor-default  px-1 py-2 rounded-lg "
-            >
-              <label
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-                htmlFor="file-upload"
-                className=" overflow-hidden cursor-pointer "
-              >
-                <HiPhoto size={30} className="text-green-500 " />
-                <input
-                  id="file-upload"
-                  type="file"
-                  size={2}
-                  className="hidden opacity-0"
-                  accept="image/png, image/webp, image/*"
-                  onChange={fileInputChangeHandler}
-                />
-              </label>
-            </motion.div>
+            <FileInput
+              fileInputChangeHandler={fileInputChangeHandler}
+              styleTw="file-upload flex justify-center absolute text-green-500 -top-14 left-0  z-10 bg-[#ffffff] backdrop-blur-lg text-sm  cursor-default  px-1 py-2 rounded-lg "
+            />
           )}
         </button>
-        <div className="flex relative items-center flex-1 h-full gap-2 px-2 py-1 bg-white rounded-lg ">
+        <div className="flex relative items-center flex-1  gap-2 p-1 bg-white rounded-lg ">
           <div
-            className="relative w-auto border-2 border-green-500 p-1 rounded-md hover:bg-neutral-200 "
+            className="relative w-auto border-2 border-green-500 p-1 rounded-md hover:bg-neutral-200  "
             onMouseEnter={() => {
               setAnimationSelectorShow(true);
             }}
@@ -400,7 +402,7 @@ const ChatLog = (props: IProps) => {
               }}
               className={`${
                 animationSelectorShow ? "opacity-100" : "opacity-0 hidden"
-              } absolute gap-2 -top-14 left-0 p-1  flex justify-center bg-white rounded-md`}
+              } absolute gap-2 -top-14 left-0 p-1 z-20  flex justify-center bg-white rounded-md`}
             >
               <div>
                 <input
@@ -408,6 +410,7 @@ const ChatLog = (props: IProps) => {
                   name="animationselector"
                   id="none"
                   className="hidden peer"
+                  checked={animationType === undefined}
                   onChange={() => {
                     setAnimationType(undefined);
                   }}
@@ -478,16 +481,13 @@ const ChatLog = (props: IProps) => {
           <div className="flex w-full gap-2">
             {previewImage && (
               <div className="absolute bottom-10 bg-white p-2 rounded-t-lg left-2">
-                <button
-                  type="button"
-                  onClick={() => {
+                <CloseButton
+                  onTouch={() => {
                     setFileInput(undefined);
                     setPreviewImage(undefined);
                   }}
-                  className="absolute bg-red-500 rounded-full w-7 right-1 top-1 aspect-square "
-                >
-                  X
-                </button>
+                  color="[#252525]"
+                />
                 <img
                   src={previewImage}
                   className="h-auto rounded-md w-56 "

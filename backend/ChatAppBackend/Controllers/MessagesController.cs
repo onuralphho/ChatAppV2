@@ -40,7 +40,7 @@ namespace ChatAppBackend.Controllers
         public async Task<ActionResult> ReadMessages(int friendBoxId)
         {
             //Canlı mesaj okuma yapısı kurulunca düzenlenicek
-            await _messageservice.ReadMessage(friendBoxId);
+            await _messageservice.ReadMessage(friendBoxId).ConfigureAwait(false);
             return NoContent();
         }
 

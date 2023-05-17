@@ -1,18 +1,20 @@
 import { AiFillCaretRight, AiFillPlusCircle, AiFillHome } from "react-icons/ai";
 import { BiSearchAlt } from "react-icons/bi";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import { IoSettingsSharp, IoLogOutOutline } from "react-icons/io5";
+import { MdTouchApp } from "react-icons/md";
 import { useState } from "react";
 import FriendsList from "../Components/FriendsList";
 import { useAuth } from "../Context/AuthProvider";
-import Modal from "./UI/Modal";
+import Modal from "./UI/GeneralUI/Modal";
 import { useNavigate } from "react-router-dom";
-import { IoSettingsSharp, IoLogOutOutline } from "react-icons/io5";
-import AlertBox from "./UI/AlertBox";
 import { Fetcher } from "../utils/Fetcher";
 import { useAlertContext } from "../Context/AlertProvider";
-import { sleep } from "../utils/sleep";
 import { useConnectionContext } from "../Context/ConnectionProvider";
 import { useTranslation } from "react-i18next";
+import ModalBackground from "./UI/GeneralUI/ModalBackground";
+import { motion } from "framer-motion";
+import { scaleEffect } from "../Constants/FramerMotionEffects/scaleEffect";
 
 interface ISideBarProps {
   openProfile: Function;
@@ -32,13 +34,15 @@ const SideBar = (props: ISideBarProps) => {
   const [showMenu, setShowMenu] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchResult, setSearchResult] = useState([]);
+  const [feelingInput, setFeelingInput] = useState<string>("");
+  const [feelingError, setFeelingError] = useState<string | undefined>();
 
   const ctx = useAuth();
   const alertCtx = useAlertContext();
   const conCtx = useConnectionContext();
 
   const navigate = useNavigate();
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -58,6 +62,30 @@ const SideBar = (props: ISideBarProps) => {
   };
   const closeSideBar = () => {
     setShowMenu(false);
+  };
+
+  const submitFeelingFormHandler = async (
+    e: React.FocusEvent<HTMLFormElement> | any
+  ) => {
+    e.preventDefault();
+
+    const res = await Fetcher({
+      method: "PUT",
+      url: "/api/users/updatefeeling",
+      body: { feeling: feelingInput },
+      token: ctx?.getCookie("jwt"),
+    });
+    const data = await res.json();
+    console.log(data);
+    if (data.status !== 400) {
+      if (ctx && ctx.user) {
+        const updatedUser = { ...ctx.user, feeling: data.feeling };
+        ctx.setUser(updatedUser);
+      }
+      setFeelingInput("");
+    } else {
+      setFeelingError(data.detail);
+    }
   };
 
   const searchHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,44 +117,23 @@ const SideBar = (props: ISideBarProps) => {
     });
     const data = await res.json();
 
-
-
     if (data.friend) {
       conCtx?.connection?.send("FriendRequest", data.friend);
       setSearchResult([]);
       setSearchInput("");
 
-      alertCtx?.setAlert({ shown: true, type: t(data.message) });
+      alertCtx?.alertStarter(data.message);
 
       ctx?.setFriendList((prev) => [...(prev ?? []), data.friend]);
-
-      await sleep(2000);
-      alertCtx?.setAlert({ shown: false, type: t(data.message) });
     }
-    if(data.status === 400){
-      alertCtx?.setAlert({ shown: true, type: t(data.title) });
-      await sleep(2000);
-      alertCtx?.setAlert({ shown: false, type: t(data.title) });
+    if (data.status === 400) {
+      alertCtx?.alertStarter(data.title);
     }
   };
 
   return (
     <>
-      {searchResult.length > 0 && (
-        <div
-          onClick={() => {
-            setSearchResult([]);
-            setSearchInput("");
-          }}
-          className="absolute w-[100vw] h-[100vh] max-lg:hidden bg-black z-30 opacity-30 cursor-pointer"
-        ></div>
-      )}
-      <AlertBox
-        message={alertCtx?.alert.type}
-        isShown={alertCtx?.alert.shown}
-        closeBox={alertCtx?.setAlert}
-      />
-      {/* Modal */}
+      {/* //! Modal */}
       {isModalOpen && (
         <Modal confirm={logOut} cancel={closeModal} title={t("logout")} />
       )}
@@ -147,6 +154,7 @@ const SideBar = (props: ISideBarProps) => {
       </div>
       {/* //! Flag */}
 
+      {/* //! Mobile menu blur */}
       {showMenu && (
         <div
           onClick={() => {
@@ -157,32 +165,95 @@ const SideBar = (props: ISideBarProps) => {
       )}
 
       <div
-        className={` p-2   bg-[#252525] max-lg:z-20 transition-all relative overflow-hidden  w-64  ${
-          !!showMenu ? "lg:w-80" : "lg:w-[4.5rem]"
-        }  gap-4 flex flex-col  ${
-          showMenu ? "max-lg:translate-0" : "max-lg:-translate-x-64"
-        } max-lg:absolute max-lg:bottom-0 max-lg:top-0 `}
+        className={` p-2 bg-[#252525] max-lg:z-20 transition-all relative overflow-hidden  w-64  gap-2 flex flex-col max-lg:absolute max-lg:bottom-0 max-lg:top-0 ${
+          showMenu ? "lg:w-80" : "lg:w-[4.5rem]"
+        }   ${showMenu ? "max-lg:translate-0" : "max-lg:-translate-x-64"} `}
       >
-        <div className="flex px-2  items-center gap-2 justify">
-          <img
-            onClick={() => {
-              setShowMenu(true);
-            }}
-            src={ctx?.user?.picture}
-            className="w-10 aspect-square shadow-md shadow-black rounded-full object-cover"
-            alt=""
-          />
-          <div className={`flex gap-2 flex-wrap ${showMenu ? "" : "hidden"}`}>
-            <span>
-              {ctx?.user &&
-                ctx?.user.name.charAt(0).toUpperCase() +
-                  ctx?.user.name.slice(1).toLowerCase()}
-            </span>
+        <div className="flex px-2   flex-col  gap-2 ">
+          <div className="flex  h-full gap-4 items-center ">
+            <img
+              onClick={() => {
+                setShowMenu(true);
+              }}
+              src={ctx?.user?.picture}
+              className=" w-10 aspect-square shadow-md shadow-black rounded-full object-cover"
+              alt=""
+            />
+            {showMenu && (
+              <form
+                onSubmit={submitFeelingFormHandler}
+                className={`whitespace-nowrap relative flex-1 flex  lg:items-center gap-1  ${
+                  showMenu ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                <MdTouchApp
+                  size={30}
+                  className={`finger text-[#cccccc] absolute z-[30] -bottom-5 left-10 ${
+                    feelingInput.length > 0 ? "hidden" : ""
+                  } ${ctx?.user?.feeling ? "hidden" : ""}`}
+                />
+                <div
+                  className={`circle_wave absolute z-10  w-5 left-11 bg-[#efefef54] rounded-full aspect-square -bottom-2 ${
+                    feelingInput.length > 0 ? "hidden" : ""
+                  } ${ctx?.user?.feeling ? "hidden" : ""}`}
+                ></div>
+
+                <div className="flex justify-start relative gap-1">
+                  <input
+                    placeholder={
+                      ctx?.user?.feeling
+                        ? ctx.user.feeling
+                        : t("feelings").toString()
+                    }
+                    type="text"
+                    value={feelingInput}
+                    onChange={(e) => {
+                      setFeelingInput(e.target.value);
+                      setFeelingError(undefined);
+                    }}
+                    onBlur={(e) => {
+                      if (feelingInput.length > 0) {
+                        submitFeelingFormHandler(e);
+                      }
+                    }}
+                    className={` text-[#252525] w-full placeholder:italic placeholder:text-sm p-1 z-[1]  rounded-md ${
+                      feelingError
+                        ? "border-2 border-red-500 ring-red-500 "
+                        : ""
+                    }`}
+                  />
+                  <div
+                    className={`absolute w-5 aspect-square ${
+                      feelingError ? "bg-red-500 " : "bg-white"
+                    }  rotate-45 top-1 -left-1`}
+                  ></div>
+                </div>
+                {feelingInput.length > 0 && (
+                  <motion.button
+                    type="submit"
+                    variants={scaleEffect}
+                    initial="hidden"
+                    animate="visible"
+                    className="text-sm bg-green-500 px-1 py-1 rounded-md hidden"
+                  >
+                    {t("submit")}
+                  </motion.button>
+                )}
+              </form>
+            )}
           </div>
         </div>
 
         {/* //! Search Bar */}
-
+        {showMenu && searchResult.length > 0 && (
+          <ModalBackground
+            darkness={0.3}
+            onClose={() => {
+              setSearchResult([]);
+              setSearchInput("");
+            }}
+          />
+        )}
         <label
           onClick={() => {
             setShowMenu(true);
@@ -190,7 +261,7 @@ const SideBar = (props: ISideBarProps) => {
           htmlFor="search"
           className={`relative border py-1 mx-1 h-10 ${
             showMenu ? "lg:pl-8 " : "lg:pl-6  aspect-square"
-          }px-10 border-green-400 text-green-500 text-xl focus-within:border-purple-500 cursor-pointer  rounded-full`}
+          }px-10 border-green-400 text-green-500 text-xl focus-within:border-purple-500 cursor-pointer z-40  rounded-full`}
         >
           <div className="absolute left-2.5 top-2.5 w-5">
             <BiSearchAlt size={20} className="w-full h-full" />
@@ -210,41 +281,43 @@ const SideBar = (props: ISideBarProps) => {
           <input
             id="search"
             onChange={searchHandler}
-            value={searchInput}
+            value={showMenu ? searchInput : ""}
             className="bg-transparent outline-none w-full"
             type="text"
           />
-          <div
-            className={`${
-              searchResult.length > 0 ? "p-1" : ""
-            } bg-purple-600 z-30  transition-all flex flex-col  overflow-hidden absolute left-0 top-11 w-full rounded-md  `}
-          >
-            <div className="rounded-md overflow-hidden">
-              {searchResult.map((item: ISearchResult) =>
-                item.id !== ctx?.user?.id ? (
-                  <div
-                    key={item.id}
-                    className=" hover:bg-[#363636] cursor-default   select-none p-2 flex  justify-between items-center gap-2 bg-[#252525]"
-                  >
-                    <div className="flex items-center gap-2">
-                      <img
-                        src={item.picture}
-                        alt=""
-                        className="h-10 rounded-full"
+          {showMenu && (
+            <div
+              className={`${
+                searchResult.length > 0 ? "p-1" : ""
+              } bg-purple-600 z-30  transition-all flex flex-col  overflow-hidden absolute left-0 top-11 w-full rounded-md  `}
+            >
+              <div className="rounded-md overflow-hidden">
+                {searchResult.map((item: ISearchResult) =>
+                  item.id !== ctx?.user?.id ? (
+                    <div
+                      key={item.id}
+                      className=" hover:bg-[#363636] cursor-default   select-none p-2 flex  justify-between items-center gap-2 bg-[#252525]"
+                    >
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={item.picture}
+                          alt=""
+                          className="h-10 aspect aspect-square object-cover rounded-full"
+                        />
+                        <span className="text-white truncate">{item.name}</span>
+                      </div>
+                      <AiFillPlusCircle
+                        onClick={() => {
+                          addFriendHandler(item.id);
+                        }}
+                        className="cursor-pointer"
                       />
-                      <span className="text-white">{item.name}</span>
                     </div>
-                    <AiFillPlusCircle
-                      onClick={() => {
-                        addFriendHandler(item.id);
-                      }}
-                      className="cursor-pointer"
-                    />
-                  </div>
-                ) : null
-              )}
+                  ) : null
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </label>
         {/*//! FRIEND LIST */}
         <FriendsList

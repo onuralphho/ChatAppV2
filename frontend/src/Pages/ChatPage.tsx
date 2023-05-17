@@ -5,7 +5,7 @@ import ChatLog from "../Components/ChatLog";
 import SideBar from "../Components/SideBar";
 import ProfileSettings from "../Components/ProfileSettings";
 import Welcome from "../Components/Welcome";
-import Notification from "../Components/UI/Notification";
+import Notification from "../Components/UI/ChatUI/Notification";
 import { useConnectionContext } from "../Context/ConnectionProvider";
 import { sleep } from "../utils/sleep";
 import { INotification } from "../@types/notificationInterface";
@@ -13,6 +13,9 @@ import { IHubMessageResponse } from "../@types/hubMessageResponse";
 import { IFriendList } from "../@types/friendBoxType";
 import { TabTitle } from "../utils/TabTitle";
 import { useTranslation } from "react-i18next";
+import AlertBox from "../Components/UI/GeneralUI/AlertBox";
+import { useAlertContext } from "../Context/AlertProvider";
+import { typingStatus } from "../@types/typingStatusType";
 const ChatPage = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
@@ -34,6 +37,20 @@ const ChatPage = () => {
 
   const conCtx = useConnectionContext();
   const ctx = useAuth();
+  const alertCtx = useAlertContext();
+
+  useEffect(() => {
+    const typingStatusListener = async (typingStatus: typingStatus) => {
+  
+    };
+    const connection = conCtx?.connection;
+    if (connection) {
+      connection.on("RecieveTypingStatus", typingStatusListener);
+      return () => {
+        connection.off("RecieveTypingStatus",typingStatusListener)
+      }
+    }
+  }, [conCtx?.connection]);
 
   useEffect(() => {
     const friendRequestListener = async (friendBox: IFriendList) => {
@@ -172,8 +189,8 @@ const ChatPage = () => {
 
       return () => {
         connection.off("RecieveMessage", receiveMessage);
+      }
       };
-    }
   }, [ctx?.talkingTo, conCtx?.connection]);
 
   useEffect(() => {
@@ -239,6 +256,10 @@ const ChatPage = () => {
       <div className="flex h-full text-white lg:p-5 lg:px-10 xl:px-20 2xl:px-40 ">
         <div className="flex w-full relative max-w-[1920px] mx-auto lg:rounded-xl overflow-hidden  shadow-lg shadow-[rgba(0,0,0,0.5)]">
           {/* Notification */}
+          <AlertBox
+            message={alertCtx?.alert.type}
+            isShown={alertCtx?.alert.shown}
+          />
 
           <Notification
             notification={notification}

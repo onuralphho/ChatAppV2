@@ -2,7 +2,7 @@ import { IMessage } from "../@types/messageType";
 
 interface fetchReq {
   body?: Record<string, unknown> | string | number | null | IMessage;
-  method: string;
+  method: "PUT"|"POST"|"DELETE"|"GET";
   url: string;
   token?: string | null;
 }

@@ -19,7 +19,7 @@ namespace ChatAppBackend.Controllers
         [HttpPost("addfriend")]
         public async Task<FriendBoxAddResponse> AddFriend(FriendBoxAddRequest friendBox)
         {
-            var FriendBoxData = await _friendBoxService.AddFriend(friendBox);
+            var FriendBoxData = await _friendBoxService.AddFriend(friendBox).ConfigureAwait(false);
             if (FriendBoxData == null)
             {
                 throw new BadRequestException("The user is already in your friendlist","notification_already_friend");
@@ -51,7 +51,7 @@ namespace ChatAppBackend.Controllers
         [Route("delete/{friendBoxId}")]
         public async Task<FriendBoxDeleteResponse> Delete(int friendBoxId)
         {
-            var Response = new FriendBoxDeleteResponse { FriendBoxId = await _friendBoxService.DeleteFriend(friendBoxId) };
+            var Response = new FriendBoxDeleteResponse { FriendBoxId = await _friendBoxService.DeleteFriend(friendBoxId).ConfigureAwait(false) };
             return Response;
             
            

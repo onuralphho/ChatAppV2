@@ -2,11 +2,17 @@ import { useAuth } from "../Context/AuthProvider";
 import { IFriendList } from "../@types/friendBoxType";
 import { BsFillPersonCheckFill, BsFillPersonXFill } from "react-icons/bs";
 import { Fetcher } from "../utils/Fetcher";
-import { sleep } from "../utils/sleep";
 import { useAlertContext } from "../Context/AlertProvider";
 import { ITalkingTo } from "../@types/talkingTo";
 import { useConnectionContext } from "../Context/ConnectionProvider";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Iprofile } from "../@types/Iprofile";
+import FriendProfile from "./FriendProfile";
+import ModalBackground from "./UI/GeneralUI/ModalBackground";
+import FriendSettingsDropdown from "./FriendSettingsDropdown";
+
 interface Iprops {
   showMenu: boolean;
   openMenu: Function;
@@ -16,9 +22,16 @@ interface Iprops {
 }
 
 const FriendList = (props: Iprops) => {
+  const [showFriendSettings, setShowFriendSettings] = useState<boolean>(false);
+  const [friendProfileData, setFriendProfileData] = useState<
+    Iprofile | undefined
+  >(undefined);
+
   const ctx = useAuth();
   const alertCtx = useAlertContext();
   const conCtx = useConnectionContext();
+
+  const { t } = useTranslation();
 
   const container = {
     hidden: { opacity: 1 },
@@ -64,10 +77,6 @@ const FriendList = (props: Iprops) => {
         return friendBox;
       });
     });
-
-    alertCtx?.setAlert({ shown: true, type: data.message });
-    sleep(2000);
-    alertCtx?.setAlert({ shown: false, type: data.message });
   };
 
   const RejectFriendRequestHandler = async (
@@ -142,6 +151,22 @@ const FriendList = (props: Iprops) => {
         animate="visible"
         className="hide_scroll flex flex-col  flex-1 overflow-y-auto  overflow-x-hidden"
       >
+        {friendProfileData && props.showMenu && (
+          <div>
+            <ModalBackground
+              darkness={0.3}
+              onClose={() => {
+                setFriendProfileData(undefined);
+              }}
+            />
+            <FriendProfile
+              close={() => {
+                setFriendProfileData(undefined);
+              }}
+              data={friendProfileData}
+            />
+          </div>
+        )}
         {ctx?.friendList
           ?.sort((a: IFriendList, b: IFriendList) =>
             a.updateTime > b.updateTime ? -1 : 1
@@ -173,12 +198,62 @@ const FriendList = (props: Iprops) => {
                 });
               }}
               key={friendBox.id}
-              className={`flex  relative h-14 transition-colors  items-center justify-between  hover:bg-neutral-700 rounded-lg p-1 px-2 ${
+              className={`flex  relative h-14 transition-colors group items-center justify-between  hover:bg-neutral-700 rounded-lg p-1 px-2 ${
                 friendBox.approved ? "cursor-pointer" : ""
               }`}
             >
+              {props.showMenu && friendBox.approved && (
+                <FriendSettingsDropdown
+                  closeTriger={() => {
+                    setShowFriendSettings(false);
+                  }}
+                  openCloseTriger={() => {
+                    setShowFriendSettings((prev) => !prev);
+                  }}
+                  showFriendSettings={showFriendSettings}
+                  setData={() => {
+                    setFriendProfileData({
+                      feelings:
+                        ctx?.user?.id !== friendBox.fromUserId
+                          ? friendBox.fromUser.feeling
+                          : friendBox.toUser.feeling,
+                      name:
+                        ctx?.user?.id !== friendBox.fromUserId
+                          ? friendBox.fromUser.name
+                          : friendBox.toUser.name,
+                      picture:
+                        ctx?.user?.id !== friendBox.fromUserId
+                          ? friendBox.fromUser.picture
+                          : friendBox.toUser.picture,
+                    });
+                  }}
+                />
+              )}
+
               <div className="flex items-center gap-4">
                 <img
+                  onClick={(e) => {
+                    if (props.showMenu) {
+                      e.stopPropagation();
+                      if (friendBox.approved) {
+                        setFriendProfileData({
+                          feelings:
+                            ctx?.user?.id !== friendBox.fromUserId
+                              ? friendBox.fromUser.feeling
+                              : friendBox.toUser.feeling,
+                          name:
+                            ctx?.user?.id !== friendBox.fromUserId
+                              ? friendBox.fromUser.name
+                              : friendBox.toUser.name,
+                          picture:
+                            ctx?.user?.id !== friendBox.fromUserId
+                              ? friendBox.fromUser.picture
+                              : friendBox.toUser.picture,
+                        });
+                      }
+                    } else {
+                    }
+                  }}
                   className="w-10 h-10 object-cover rounded-full"
                   src={
                     ctx?.user?.id !== friendBox.fromUserId
@@ -190,7 +265,7 @@ const FriendList = (props: Iprops) => {
 
                 {props.showMenu && (
                   <div className="flex flex-col">
-                    <span className="truncate select-none ">
+                    <span className="truncate max-lg:w-32 select-none ">
                       {ctx?.user?.id !== friendBox.fromUserId
                         ? friendBox.fromUser.name
                         : friendBox.toUser.name}
@@ -205,8 +280,8 @@ const FriendList = (props: Iprops) => {
               </div>
 
               <div
-                className={`bg-green-500 aspect-square scale-0 transition-all  text-xs font-semibold w-5 p-0.5 flex justify-center items-center rounded-full  
-                ${props.showMenu ? "" : "absolute  top-0 right-0"}
+                className={`bg-green-500 absolute  aspect-square scale-0 transition-all  text-xs font-semibold w-5 p-0.5 flex justify-center items-center rounded-full  
+                ${props.showMenu ? "top-2 right-10" : "  top-0 right-0"}
                 ${friendBox.unreadMessageCount > 0 ? "scale-100" : ""}`}
               >
                 <span className="truncate">{friendBox.unreadMessageCount}</span>
