@@ -9,7 +9,7 @@ const AuthForm = (props: any) => {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [Loading, setLoading] = useState<boolean>(false);
   const [Loading2, setLoading2] = useState<boolean>(false);
-  const errorHtml = errorMessage.replace(/\r?\n/g, "<br>");
+
 
   const { t } = useTranslation();
 
@@ -112,8 +112,7 @@ const AuthForm = (props: any) => {
           {errorMessage && (
             <span
               className="text-red-600 font-semibold text-lg"
-              dangerouslySetInnerHTML={{ __html: t(errorHtml) }}
-            ></span>
+            >{errorMessage}</span>
           )}
         </span>
       )}
