@@ -59,7 +59,6 @@ const ChatLog = (props: IProps) => {
   useEffect(() => {
     
     const typingStatusSpeaker = async () => {
-      console.log(typingStatus,typingStatus.ToUserId);
       //TODO: Typing status send operations send typing wont work
       await conCtx?.connection?.send("TypingStatus", typingStatus);
     };

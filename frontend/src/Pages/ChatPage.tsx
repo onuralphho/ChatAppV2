@@ -41,7 +41,7 @@ const ChatPage = () => {
 
   useEffect(() => {
     const typingStatusListener = async (typingStatus: typingStatus) => {
-      console.log("AAAA",typingStatus)
+  
     };
     const connection = conCtx?.connection;
     if (connection) {
