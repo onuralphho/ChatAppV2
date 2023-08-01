@@ -70,7 +70,7 @@ const AuthForm = (props: any) => {
       setLoading2(false);
 
       if (res.status === 400) {
-        setErrorMessage(res.detail);
+        setErrorMessage(t(res.detail).toString());
         return;
       }
       setPasswordInput("");
