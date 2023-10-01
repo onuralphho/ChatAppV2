@@ -1,6 +1,4 @@
 <h1>Soprah Chat</h1>
-<span>Colins Yazılım Uzamnı Yetiştirme Progamında geliştirdiğim uygulamadır</span>
-<span>Mentor: Fatih Gürdal</span>
 <p>Soprah Chat, kullanıcıların gerçek zamanlı olarak sohbet edebileceği bir chat uygulamasıdır. Bu uygulama React 18, .NET 6.0, Postgresql ve AWS gibi modern teknolojiler kullanılarak geliştirilmiştir.
 Kullanıcılar farklı sohbet odalarına katılabilir, yeni sohbet odaları oluşturabilir ve diğer kullanıcılarla anında iletişim kurabilirler.
 </p>
