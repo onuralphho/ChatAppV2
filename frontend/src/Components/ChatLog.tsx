@@ -31,19 +31,7 @@ const ChatLog = (props: IProps) => {
 	const tmpSavedMessage = props.talkingTo.id
 		? "soprahmessage-" + props.talkingTo.id.toString()
 		: "";
-	const tmpTypingStatus = props.talkingTo.id
-		? "soprahtyping-" + props.talkingTo.id.toString()
-		: "";
 	const [messageInput, setMessageInput] = useLocalStorage(tmpSavedMessage, "");
-	const [typingUser, setTypingUser] = useLocalStorage(
-		tmpTypingStatus,
-		JSON.stringify({
-			toUserId: ctx?.talkingTo?.id?.toString(),
-			fromUserId: ctx?.user?.id,
-			isTyping: false,
-		})
-	);
-	const [typingCurrent, setTypingCurrent] = useState<typingStatus>();
 	const [checkerVal, setCheckerVal] = useState<boolean>(false);
 	const [showFileInput, setShowFileInput] = useState<boolean>(false);
 	const [fileInput, setFileInput] = useState<File | undefined>(undefined);
@@ -59,6 +47,7 @@ const ChatLog = (props: IProps) => {
 		fromUserId: ctx?.user?.id,
 		isTyping: false,
 	});
+	const [isTyping, setIsTyping] = useState<typingStatus>();
 
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -70,17 +59,20 @@ const ChatLog = (props: IProps) => {
 	messageAudio.volume = 0.2;
 
 	useEffect(() => {
-		debugger
-		const storedValue = localStorage.getItem(tmpSavedMessage);
-		const storedTypingStatus = localStorage.getItem(tmpTypingStatus);
-		const typingObj = JSON.parse(storedTypingStatus ?? "{}");
-
-		if (storedTypingStatus !== null) {
-			setTypingCurrent(typingObj);
-		}else{
-			setTypingCurrent(undefined);
+		const typingStatusListener = async (typingStatus: typingStatus) => {
+			setIsTyping(typingStatus);
+		};
+		const connection = conCtx?.connection;
+		if (connection) {
+			connection.on("RecieveTypingStatus", typingStatusListener);
+			return () => {
+				connection.off("RecieveTypingStatus", typingStatusListener);
+			};
 		}
+	}, [conCtx?.connection]);
 
+	useEffect(() => {
+		const storedValue = localStorage.getItem(tmpSavedMessage);
 		if (storedValue !== null) {
 			setMessageInput(JSON.parse(storedValue));
 		} else {
@@ -228,7 +220,7 @@ const ChatLog = (props: IProps) => {
 					alt=""
 				/>
 				<span className="text-xl">{props.talkingTo.name}</span>
-				<span className="text-sm italic">{typingCurrent?.isTyping ?"yazıyor..." : ""}</span>
+				<span className="text-xs italic opacity-80">{isTyping?.fromUserId === ctx?.talkingTo?.id && isTyping?.isTyping && "yazıyor..."}</span>
 			</div>
 
 			{showFullImage && (
