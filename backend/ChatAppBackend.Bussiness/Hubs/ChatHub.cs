@@ -42,11 +42,16 @@ namespace ChatAppBackend.Bussiness.Hubs
 
         public async Task TypingStatus(TypingStatusDto typingStatus)
         {
-            Console.WriteLine(typingStatus);
+            Console.WriteLine(typingStatus.IsTyping);
             await Clients.Group(typingStatus.ToUserId).SendAsync("RecieveTypingStatus", typingStatus).ConfigureAwait(false);
 
         }
 
+        public async Task Test(string a)
+        {
+            await Clients.Group("1").SendAsync("RecieveTypingStatus", a).ConfigureAwait(false);
+
+        }
 
 
         public async Task SendMessage(HubMessageSent hubMessageSent)

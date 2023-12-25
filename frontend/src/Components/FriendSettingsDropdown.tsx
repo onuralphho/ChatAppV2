@@ -3,6 +3,7 @@ import { BsFillPersonFill, BsThreeDots } from "react-icons/bs";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { motion } from "framer-motion";
 import { scaleEffect } from "../Constants/FramerMotionEffects/scaleEffect";
+import { useState } from "react";
 type Props = {
   showFriendSettings: boolean;
   openCloseTriger: () => void;
@@ -12,17 +13,20 @@ type Props = {
 
 const FriendSettingsDropdown = (props: Props) => {
   const { t } = useTranslation();
+  const [spesificSetting, setSpesificSetting] = useState<boolean>(false)
 
   return (
     <div
       onClick={(e) => {
         e.stopPropagation();
+        setSpesificSetting(true)
         props.openCloseTriger();
       }}
       onMouseLeave={() => {
         props.closeTriger();
+        setSpesificSetting(false)
       }}
-      className="absolute top-1 right-1 rounded-md opacity-50 lg:opacity-0 group-hover:opacity-100   p-1 hover:bg-[#252525] transition-opacity "
+      className="absolute top-1 right-1 rounded-md opacity-50 lg:opacity-0 group-hover:opacity-100 z-20 p-1 hover:bg-[#252525] transition-opacity "
     >
       <BsThreeDots size={20} />
       {props.showFriendSettings && (
@@ -30,7 +34,8 @@ const FriendSettingsDropdown = (props: Props) => {
           variants={scaleEffect}
           initial="hidden"
           animate="visible"
-          className={` hidden group-hover:flex   absolute p-1  flex-col gap-0.5 backdrop-blur-sm border border-[#252525] bg-[rgba(255,255,255,0.1)]  rounded-md top-7 right-0 text-white z-20`}
+          key={Math.random()}
+          className={` ${props.showFriendSettings && spesificSetting ? '' :'hidden'} group-hover:flex   absolute p-1  flex-col gap-0.5 backdrop-blur-sm border border-[#252525] bg-[rgba(255,255,255,0.1)]  rounded-md top-7 right-0 text-white`}
         >
           <div
             onClick={props.setData}
