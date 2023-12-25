@@ -1,4 +1,5 @@
 export type typingStatus = {
-    ToUserId: string|undefined;
-    isTyping: boolean;
-  };
+	toUserId: string | undefined;
+	isTyping: boolean;
+	fromUserId: number | undefined;
+};

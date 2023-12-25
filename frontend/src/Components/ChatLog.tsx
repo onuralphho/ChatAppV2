@@ -28,25 +28,35 @@ interface IProps {
 const ChatLog = (props: IProps) => {
 	const conCtx = useConnectionContext();
 	const ctx = useAuth();
-	var tmpStr = props.talkingTo.id
+	const tmpSavedMessage = props.talkingTo.id
 		? "soprahmessage-" + props.talkingTo.id.toString()
 		: "";
-	const [messageInput, setMessageInput] = useLocalStorage(tmpStr, "");
+	const tmpTypingStatus = props.talkingTo.id
+		? "soprahtyping-" + props.talkingTo.id.toString()
+		: "";
+	const [messageInput, setMessageInput] = useLocalStorage(tmpSavedMessage, "");
+	const [typingUser, setTypingUser] = useLocalStorage(
+		tmpTypingStatus,
+		JSON.stringify({
+			toUserId: ctx?.talkingTo?.id?.toString(),
+			fromUserId: ctx?.user?.id,
+			isTyping: false,
+		})
+	);
+	const [typingCurrent, setTypingCurrent] = useState<typingStatus>();
 	const [checkerVal, setCheckerVal] = useState<boolean>(false);
 	const [showFileInput, setShowFileInput] = useState<boolean>(false);
 	const [fileInput, setFileInput] = useState<File | undefined>(undefined);
-	const [previewImage, setPreviewImage] = useState<string | undefined>(
+	const [previewImage, setPreviewImage] = useState<string | undefined>(undefined);
+	const [showFullImage, setShowFullImage] = useState<string | undefined>("");
+	const [animationType, setAnimationType] = useState<"shake" | "scale" | "colorful" | undefined>(
 		undefined
 	);
-	const [showFullImage, setShowFullImage] = useState<string | undefined>("");
-	const [animationType, setAnimationType] = useState<
-		"shake" | "scale" | "colorful" | undefined
-	>(undefined);
-	const [animationSelectorShow, setAnimationSelectorShow] =
-		useState<boolean>(false);
+	const [animationSelectorShow, setAnimationSelectorShow] = useState<boolean>(false);
 
 	const [typingStatus, setTypingStatus] = useState<typingStatus>({
-		ToUserId: ctx?.talkingTo?.id?.toString(),
+		toUserId: ctx?.talkingTo?.id?.toString(),
+		fromUserId: ctx?.user?.id,
 		isTyping: false,
 	});
 
@@ -60,7 +70,17 @@ const ChatLog = (props: IProps) => {
 	messageAudio.volume = 0.2;
 
 	useEffect(() => {
-		const storedValue = localStorage.getItem(tmpStr);
+		debugger
+		const storedValue = localStorage.getItem(tmpSavedMessage);
+		const storedTypingStatus = localStorage.getItem(tmpTypingStatus);
+		const typingObj = JSON.parse(storedTypingStatus ?? "{}");
+
+		if (storedTypingStatus !== null) {
+			setTypingCurrent(typingObj);
+		}else{
+			setTypingCurrent(undefined);
+		}
+
 		if (storedValue !== null) {
 			setMessageInput(JSON.parse(storedValue));
 		} else {
@@ -77,19 +97,17 @@ const ChatLog = (props: IProps) => {
 		typingStatusSpeaker();
 	}, [typingStatus.isTyping]);
 
+	const test = async () => {
+		await conCtx?.connection?.send("Test", "test");
+	};
+
 	const messageChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.target.value.length > 0) {
-			setTypingStatus({
-				ToUserId: ctx?.talkingTo?.id?.toString(),
-				isTyping: true,
-			});
-		} else {
-			setTypingStatus({
-				ToUserId: ctx?.talkingTo?.id?.toString(),
-				isTyping: false,
-			});
-		}
 		setMessageInput(e.target.value);
+		if (e.target.value.length > 0) {
+			setTypingStatus((prev) => ({ ...prev, isTyping: true }));
+		} else {
+			setTypingStatus((prev) => ({ ...prev, isTyping: false }));
+		}
 	};
 
 	const fileInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,6 +130,7 @@ const ChatLog = (props: IProps) => {
 		let dateNow = new Date();
 
 		setCheckerVal(true);
+		setTypingStatus((prev) => ({ ...prev, isTyping: false }));
 		setMessageInput("");
 		setFileInput(undefined);
 		setPreviewImage(undefined);
@@ -209,6 +228,7 @@ const ChatLog = (props: IProps) => {
 					alt=""
 				/>
 				<span className="text-xl">{props.talkingTo.name}</span>
+				<span className="text-sm italic">{typingCurrent?.isTyping ?"yazıyor..." : ""}</span>
 			</div>
 
 			{showFullImage && (
@@ -235,7 +255,9 @@ const ChatLog = (props: IProps) => {
 				className={`flex flex-1 flex-col px-1  gap-0 overflow-y-scroll overflow-x-hidden  pb-2`}>
 				{props.messages
 					? props.messages
-							.filter((message) => message.friendBoxId === props.talkingTo.friendBoxId)
+							.filter(
+								(message) => message.friendBoxId === props.talkingTo.friendBoxId
+							)
 							.map((message, index) => (
 								<div
 									key={index}
@@ -275,7 +297,8 @@ const ChatLog = (props: IProps) => {
 												: "  bg-[#efefef] text-black"
 										}   ${
 											props.messages &&
-											message.fromUserId !== props.messages[index + 1]?.fromUserId
+											message.fromUserId !==
+												props.messages[index + 1]?.fromUserId
 												? ctx?.user && ctx.user.id === message.fromUserId
 													? "rounded-br-none right-tri "
 													: "rounded-bl-none left-tri  "
@@ -301,7 +324,8 @@ const ChatLog = (props: IProps) => {
 												<div className="flex items-end gap-1.5 absolute right-1 bottom-0.5  h-max self-end">
 													<span
 														className={`text-xs italic self-end ${
-															ctx?.user && ctx.user.id === message.fromUserId
+															ctx?.user &&
+															ctx.user.id === message.fromUserId
 																? "text-[#efefef]"
 																: ""
 														} `}>
@@ -323,7 +347,8 @@ const ChatLog = (props: IProps) => {
 													</span>
 													<div
 														className={`${
-															message.fromUserId !== ctx?.user?.id && "hidden"
+															message.fromUserId !== ctx?.user?.id &&
+															"hidden"
 														} flex w-2 h-3    relative mx-1`}>
 														<div
 															className={`${
@@ -331,7 +356,8 @@ const ChatLog = (props: IProps) => {
 																	? " border-r-sky-500 border-b-sky-500"
 																	: "border-r-neutral-300 border-b-neutral-300"
 															} ${
-																message.fromUserId !== ctx?.user?.id && "hidden"
+																message.fromUserId !==
+																	ctx?.user?.id && "hidden"
 															} absolute  w-1.5 h-3.5 border-[2.3px] border-t-transparent border-l-transparent  inline-block  rotate-[52deg] -right-[1.5px] bottom-[3.5px] skew-x-12 `}></div>
 														<div
 															className={` ${
@@ -340,8 +366,8 @@ const ChatLog = (props: IProps) => {
 																	: "border-r-neutral-300 border-b-neutral-300"
 															}
                         ${
-																									message.fromUserId !== ctx?.user?.id && "hidden"
-																								} border-r-neutral-300 border-b-neutral-300 absolute  w-2 h-3 border-[2.3px] border-t-transparent border-l-transparent  right-1 bottom-1  inline-block skew-x-12  rotate-[52deg]  `}></div>
+							message.fromUserId !== ctx?.user?.id && "hidden"
+						} border-r-neutral-300 border-b-neutral-300 absolute  w-2 h-3 border-[2.3px] border-t-transparent border-l-transparent  right-1 bottom-1  inline-block skew-x-12  rotate-[52deg]  `}></div>
 													</div>
 												</div>
 											</div>
@@ -365,9 +391,7 @@ const ChatLog = (props: IProps) => {
 				<div ref={messagesEndRef} />
 			</div>
 
-			<form
-				onSubmit={sendMessageHandler}
-				className="flex items-center gap-1 p-1 max-sm:mb-4">
+			<form onSubmit={sendMessageHandler} className="flex items-center gap-1 p-1 max-sm:mb-4">
 				<button
 					onClick={(e) => {
 						setShowFileInput((prev) => !prev);
@@ -497,6 +521,9 @@ const ChatLog = (props: IProps) => {
 						disabled={fileInput || messageInput.length > 0 ? false : true}
 						className="px-4 py-1 text-2xl font-semibold text-white bg-green-500 rounded-md disabled:bg-neutral-400">
 						<HiPaperAirplane />
+					</button>
+					<button type="button" className="bg-red-500 p-1 rounded" onClick={test}>
+						Test
 					</button>
 				</div>
 			</form>

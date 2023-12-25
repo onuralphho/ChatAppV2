@@ -22,6 +22,7 @@ const ChatPage = () => {
   const [notification, setNotification] = useState<INotification | undefined>(
     undefined
   );
+  
 
   const { t } = useTranslation();
 
@@ -41,7 +42,7 @@ const ChatPage = () => {
 
   useEffect(() => {
     const typingStatusListener = async (typingStatus: typingStatus) => {
-  
+      localStorage.setItem(`soprahtyping-${typingStatus.fromUserId}`,JSON.stringify(typingStatus))
     };
     const connection = conCtx?.connection;
     if (connection) {
