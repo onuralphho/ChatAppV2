@@ -47,13 +47,6 @@ namespace ChatAppBackend.Bussiness.Hubs
 
         }
 
-        public async Task Test(string a)
-        {
-            await Clients.Group("1").SendAsync("RecieveTypingStatus", a).ConfigureAwait(false);
-
-        }
-
-
         public async Task SendMessage(HubMessageSent hubMessageSent)
         {
 
