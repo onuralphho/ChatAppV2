@@ -89,10 +89,6 @@ const ChatLog = (props: IProps) => {
 		typingStatusSpeaker();
 	}, [typingStatus.isTyping]);
 
-	const test = async () => {
-		await conCtx?.connection?.send("Test", "test");
-	};
-
 	const messageChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setMessageInput(e.target.value);
 		if (e.target.value.length > 0) {
@@ -513,9 +509,6 @@ const ChatLog = (props: IProps) => {
 						disabled={fileInput || messageInput.length > 0 ? false : true}
 						className="px-4 py-1 text-2xl font-semibold text-white bg-green-500 rounded-md disabled:bg-neutral-400">
 						<HiPaperAirplane />
-					</button>
-					<button type="button" className="bg-red-500 p-1 rounded" onClick={test}>
-						Test
 					</button>
 				</div>
 			</form>
