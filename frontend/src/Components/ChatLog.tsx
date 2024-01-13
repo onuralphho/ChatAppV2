@@ -197,7 +197,9 @@ const ChatLog = (props: IProps) => {
 				ctx?.messages[ctx.messages?.length - 1] &&
 				ctx?.messages[ctx.messages?.length - 1].friendBoxId)
 		) {
-			scrollToBottom();
+			setTimeout(() => {
+				scrollToBottom();
+			}, 100);
 		}
 	}, [ctx?.messages, scrollToBottom, checkerVal]);
 
