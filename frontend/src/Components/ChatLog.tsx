@@ -12,7 +12,7 @@ import { ITalkingTo } from "../@types/talkingTo";
 import { Fetcher } from "../utils/Fetcher";
 import { useConnectionContext } from "../Context/ConnectionProvider";
 import ChatLoader from "./UI/ChatUI/ChatLoader";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import CloseButton from "./UI/GeneralUI/CloseButton";
 import { scaleEffect } from "../Constants/FramerMotionEffects/scaleEffect";
@@ -218,7 +218,11 @@ const ChatLog = (props: IProps) => {
 					alt=""
 				/>
 				<span className="text-xl">{props.talkingTo.name}</span>
-				<span className="text-xs italic opacity-80">{isTyping?.fromUserId === ctx?.talkingTo?.id && isTyping?.isTyping && "yazıyor..."}</span>
+				<span className="text-xs italic opacity-80">
+					{isTyping?.fromUserId === ctx?.talkingTo?.id &&
+						isTyping?.isTyping &&
+						"yazıyor..."}
+				</span>
 			</div>
 
 			{showFullImage && (
@@ -248,6 +252,8 @@ const ChatLog = (props: IProps) => {
 							.filter(
 								(message) => message.friendBoxId === props.talkingTo.friendBoxId
 							)
+							.slice()
+							.reverse()
 							.map((message, index) => (
 								<div
 									key={index}
