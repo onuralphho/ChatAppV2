@@ -20,6 +20,7 @@ import FileInput from "./UI/GeneralUI/FileInput";
 import { S3MediaSender } from "../utils/S3MediaSender";
 import { typingStatus } from "../@types/typingStatusType";
 import { useLocalStorage } from "usehooks-ts";
+import MessageLoader from "./UI/ChatUI/MessageLoader";
 interface IProps {
 	talkingTo: ITalkingTo;
 	messages: IMessage[] | undefined;
@@ -41,7 +42,7 @@ const ChatLog = (props: IProps) => {
 		undefined
 	);
 	const [animationSelectorShow, setAnimationSelectorShow] = useState<boolean>(false);
-
+	
 	const [typingStatus, setTypingStatus] = useState<typingStatus>({
 		toUserId: ctx?.talkingTo?.id?.toString(),
 		fromUserId: ctx?.user?.id,
@@ -82,7 +83,6 @@ const ChatLog = (props: IProps) => {
 
 	useEffect(() => {
 		const typingStatusSpeaker = async () => {
-			//TODO: Typing status send operations send typing wont work
 			await conCtx?.connection?.send("TypingStatus", typingStatus);
 		};
 
@@ -247,6 +247,7 @@ const ChatLog = (props: IProps) => {
 
 			<div
 				className={`flex flex-1 flex-col px-1  gap-0 overflow-y-scroll overflow-x-hidden  pb-2`}>
+				<MessageLoader />
 				{props.messages
 					? props.messages
 							.filter(
