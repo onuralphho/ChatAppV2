@@ -143,7 +143,7 @@ const ChatLog = (props: IProps) => {
 			animationType: animationType ?? undefined,
 		};
 
-		ctx?.setMessages((prev) => [...(prev || []), messagePayload]);
+		ctx?.setMessages((prev) => [messagePayload, ...(prev || [])]);
 
 		messageAudio.play();
 		ctx?.setFriendList((prev) => {
