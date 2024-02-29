@@ -44,7 +44,7 @@ jobs:
         run: |
           dotnet tool install --global dotnet-ef --version 6.0.0
           dotnet tool restore
-          dotnet ef database update --project soprahchat --connection "${CONNECTION_STRING}"
+          dotnet ef database update --connection "${CONNECTION_STRING}"
           
           
           # Replace YourProjectName with the name of your project
