@@ -43,7 +43,7 @@ jobs:
           CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
         run: |
           dotnet new tool-manifest
-          dotnet tool install --global dotnet-ef --version 6.0.0
+          dotnet tool install --global dotnet-ef --version 6.0.15
           dotnet tool restore
           dotnet ef database update --project ChatAppBackend --connection "${CONNECTION_STRING}"
           
