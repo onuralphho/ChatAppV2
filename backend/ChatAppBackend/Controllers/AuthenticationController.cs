@@ -29,7 +29,7 @@ namespace ChatAppBackend.Controllers
             }
             else
             {
-                
+                //checkout this
                 //var options = new CookieOptions
                 //{
                 //    HttpOnly = true,
