@@ -37,7 +37,14 @@ jobs:
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
-
+          
+      - name: Database migrations
+        env:
+          CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
+        run: |
+          dotnet ef database update --project soprahchat --connection "${CONNECTION_STRING}"
+          
+          # Replace YourProjectName with the name of your project
   deploy:
     runs-on: windows-latest
     needs: build
