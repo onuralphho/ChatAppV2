@@ -55,7 +55,7 @@ namespace ChatAppBackend.Controllers
         public ActionResult Logout()
         {
 
-            //Cookie silme işlemi çalışmıyor
+            //Cookie silme işlemi çalışmıyor bakılmalı
 
             //_httpContextAccessor.HttpContext.Response.Cookies.Delete("jwt");
             //_httpContextAccessor.HttpContext.Response.Cookies.Append("jwt", "", new CookieOptions
