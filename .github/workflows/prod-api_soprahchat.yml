@@ -44,7 +44,7 @@ jobs:
           dotnet new tool-manifest
           dotnet tool install --global dotnet-ef --version 6.0.15
           dotnet tool restore
-          dotnet ef database update --project ChatAppBackend --connection "${CONNECTION_STRING}"
+          dotnet ef database update --project ChatAppBackend --connection "${{ secrets.DB_CONNECTION_STRING }}"
           
           
           # Replace YourProjectName with the name of your project
