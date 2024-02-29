@@ -42,7 +42,7 @@ jobs:
         env:
           CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
         run: |
-          dotnet tool install --global dotnet-ef
+          dotnet tool install --global dotnet-ef --version 6.0.0
           dotnet tool restore
           dotnet ef database update --project soprahchat --connection "${CONNECTION_STRING}"
           
