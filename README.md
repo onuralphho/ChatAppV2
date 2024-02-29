@@ -127,7 +127,7 @@ Kullanıcılar farklı sohbet odalarına katılabilir, yeni sohbet odaları olu�
   </tr>
 </table>
 
-<h3>Katkı<h3>
+<h3>Katkı:<h3>
 Soprah Chat'a katkıda bulunmak için, lütfen aşağıdaki adımları takip edin:
 <ol>
 <li>Bu depoyu kendi hesabınıza kopyalayın.</li>
