@@ -20,9 +20,9 @@ namespace ChatAppBackend.Controllers
         }
 
         [HttpGet("{friendBoxId}")]
-        public Task<List<MessageSentResponse>> Messages(int friendBoxId, [FromQuery] int skip = 0)
+        public Task<List<MessageSentResponse>> Messages(int friendBoxId)
         {
-            return _messageservice.GetMessages(friendBoxId,skip);
+            return _messageservice.GetMessages(friendBoxId);
         }
 
 

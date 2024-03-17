@@ -12,7 +12,7 @@ import { ITalkingTo } from "../@types/talkingTo";
 import { Fetcher } from "../utils/Fetcher";
 import { useConnectionContext } from "../Context/ConnectionProvider";
 import ChatLoader from "./UI/ChatUI/ChatLoader";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import CloseButton from "./UI/GeneralUI/CloseButton";
 import { scaleEffect } from "../Constants/FramerMotionEffects/scaleEffect";
@@ -20,7 +20,6 @@ import FileInput from "./UI/GeneralUI/FileInput";
 import { S3MediaSender } from "../utils/S3MediaSender";
 import { typingStatus } from "../@types/typingStatusType";
 import { useLocalStorage } from "usehooks-ts";
-import MessageLoader from "./UI/ChatUI/MessageLoader";
 interface IProps {
 	talkingTo: ITalkingTo;
 	messages: IMessage[] | undefined;
@@ -42,7 +41,7 @@ const ChatLog = (props: IProps) => {
 		undefined
 	);
 	const [animationSelectorShow, setAnimationSelectorShow] = useState<boolean>(false);
-	
+
 	const [typingStatus, setTypingStatus] = useState<typingStatus>({
 		toUserId: ctx?.talkingTo?.id?.toString(),
 		fromUserId: ctx?.user?.id,
@@ -83,6 +82,7 @@ const ChatLog = (props: IProps) => {
 
 	useEffect(() => {
 		const typingStatusSpeaker = async () => {
+			//TODO: Typing status send operations send typing wont work
 			await conCtx?.connection?.send("TypingStatus", typingStatus);
 		};
 
@@ -218,11 +218,7 @@ const ChatLog = (props: IProps) => {
 					alt=""
 				/>
 				<span className="text-xl">{props.talkingTo.name}</span>
-				<span className="text-xs italic opacity-80">
-					{isTyping?.fromUserId === ctx?.talkingTo?.id &&
-						isTyping?.isTyping &&
-						"yazıyor..."}
-				</span>
+				<span className="text-xs italic opacity-80">{isTyping?.fromUserId === ctx?.talkingTo?.id && isTyping?.isTyping && "yazıyor..."}</span>
 			</div>
 
 			{showFullImage && (
@@ -247,14 +243,11 @@ const ChatLog = (props: IProps) => {
 
 			<div
 				className={`flex flex-1 flex-col px-1  gap-0 overflow-y-scroll overflow-x-hidden  pb-2`}>
-				<MessageLoader />
 				{props.messages
 					? props.messages
 							.filter(
 								(message) => message.friendBoxId === props.talkingTo.friendBoxId
 							)
-							.slice()
-							.reverse()
 							.map((message, index) => (
 								<div
 									key={index}

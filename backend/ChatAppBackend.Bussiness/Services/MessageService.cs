@@ -1,6 +1,5 @@
 ﻿
 
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatAppBackend.Bussiness.Services
@@ -8,7 +7,7 @@ namespace ChatAppBackend.Bussiness.Services
 
     public interface IMessageService
     {
-        Task<List<MessageSentResponse>> GetMessages(int friendBoxId, int skip);
+        Task<List<MessageSentResponse>> GetMessages(int friendBoxId);
         Task<MessageSentResponse> AddMessage(MessageSentRequest message);
         Task ReadMessage(int friendBoxId);
 
@@ -55,11 +54,11 @@ namespace ChatAppBackend.Bussiness.Services
             return resMessage;
         }
 
-        public async Task<List<MessageSentResponse>> GetMessages(int friendBoxId, int skip)
+        public async Task<List<MessageSentResponse>> GetMessages(int friendBoxId)
         {
             var messages = await _context.Messages
                 .Include(m => m.Friendship)
-                .Where(m => m.Friendship.Id == friendBoxId).OrderByDescending(m => m.SentDate).Skip(skip).Take(20)
+                .Where(m => m.Friendship.Id == friendBoxId)
                 .ToListAsync().ConfigureAwait(false);
 
             return messages.Select((message) =>
